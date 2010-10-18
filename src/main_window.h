@@ -2,7 +2,9 @@
 #define MAIN_WINDOW_H_INCLUDED
 
 #include <gtkmm.h>
-#include <clutter.h>
+#include <glibmm.h>
+#include <clutter/clutter.h>
+#include <clutter-gtk/clutter-gtk.h>
 
 class MainWindow {
 public:
@@ -15,8 +17,8 @@ private:
     Gtk::Window* gtk_window_;
 
     Gtk::VBox* gtk_tile_vbox_;
-    Clutter::Gtk::Embed* gtk_tile_canvas_;
-    Glib::RefPtr<Clutter::Stage> gtk_tile_stage_;
+    Gtk::Widget* gtk_tile_canvas_;
+    ClutterActor* gtk_tile_stage_;
 
     void initialize_tile_canvas();
 };
