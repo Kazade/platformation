@@ -31,14 +31,17 @@ ENDIF(CLUTTERGTK_FOUND)
 set(sources
     src/main.cpp
     src/main_window.cpp
+    src/new_level_dialog.cpp
 )
 
 set(headers
     src/main_window.h
+    src/new_level_dialog.h
 )
 
 set(ui_files
     ui/main_window.glade
+    ui/new_level_dialog.glade
 )
 
 add_executable(gnovaedit ${sources})
