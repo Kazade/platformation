@@ -38,3 +38,16 @@ void MainWindow::initialize_tile_canvas() {
     gtk_tile_canvas_->show();
     clutter_actor_show(gtk_tile_stage_);
 }
+
+/** @brief on_new_level
+  *
+  * Display a dialog and create a new level if neccessary
+  * @todo Ask to save current level if one exists
+  * @todo Create the new level
+  * @todo Initialize the tileset view
+  */
+void MainWindow::on_new_level() {
+    NewLevelDialog::ptr dialog(new NewLevelDialog());
+    dialog->run_dialog();
+}
+

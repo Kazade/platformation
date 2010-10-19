@@ -13,6 +13,8 @@ public:
 
     Gtk::Window& get_window_ref() { return *gtk_window_; }
 
+    void on_new_level();
+
 private:
     Gtk::Window* gtk_window_;
 

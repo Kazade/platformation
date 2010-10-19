@@ -54,12 +54,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../src/level.h" />
 		<Unit filename="../src/main.cpp" />
 		<Unit filename="../src/main_window.cpp" />
 		<Unit filename="../src/main_window.h" />
 		<Unit filename="../src/new_level_dialog.cpp" />
 		<Unit filename="../src/new_level_dialog.h" />
 		<Unit filename="../src/tile.h" />
+		<Unit filename="../src/tile_instance.h" />
 		<Unit filename="../src/tileset.cpp" />
 		<Unit filename="../src/tileset.h" />
 		<Extensions>
