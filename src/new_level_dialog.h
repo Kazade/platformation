@@ -17,6 +17,7 @@ public:
     const std::string& get_tileset_path() const;
 
     void on_browse_directory_clicked();
+    void on_entry_changed();
 
 private:
     std::string level_name_;
@@ -24,8 +25,9 @@ private:
 
     Gtk::Dialog* dialog_;
     Gtk::Entry* gtk_directory_;
+    Gtk::Entry* gtk_level_name_;
     Gtk::Button* gtk_browse_directory_;
-
+    Gtk::Button* gtk_ok_button_;
     //Gtk::TextEntry* gtk_level_name_;
 };
 

@@ -28,10 +28,15 @@ IF(CLUTTERGTK_FOUND)
     include_directories(${CLUTTERGTK_INCLUDE_DIRS})
 ENDIF(CLUTTERGTK_FOUND)
 
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+
+
 set(sources
     src/main.cpp
     src/main_window.cpp
     src/new_level_dialog.cpp
+    src/tileset.cpp
+    src/level.cpp
 )
 
 set(headers
@@ -45,7 +50,7 @@ set(ui_files
 )
 
 add_executable(gnovaedit ${sources})
-target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES})
+target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)

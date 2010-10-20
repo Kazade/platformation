@@ -1,8 +1,12 @@
 #ifndef TILE_H_INCLUDED
 #define TILE_H_INCLUDED
 
+#include <boost/shared_ptr.hpp>
+
 class Tile {
 public:
+    typedef boost::shared_ptr<Tile> ptr;
+
     Tile(const std::string& path);
 
     ClutterTexture* get_texture() const;

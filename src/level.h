@@ -1,15 +1,22 @@
 #ifndef LEVEL_H_INCLUDED
 #define LEVEL_H_INCLUDED
 
+#include <list>
+#include <boost/shared_ptr.hpp>
+
 #include "tile_instance.h"
-#include "gimmick_instance.h"
-#include "entity_instance.h"
+//#include "gimmick_instance.h"
+//#include "entity_instance.h"
+
+class Tileset;
 
 class Level {
 public:
+    typedef boost::shared_ptr<Level> ptr;
+
     Level(Tileset* tileset);
 
-    SceneObject* get_selected_object() const;
+    //SceneObject* get_selected_object() const;
 
     TileInstance* spawn_tile_instance(int tile_id, bool select=true);
     /*GimmickInstance* spawn_gimmick_instance(int gimmick_id);
@@ -29,6 +36,7 @@ public:
 
 private:
     std::list<TileInstance::ptr> tile_instances_;
+    Tileset* tileset_;
 
 };
 

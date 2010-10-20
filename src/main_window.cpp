@@ -51,7 +51,17 @@ void MainWindow::initialize_tile_canvas() {
   */
 void MainWindow::on_new_level_activate() {
     NewLevelDialog::ptr dialog(new NewLevelDialog());
-    dialog->run_dialog(gtk_window_);
+    int result = dialog->run_dialog(gtk_window_);
+
+    if(result == Gtk::RESPONSE_OK) {
+        std::string level_name = dialog->get_level_name();
+        std::string tileset_path = dialog->get_tileset_path();
+
+        tileset_ = Tileset::load_from_directory(tileset_path);
+        tileset_->update_stage((ClutterStage*)gtk_tile_stage_);
+
+        level_.reset(new Level(tileset_.get()));
+    }
 }
 
 /** @brief connect_signals

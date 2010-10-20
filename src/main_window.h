@@ -6,6 +6,9 @@
 #include <clutter/clutter.h>
 #include <clutter-gtk/clutter-gtk.h>
 
+#include "level.h"
+#include "tileset.h"
+
 class MainWindow {
 public:
     MainWindow();
@@ -26,6 +29,9 @@ private:
 
     void initialize_tile_canvas();
     void connect_signals();
+
+    Level::ptr level_;
+    Tileset::ptr tileset_;
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED
