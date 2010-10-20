@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "main_window.h"
+#include "new_level_dialog.h"
 
 #define UI_FILE "ui/main_window.glade"
 
@@ -9,6 +10,7 @@ gtk_window_(NULL),
 gtk_tile_canvas_(NULL),
 gtk_tile_stage_(NULL) {
     create_widgets();
+    connect_signals();
 }
 
 void MainWindow::create_widgets() {
@@ -18,6 +20,7 @@ void MainWindow::create_widgets() {
     builder->add_from_file(UI_FILE);
     builder->get_widget("main_window", gtk_window_);
     builder->get_widget("tile_vbox", gtk_tile_vbox_);
+    builder->get_widget("new_level_item", gtk_new_level_item_);
 
     gtk_window_->show_all();
     initialize_tile_canvas();
@@ -46,8 +49,17 @@ void MainWindow::initialize_tile_canvas() {
   * @todo Create the new level
   * @todo Initialize the tileset view
   */
-void MainWindow::on_new_level() {
+void MainWindow::on_new_level_activate() {
     NewLevelDialog::ptr dialog(new NewLevelDialog());
-    dialog->run_dialog();
+    dialog->run_dialog(gtk_window_);
+}
+
+/** @brief connect_signals
+  *
+  * @todo: document this function
+  */
+void MainWindow::connect_signals() {
+    assert(gtk_new_level_item_);
+    gtk_new_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_new_level_activate));
 }
 

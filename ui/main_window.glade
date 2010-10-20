@@ -23,11 +23,12 @@
                     <property name="visible">True</property>
                     <property name="ubuntu_local">True</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                      <object class="GtkImageMenuItem" id="new_level_item">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_new_level_item_activate"/>
                       </object>
                     </child>
                     <child>

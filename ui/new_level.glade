@@ -33,7 +33,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="entry1">
+                  <object class="GtkEntry" id="directory_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">•</property>
@@ -43,11 +43,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button1">
+                  <object class="GtkButton" id="browse_directory">
                     <property name="label" translatable="yes">...</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_browse_directory_clicked"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -101,10 +102,12 @@
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="button1">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
@@ -139,10 +142,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button2</action-widget>
-      <action-widget response="0">button3</action-widget>
+      <action-widget response="-5">button1</action-widget>
+      <action-widget response="-6">button3</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkActionGroup" id="actiongroup1"/>
-  <object class="GtkAction" id="action1"/>
 </interface>
