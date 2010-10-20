@@ -37,6 +37,7 @@ set(sources
     src/new_level_dialog.cpp
     src/tileset.cpp
     src/level.cpp
+    src/tile.cpp
 )
 
 set(headers

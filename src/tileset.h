@@ -2,7 +2,7 @@
 #define TILESET_H_INCLUDED
 
 #include <boost/shared_ptr.hpp>
-#include <map>
+#include <vector>
 #include <string>
 #include <clutter/clutter.h>
 
@@ -16,7 +16,9 @@ public:
     void update_stage(ClutterStage* stage);
 
 private:
-    std::map<std::string, Tile::ptr> tiles_;
+    void add_tile(const std::string& path);
+
+    std::vector<Tile::ptr> tiles_;
 };
 
 #endif // TILESET_H_INCLUDED

@@ -61,6 +61,7 @@
 		<Unit filename="../src/main_window.h" />
 		<Unit filename="../src/new_level_dialog.cpp" />
 		<Unit filename="../src/new_level_dialog.h" />
+		<Unit filename="../src/tile.cpp" />
 		<Unit filename="../src/tile.h" />
 		<Unit filename="../src/tile_instance.h" />
 		<Unit filename="../src/tileset.cpp" />

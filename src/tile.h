@@ -2,6 +2,8 @@
 #define TILE_H_INCLUDED
 
 #include <boost/shared_ptr.hpp>
+#include <clutter/clutter.h>
+#include <string>
 
 class Tile {
 public:
