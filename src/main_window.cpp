@@ -1,14 +1,18 @@
 #include <cassert>
+#include <boost/bind.hpp>
+#include <iostream>
 
 #include "main_window.h"
 #include "new_level_dialog.h"
+#include "clutter_helper.h"
 
 #define UI_FILE "ui/main_window.glade"
 
 MainWindow::MainWindow():
 gtk_window_(NULL),
 gtk_tile_canvas_(NULL),
-gtk_tile_stage_(NULL) {
+gtk_tile_stage_(NULL),
+active_tile_(-1) {
     create_widgets();
     connect_signals();
 }
@@ -40,7 +44,25 @@ void MainWindow::initialize_tile_canvas() {
 
     gtk_tile_canvas_->show();
     clutter_actor_show(gtk_tile_stage_);
+
+    //Connect (in a round-about way) the on_tile_stage_clicked method
+    g_signal_connect(gtk_tile_stage_, "button-press-event", G_CALLBACK(MainWindow::on_tile_stage_clicked_cb), this);
 }
+
+void MainWindow::on_tile_stage_clicked(ClutterEvent* event) {
+    gfloat x = 0;
+    gfloat y = 0;
+    clutter_event_get_coords (event, &x, &y);
+    ClutterActor* a = clutter_stage_get_actor_at_pos(CLUTTER_STAGE(gtk_tile_stage_), CLUTTER_PICK_ALL, x, y);
+    if(a && a != gtk_tile_stage_) {
+        Tile* t = (Tile*) g_object_get_data(G_OBJECT(a), "tile");
+        active_tile_ = t->get_id();
+        std::cout << "Tile clicked: " << active_tile_ << std::endl;
+    } else {
+        active_tile_ = -1;
+    }
+}
+
 
 /** @brief on_new_level
   *

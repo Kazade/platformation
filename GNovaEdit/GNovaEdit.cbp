@@ -54,6 +54,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../src/clutter_helper.h" />
 		<Unit filename="../src/level.cpp" />
 		<Unit filename="../src/level.h" />
 		<Unit filename="../src/main.cpp" />

@@ -8,6 +8,7 @@
 class Tile {
 public:
     typedef boost::shared_ptr<Tile> ptr;
+    typedef int id_type;
 
     Tile(const std::string& path);
 
@@ -15,9 +16,16 @@ public:
     ClutterTexture* get_solidity_front() const;
     ClutterTexture* get_solidity_back() const;
 
+    id_type get_id() const { return id_; }
 private:
     std::string path_;
     ClutterTexture* texture_;
+    Tile::id_type id_;
+
+    static Tile::id_type next_id() {
+        static Tile::id_type id = 0;
+        return id++;
+    }
 };
 
 

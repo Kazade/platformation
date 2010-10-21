@@ -11,6 +11,7 @@
 class Tileset {
 public:
     typedef boost::shared_ptr<Tileset> ptr;
+    typedef std::vector<Tile::ptr> TileArray;
 
     static Tileset::ptr load_from_directory(const std::string& path);
     void update_stage(ClutterStage* stage);
@@ -18,7 +19,7 @@ public:
 private:
     void add_tile(const std::string& path);
 
-    std::vector<Tile::ptr> tiles_;
+    TileArray tiles_;
 };
 
 #endif // TILESET_H_INCLUDED

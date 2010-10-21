@@ -5,6 +5,8 @@
 #include <glibmm.h>
 #include <clutter/clutter.h>
 #include <clutter-gtk/clutter-gtk.h>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 #include "level.h"
 #include "tileset.h"
@@ -17,6 +19,12 @@ public:
     Gtk::Window& get_window_ref() { return *gtk_window_; }
 
     void on_new_level_activate();
+    void on_tile_stage_clicked(ClutterEvent* event);
+
+    static void on_tile_stage_clicked_cb(ClutterStage *stage, ClutterEvent *event, gpointer data) {
+        MainWindow* _this = (MainWindow*) data;
+        _this->on_tile_stage_clicked(event);
+    }
 
 private:
     Gtk::Window* gtk_window_;
@@ -32,6 +40,7 @@ private:
 
     Level::ptr level_;
     Tileset::ptr tileset_;
+    Tile::id_type active_tile_;
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED
