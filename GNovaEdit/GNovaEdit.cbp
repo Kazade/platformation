@@ -65,6 +65,8 @@
 		<Unit filename="../src/tile.cpp" />
 		<Unit filename="../src/tile.h" />
 		<Unit filename="../src/tile_instance.h" />
+		<Unit filename="../src/tile_selector.cpp" />
+		<Unit filename="../src/tile_selector.h" />
 		<Unit filename="../src/tileset.cpp" />
 		<Unit filename="../src/tileset.h" />
 		<Extensions>

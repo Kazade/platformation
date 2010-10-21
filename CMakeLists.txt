@@ -38,6 +38,7 @@ set(sources
     src/tileset.cpp
     src/level.cpp
     src/tile.cpp
+    src/tile_selector.cpp
 )
 
 set(headers
