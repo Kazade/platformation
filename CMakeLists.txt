@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(gnova_edit)
 
 find_package(PkgConfig)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
 
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
 IF(GTKMM_FOUND)
@@ -27,9 +28,6 @@ IF(CLUTTERGTK_FOUND)
     link_directories(${CLUTTERGTK_LIBRARY_DIRS})
     include_directories(${CLUTTERGTK_INCLUDE_DIRS})
 ENDIF(CLUTTERGTK_FOUND)
-
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-
 
 set(sources
     src/main.cpp
