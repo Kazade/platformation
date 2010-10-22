@@ -9,7 +9,8 @@
 #define UI_FILE "ui/main_window.glade"
 
 MainWindow::MainWindow():
-gtk_window_(NULL) {
+gtk_window_(NULL),
+gtk_add_tile_button_(NULL) {
     create_widgets();
     connect_signals();
 
@@ -24,6 +25,7 @@ void MainWindow::create_widgets() {
     builder->get_widget("main_window", gtk_window_);
     builder->get_widget("tile_vbox", gtk_tile_vbox_);
     builder->get_widget("new_level_item", gtk_new_level_item_);
+    builder->get_widget("add_tile_button", gtk_add_tile_button_);
 
     gtk_window_->show_all();
 }
@@ -56,6 +58,22 @@ void MainWindow::on_new_level_activate() {
   */
 void MainWindow::connect_signals() {
     assert(gtk_new_level_item_);
+    assert(gtk_add_tile_button_);
+
     gtk_new_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_new_level_activate));
+    gtk_add_tile_button_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_add_tile_clicked));
+}
+
+/** @brief on_add_tile_clicked
+  *
+  * @todo: document this function
+  */
+void MainWindow::on_add_tile_clicked()
+{
+    if(!level_) {
+        return;
+    }
+
+    level_->spawn_tile_instance(selector_->get_active_tile_id());
 }
 

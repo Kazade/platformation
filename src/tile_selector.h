@@ -21,6 +21,8 @@ public:
         _this->on_stage_clicked(event);
     }
 
+    Tile::id_type get_active_tile_id() const { return active_tile_; }
+
     ClutterStage* get_stage() const { return stage_; }
 
 private:

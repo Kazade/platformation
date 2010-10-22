@@ -16,6 +16,8 @@ public:
     static Tileset::ptr load_from_directory(const std::string& path);
     void update_stage(ClutterStage* stage);
 
+    Tile* get_tile_by_id(Tile::id_type id) const;
+
 private:
     void add_tile(const std::string& path);
 

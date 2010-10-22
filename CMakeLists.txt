@@ -37,11 +37,15 @@ set(sources
     src/level.cpp
     src/tile.cpp
     src/tile_selector.cpp
+    src/tile_instance.cpp
 )
 
 set(headers
     src/main_window.h
     src/new_level_dialog.h
+    src/tile.h
+    src/tile_instance.h
+    src/level.h
 )
 
 set(ui_files

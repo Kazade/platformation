@@ -19,11 +19,14 @@ public:
     Gtk::Window& get_window_ref() { return *gtk_window_; }
 
     void on_new_level_activate();
+    void on_add_tile_clicked();
+
 private:
     Gtk::Window* gtk_window_;
 
     Gtk::VBox* gtk_tile_vbox_;
     Gtk::MenuItem* gtk_new_level_item_;
+    Gtk::Button* gtk_add_tile_button_;
 
     void initialize_tile_canvas();
     void connect_signals();

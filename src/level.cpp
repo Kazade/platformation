@@ -42,7 +42,9 @@ int Level::get_tile_instance_count() const
   */
 TileInstance* Level::spawn_tile_instance(int tile_id, bool select)
 {
-
+    TileInstance::ptr new_tile_instance(new TileInstance(tileset_, tile_id));
+    tile_instances_.push_back(new_tile_instance);
+    return new_tile_instance.get();
 }
 
 /** @brief Level
