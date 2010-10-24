@@ -13,8 +13,6 @@ gtk_window_(NULL),
 gtk_add_tile_button_(NULL) {
     create_widgets();
     connect_signals();
-
-    selector_.reset(new TileSelector(gtk_tile_vbox_));
 }
 
 void MainWindow::create_widgets() {
@@ -23,9 +21,16 @@ void MainWindow::create_widgets() {
     //Just let exceptions propagate - we can't do anything about them anyway
     builder->add_from_file(UI_FILE);
     builder->get_widget("main_window", gtk_window_);
-    builder->get_widget("tile_vbox", gtk_tile_vbox_);
+    builder->get_widget("tile_selector_canvas", gtk_tile_selector_canvas_);
     builder->get_widget("new_level_item", gtk_new_level_item_);
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
+    builder->get_widget("canvas", gtk_canvas_);
+
+    assert(gtk_canvas_);
+    editor_view_.reset(new EditorView(gtk_canvas_));
+
+    assert(gtk_tile_selector_canvas_);
+    selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
 
     gtk_window_->show_all();
 }
@@ -46,8 +51,7 @@ void MainWindow::on_new_level_activate() {
         std::string tileset_path = dialog->get_tileset_path();
 
         tileset_ = Tileset::load_from_directory(tileset_path);
-        tileset_->update_stage(selector_->get_stage());
-
+        selector_->set_tileset(tileset_.get());
         level_.reset(new Level(tileset_.get()));
     }
 }

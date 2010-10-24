@@ -29,6 +29,12 @@ IF(CLUTTERGTK_FOUND)
     include_directories(${CLUTTERGTK_INCLUDE_DIRS})
 ENDIF(CLUTTERGTK_FOUND)
 
+pkg_check_modules(GTKGLEXTMM REQUIRED gtkglextmm-1.2)
+IF(GTKGLEXTMM_FOUND)
+    link_directories(${GTKGLEXTMM_LIBRARY_DIRS})
+    include_directories(${GTKGLEXTMM_INCLUDE_DIRS})
+ENDIF(GTKGLEXTMM_FOUND)
+
 set(sources
     src/main.cpp
     src/main_window.cpp
@@ -36,8 +42,11 @@ set(sources
     src/tileset.cpp
     src/level.cpp
     src/tile.cpp
-    src/tile_selector.cpp
     src/tile_instance.cpp
+    src/opengl_widget.cpp
+    src/editor_view.cpp
+    src/opengl_grid.cpp
+    src/opengl_tile_selector.cpp
 )
 
 set(headers
@@ -46,6 +55,7 @@ set(headers
     src/tile.h
     src/tile_instance.h
     src/level.h
+    src/opengl_widget.h
 )
 
 set(ui_files
@@ -54,7 +64,7 @@ set(ui_files
 )
 
 add_executable(gnovaedit ${sources})
-target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)

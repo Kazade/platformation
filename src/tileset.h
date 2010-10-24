@@ -4,7 +4,6 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 #include <string>
-#include <clutter/clutter.h>
 
 #include "tile.h"
 
@@ -14,9 +13,11 @@ public:
     typedef std::vector<Tile::ptr> TileArray;
 
     static Tileset::ptr load_from_directory(const std::string& path);
-    void update_stage(ClutterStage* stage);
 
     Tile* get_tile_by_id(Tile::id_type id) const;
+
+    int get_tile_count() const { return tiles_.size(); }
+    Tile* get_tile_at(int i) { return tiles_[i].get(); }
 
 private:
     void add_tile(const std::string& path);

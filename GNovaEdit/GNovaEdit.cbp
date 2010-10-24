@@ -55,6 +55,8 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../src/clutter_helper.h" />
+		<Unit filename="../src/editor_view.cpp" />
+		<Unit filename="../src/editor_view.h" />
 		<Unit filename="../src/level.cpp" />
 		<Unit filename="../src/level.h" />
 		<Unit filename="../src/main.cpp" />
@@ -62,6 +64,13 @@
 		<Unit filename="../src/main_window.h" />
 		<Unit filename="../src/new_level_dialog.cpp" />
 		<Unit filename="../src/new_level_dialog.h" />
+		<Unit filename="../src/opengl_grid.cpp" />
+		<Unit filename="../src/opengl_grid.h" />
+		<Unit filename="../src/opengl_picker.h" />
+		<Unit filename="../src/opengl_tile_selector.cpp" />
+		<Unit filename="../src/opengl_tile_selector.h" />
+		<Unit filename="../src/opengl_widget.cpp" />
+		<Unit filename="../src/opengl_widget.h" />
 		<Unit filename="../src/tile.cpp" />
 		<Unit filename="../src/tile.h" />
 		<Unit filename="../src/tile_instance.cpp" />
@@ -75,6 +84,15 @@
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

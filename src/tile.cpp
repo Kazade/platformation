@@ -1,3 +1,4 @@
+#include <SOIL/SOIL.h>
 
 #include "tile.h"
 
@@ -6,37 +7,43 @@
   * @todo: document this function
   */
 Tile::Tile(const std::string& path) {
-    GError* error = NULL;
-    texture_ = CLUTTER_TEXTURE(clutter_texture_new_from_file(path.c_str(), &error));
-
-    assert(error == NULL); //TODO: Handle this
-
+    load_tile(path);
     id_ = next_id();
-
-    g_object_set_data(G_OBJECT(texture_), "tile", this);
 }
 
-/** @brief get_texture
+void Tile::load_tile(const std::string& path) {
+    unsigned char* data = SOIL_load_image(path.c_str(), &width_, &height_, &channels_, SOIL_LOAD_AUTO);
+
+    assert(data);
+
+    data_ = std::vector<unsigned char>(data, data + (width_ * height_ * channels_));
+    SOIL_free_image_data(data);
+}
+
+/** @brief get_height
   *
   * @todo: document this function
   */
-ClutterTexture* Tile::get_texture() const {
-    return texture_;
+int Tile::get_height() const
+{
+    return height_;
 }
 
-/** @brief get_solidity_front
+/** @brief get_width
   *
   * @todo: document this function
   */
-ClutterTexture* Tile::get_solidity_front() const {
-
+int Tile::get_width() const
+{
+    return width_;
 }
 
-/** @brief get_solidity_back
+/** @brief get_channels
   *
   * @todo: document this function
   */
-ClutterTexture* Tile::get_solidity_back() const {
-
+int Tile::get_channels() const
+{
+    return channels_;
 }
 

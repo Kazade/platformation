@@ -1,8 +1,8 @@
 #ifndef TILE_H_INCLUDED
 #define TILE_H_INCLUDED
 
+#include <vector>
 #include <boost/shared_ptr.hpp>
-#include <clutter/clutter.h>
 #include <string>
 
 class Tile {
@@ -12,14 +12,24 @@ public:
 
     Tile(const std::string& path);
 
-    ClutterTexture* get_texture() const;
-    ClutterTexture* get_solidity_front() const;
-    ClutterTexture* get_solidity_back() const;
-
     id_type get_id() const { return id_; }
+
+    //Probably should be in a separate place than here
+    int get_width() const;
+    int get_height() const;
+    unsigned char* get_data() { return &data_[0]; }
+    int get_channels() const;
+
 private:
     std::string path_;
-    ClutterTexture* texture_;
+
+    int width_;
+    int height_;
+    int channels_;
+    std::vector<unsigned char> data_;
+
+    void load_tile(const std::string& path);
+
     Tile::id_type id_;
 
     static Tile::id_type next_id() {

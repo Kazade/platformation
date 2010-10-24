@@ -9,7 +9,8 @@
 
 #include "level.h"
 #include "tileset.h"
-#include "tile_selector.h"
+#include "opengl_tile_selector.h"
+#include "editor_view.h"
 
 class MainWindow {
 public:
@@ -27,13 +28,15 @@ private:
     Gtk::VBox* gtk_tile_vbox_;
     Gtk::MenuItem* gtk_new_level_item_;
     Gtk::Button* gtk_add_tile_button_;
+    Gtk::DrawingArea* gtk_canvas_, *gtk_tile_selector_canvas_;
 
     void initialize_tile_canvas();
     void connect_signals();
 
     Level::ptr level_;
     Tileset::ptr tileset_;
-    TileSelector::ptr selector_;
+    OpenGLTileSelector::ptr selector_;
+    EditorView::ptr editor_view_;
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED

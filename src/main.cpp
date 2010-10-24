@@ -1,4 +1,5 @@
 #include <gtkmm.h>
+#include <gtkglmm.h>
 
 #include "main_window.h"
 
@@ -7,6 +8,7 @@ int main(int argc, char* argv[]) {
     clutter_init (&argc, &argv);
 
     Gtk::Main kit(argc, argv);
+    Gtk::GL::init(argc, argv);
 
     MainWindow window;
     Gtk::Main::run(window.get_window_ref());
