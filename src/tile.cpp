@@ -1,4 +1,5 @@
 #include <SOIL/SOIL.h>
+#include <GL/gl.h>
 
 #include "tile.h"
 
@@ -17,6 +18,22 @@ void Tile::load_tile(const std::string& path) {
     assert(data);
 
     data_ = std::vector<unsigned char>(data, data + (width_ * height_ * channels_));
+
+    //SOIL loads images upside-down this loop will flip it the right way
+    for(uint32_t j = 0; j * 2 < height_; ++j)
+    {
+        int index1 = j * width_ * channels_;
+        int index2 = (height_ - 1 - j) * width_ * channels_;
+        for(int i = width_ * channels_; i > 0; --i )
+        {
+            uint8_t temp = data_[index1];
+            data_[index1] = data_[index2];
+            data_[index2] = temp;
+            ++index1;
+            ++index2;
+        }
+    }
+
     SOIL_free_image_data(data);
 }
 
@@ -47,3 +64,42 @@ int Tile::get_channels() const
     return channels_;
 }
 
+
+ /** @brief get_rendered_dimensions
+  *
+  * @todo: document this function
+  */
+
+std::pair<float, float> Tile::get_rendered_dimensions() const
+{
+    float ratio = float(get_height()) / float(get_width());
+
+    float w = 1.0f;
+    float h = w * ratio;
+
+    return std::make_pair(w, h);
+}
+
+void Tile::render_geometry() {
+    std::pair<float, float> dim = get_rendered_dimensions();
+
+    float w = dim.first;
+    float h = dim.second;
+
+    float hw = w / 2.0f;
+    float hh = h / 2.0f;
+
+    glPushMatrix();
+
+    kmVec2 pos = get_position();
+
+    glTranslatef(pos.x, pos.y, 0.0f);
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0, 0); glVertex2f(-hw, -hh);
+        glTexCoord2f(1, 0); glVertex2f( hw, -hh);
+        glTexCoord2f(1, 1); glVertex2f( hw,  hh);
+        glTexCoord2f(0, 1); glVertex2f(-hw,  hh);
+    glEnd();
+    glPopMatrix();
+}

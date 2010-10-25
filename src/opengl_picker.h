@@ -1,12 +1,24 @@
 #ifndef OPENGL_PICKER_H_INCLUDED
 #define OPENGL_PICKER_H_INCLUDED
 
+#include <GL/gl.h>
+#include <map>
+#include <iterator>
+
 template<typename T>
 class OpenGLPicker {
 public:
-    template<typename input_iterator>
-    T* pick(float mouse_x, float mouse_y, input_iterator begin, input_iterator end) {
+    typedef boost::shared_ptr<OpenGLPicker<T> > ptr;
+
+    OpenGLPicker() {
+        reset_colour_counter();
+    }
+
+    template<typename ForwardIterator>
+    T pick(float mouse_x, float mouse_y, ForwardIterator begin, ForwardIterator end) {
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
 
         reset_colour_counter();
         items_.clear();
@@ -23,7 +35,7 @@ public:
             (*begin)->render_geometry();
         }
 
-        unsigned char pixel[3]
+        unsigned char pixel[3];
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
         glReadPixels(mouse_x, viewport[3] - mouse_y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
@@ -35,7 +47,7 @@ public:
 
         glPopAttrib();
 
-        return map_[selected];
+        return items_[selected];
     }
 
 private:
@@ -43,6 +55,16 @@ private:
         unsigned char r;
         unsigned char g;
         unsigned char b;
+
+        bool operator<(const PickColour& rhs) const {
+            if (r < rhs.r ||
+                r == rhs.r && g < rhs.g ||
+                r == rhs.r && g == rhs.g && b < rhs.b) {
+                return true;
+            }
+
+            return false;
+        }
     };
 
     PickColour current_colour_;
@@ -67,7 +89,7 @@ private:
         return current_colour_;
     }
 
-    std::map<PickColour, T* item> items_;
+    std::map<PickColour, T> items_;
 };
 
 #endif // OPENGL_PICKER_H_INCLUDED

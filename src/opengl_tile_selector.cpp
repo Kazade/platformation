@@ -1,3 +1,4 @@
+#include <iostream>
 #include "opengl_tile_selector.h"
 #include "tileset.h"
 
@@ -7,7 +8,7 @@ float tile_spacing = 0.25f;
 OpenGLTileSelector::OpenGLTileSelector(Gtk::DrawingArea* canvas):
 OpenGLWidget(canvas),
 tileset_(NULL) {
-
+    initialize();
 }
 
 /** @brief do_resize
@@ -22,12 +23,23 @@ void OpenGLTileSelector::do_resize(int width, int height)
     float num_tiles_visible = 5.0f;
 
     glMatrixMode(GL_PROJECTION);
-    float ortho_height = num_tiles_visible * (tile_size + tile_spacing);
-
-    glOrtho(-1.0f, 1.0f, scroll + ortho_height, scroll, -1.0f, 1.0f);
     glLoadIdentity();
 
+    glViewport(0, 0, width, height);
+
+    float ortho_height = num_tiles_visible * (tile_size + tile_spacing);
+
+
+    float w = float(width);
+    float h = float(height);
+
+    float ratio = h / w;
+    h = 2.0f * ratio;
+
+    glOrtho(-1.0f, 1.0f, scroll - h, scroll, -1.0f, 1.0f);
+
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 /** @brief do_render
@@ -43,33 +55,25 @@ void OpenGLTileSelector::do_render()
         return;
     }
 
-    glTranslatef(0.0f, tile_spacing, 0.0f);
     glEnable(GL_TEXTURE_2D);
 
     for(int i = 0; i < tileset_->get_tile_count(); ++i) {
         Tile* t = tileset_->get_tile_at(i);
-
-        int width = t->get_width();
-        int height = t->get_height();
-
-        float ratio = float(height) / float(width);
-
-        float hdw = tile_size / 2.0f; //Half display width
-        float hdh = (tile_size * ratio) / 2.0f;
-
         glBindTexture(GL_TEXTURE_2D, get_texture_for_tile(t));
+        t->render_geometry();
 
-        glPushMatrix();
-
-        glBegin(GL_QUADS);
-            glVertex2f(-hdw, hdw);
-            glVertex2f( hdw, hdw);
-            glVertex2f( hdw,-hdw);
-            glVertex2f(-hdw,-hdw);
-        glEnd();
-
-        glPopMatrix();
-        glTranslatef(0.0f, tile_spacing + tile_size, 0.0f);
+        if(active_tile_ == t->get_id()) {
+            glPushMatrix();
+            glTranslatef(0.0f, 0.0f, -0.1f);
+            glLineWidth(2);
+            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_POLYGON_BIT);
+                glColor3f(1.0f, 0.0f, 0.0f);
+                glDisable(GL_TEXTURE_2D);
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                t->render_geometry();
+            glPopAttrib();
+            glPopMatrix();
+        }
     }
 }
 
@@ -79,7 +83,8 @@ void OpenGLTileSelector::do_render()
   */
 bool OpenGLTileSelector::initialize()
 {
-
+    picker_.reset(new OpenGLPicker<Tile::ptr>());
+    return true;
 }
 
 /** @brief generate_texture
@@ -91,7 +96,12 @@ GLuint OpenGLTileSelector::generate_texture(int width, int height, int channels,
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, (channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, (channels == 4) ? GL_RGBA : GL_RGB, width, height, 0, (channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	// Linear Filtering
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	// Linear Filtering
+
+    assert(tex);
+
     return tex;
 }
 
@@ -109,6 +119,57 @@ GLuint OpenGLTileSelector::get_texture_for_tile(Tile* tile)
     GLuint tex_id = generate_texture(tile->get_width(), tile->get_height(), tile->get_channels(), tile->get_data());
     tile_textures_[tile->get_id()] = tex_id;
     return tex_id;
+}
+
+/** @brief on_button_press
+  *
+  * @todo: document this function
+  */
+void OpenGLTileSelector::do_button_press(GdkEventButton* event)
+{
+    MakeCurrent context(this);
+    if(!context.ok) {
+        return;
+    }
+
+    assert(picker_);
+
+    int tile_count = tileset_->get_tile_count();
+    if(tile_count == 0) {
+        return;
+    }
+
+    gfloat x = event->x;
+    gfloat y = event->y;
+
+    Tileset::IteratorPair iterators = tileset_->get_iterators();
+
+    Tile::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
+    if(t) {
+        active_tile_ = t->get_id();
+        std::cout << "Tile clicked: " << active_tile_ << std::endl;
+    } else {
+        active_tile_ = -1;
+    }
+}
+
+/** @brief set_tileset
+  *
+  * @todo: document this function
+  */
+void OpenGLTileSelector::set_tileset(Tileset* tileset)
+{
+    tileset_ = tileset;
+
+    float y = -0.75f;
+
+    //todo: fix this, it should get the rendered height from the tile (depending on the ratio)
+    Tileset::IteratorPair iterators = tileset->get_iterators();
+    for(; iterators.first != iterators.second; ++iterators.first) {
+        (*iterators.first)->set_position(0.0f, y);
+        y -= 1.25f;
+    }
+
 }
 
 

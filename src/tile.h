@@ -1,11 +1,14 @@
 #ifndef TILE_H_INCLUDED
 #define TILE_H_INCLUDED
 
+#include <utility>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
-class Tile {
+#include "object.h"
+
+class Tile : public Object {
 public:
     typedef boost::shared_ptr<Tile> ptr;
     typedef int id_type;
@@ -19,6 +22,10 @@ public:
     int get_height() const;
     unsigned char* get_data() { return &data_[0]; }
     int get_channels() const;
+
+    void render_geometry();
+
+    std::pair<float, float> get_rendered_dimensions() const;
 
 private:
     std::string path_;

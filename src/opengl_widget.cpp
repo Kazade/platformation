@@ -1,8 +1,5 @@
 #include <cassert>
 
-#include <gdkmm.h>
-#include <gtkglmm.h>
-
 #include "opengl_widget.h"
 
 
@@ -33,6 +30,8 @@ void OpenGLWidget::initialize_context()
     widget_->signal_button_press_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_button_press));
     widget_->signal_button_release_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_button_release));
     widget_->signal_scroll_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_scroll));
+
+    Glib::signal_idle().connect(sigc::mem_fun(this, &OpenGLWidget::on_idle));
 }
 
 /** @brief OpenGLWidget
@@ -60,6 +59,7 @@ bool OpenGLWidget::on_scroll(GdkEventScroll* event)
   */
 bool OpenGLWidget::on_button_release(GdkEventButton* event)
 {
+    do_button_press(event);
     return true;
 }
 
@@ -87,17 +87,15 @@ bool OpenGLWidget::on_motion_notify(GdkEventMotion* event)
   */
 bool OpenGLWidget::on_expose(GdkEventExpose *event)
 {
-    Glib::RefPtr<Gdk::GL::Context> context = Gtk::GL::widget_get_gl_context(*widget_);
-    Glib::RefPtr<Gdk::GL::Drawable> drawable = Gtk::GL::widget_get_gl_drawable(*widget_);
+    MakeCurrent context(this);
 
-    if(!drawable->gl_begin(context)) {
+    if(!context.ok) {
         return true;
     }
 
     do_render();
 
-    drawable->swap_buffers();
-    drawable->gl_end();
+    context.drawable_->swap_buffers();
 
     return true;
 }
@@ -108,16 +106,13 @@ bool OpenGLWidget::on_expose(GdkEventExpose *event)
   */
 void OpenGLWidget::on_realize()
 {
-    Glib::RefPtr<Gdk::GL::Context> context = Gtk::GL::widget_get_gl_context(*widget_);
-    Glib::RefPtr<Gdk::GL::Drawable> drawable = Gtk::GL::widget_get_gl_drawable(*widget_);
+    MakeCurrent context(this);
 
-    if(!drawable->gl_begin(context)) {
+    if(!context.ok) {
         return;
     }
 
     do_init();
-
-    drawable->gl_end();
 }
 
 /** @brief on_configure
@@ -126,19 +121,24 @@ void OpenGLWidget::on_realize()
   */
 bool OpenGLWidget::on_configure(GdkEventConfigure* event)
 {
-    Gtk::Allocation allocation = widget_->get_allocation();
+    MakeCurrent context(this);
 
-    Glib::RefPtr<Gdk::GL::Context> context = Gtk::GL::widget_get_gl_context(*widget_);
-    Glib::RefPtr<Gdk::GL::Drawable> drawable = Gtk::GL::widget_get_gl_drawable(*widget_);
-
-    if(!drawable->gl_begin(context)) {
+    if(!context.ok) {
         return true;
     }
 
-    do_resize(allocation.get_width(), allocation.get_height());
+    do_resize(event->width, event->height);
 
-    drawable->gl_end();
+    return true;
+}
 
+/** @brief on_idle
+  *
+  * @todo: document this function
+  */
+bool OpenGLWidget::on_idle()
+{
+    widget_->queue_draw();
     return true;
 }
 
