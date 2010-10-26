@@ -64,9 +64,12 @@
 		<Unit filename="../src/main_window.h" />
 		<Unit filename="../src/new_level_dialog.cpp" />
 		<Unit filename="../src/new_level_dialog.h" />
+		<Unit filename="../src/object.h" />
 		<Unit filename="../src/opengl_grid.cpp" />
 		<Unit filename="../src/opengl_grid.h" />
 		<Unit filename="../src/opengl_picker.h" />
+		<Unit filename="../src/opengl_tile_editor.cpp" />
+		<Unit filename="../src/opengl_tile_editor.h" />
 		<Unit filename="../src/opengl_tile_selector.cpp" />
 		<Unit filename="../src/opengl_tile_selector.h" />
 		<Unit filename="../src/opengl_widget.cpp" />

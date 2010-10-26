@@ -6,6 +6,7 @@
 
 #include "opengl_picker.h"
 #include "opengl_widget.h"
+#include "opengl_tile_editor.h"
 #include "tile.h"
 
 class Tileset;
@@ -22,6 +23,7 @@ public:
 
     void set_tileset(Tileset* tileset);
 
+    void on_tile_edit();
 
 private:
     Tile::id_type active_tile_;
@@ -40,6 +42,10 @@ private:
     void do_button_press(GdkEventButton* event);
 
     OpenGLPicker<Tile::ptr>::ptr picker_;
+    Gtk::Menu* gtk_tile_edit_menu_;
+    Gtk::MenuItem* gtk_edit_tile_item_;
+
+    OpenGLTileEditor::ptr tile_editor_;
 };
 
 #endif // OPENGL_TILE_SELECTOR_H_INCLUDED

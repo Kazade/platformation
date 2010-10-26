@@ -59,7 +59,7 @@ bool OpenGLWidget::on_scroll(GdkEventScroll* event)
   */
 bool OpenGLWidget::on_button_release(GdkEventButton* event)
 {
-    do_button_press(event);
+
     return true;
 }
 
@@ -69,6 +69,7 @@ bool OpenGLWidget::on_button_release(GdkEventButton* event)
   */
 bool OpenGLWidget::on_button_press(GdkEventButton* event)
 {
+    do_button_press(event);
     return true;
 }
 
@@ -78,6 +79,7 @@ bool OpenGLWidget::on_button_press(GdkEventButton* event)
   */
 bool OpenGLWidget::on_motion_notify(GdkEventMotion* event)
 {
+    do_motion(event);
     return true;
 }
 

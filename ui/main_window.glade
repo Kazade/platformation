@@ -173,8 +173,17 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkDrawingArea" id="tile_selector_canvas">
+                      <object class="GtkScrolledWindow" id="tile_selector_scrolled_window">
                         <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="vadjustment">tile_selector_vadjust</property>
+                        <property name="hscrollbar_policy">never</property>
+                        <child>
+                          <object class="GtkDrawingArea" id="tile_selector_canvas">
+                            <property name="visible">True</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -234,8 +243,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="canvas">
+              <object class="GtkScrolledWindow" id="canvas_scrolled_window">
                 <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hadjustment">canvas_hadjust</property>
+                <property name="vadjustment">canvas_vadjust</property>
+                <child>
+                  <object class="GtkDrawingArea" id="canvas">
+                    <property name="visible">True</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -249,7 +266,20 @@
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="adjustment1">
+  <object class="GtkAdjustment" id="tile_selector_vadjust">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
+  <object class="GtkAdjustment" id="canvas_hadjust">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
+  <object class="GtkAdjustment" id="canvas_vadjust">
+    <property name="lower">-100</property>
     <property name="upper">100</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>

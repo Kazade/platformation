@@ -1,5 +1,6 @@
 #include <iostream>
 #include "opengl_tile_selector.h"
+
 #include "tileset.h"
 
 float tile_size = 1.0f;
@@ -7,7 +8,9 @@ float tile_spacing = 0.25f;
 
 OpenGLTileSelector::OpenGLTileSelector(Gtk::DrawingArea* canvas):
 OpenGLWidget(canvas),
-tileset_(NULL) {
+tileset_(NULL),
+active_tile_(-1),
+gtk_tile_edit_menu_(NULL) {
     initialize();
 }
 
@@ -19,7 +22,6 @@ void OpenGLTileSelector::do_resize(int width, int height)
 {
     glClearColor(0.8f, 0.8f, 1.0f, 1.0f);
 
-    float scroll = 0.0f;
     float num_tiles_visible = 5.0f;
 
     glMatrixMode(GL_PROJECTION);
@@ -36,7 +38,7 @@ void OpenGLTileSelector::do_resize(int width, int height)
     float ratio = h / w;
     h = 2.0f * ratio;
 
-    glOrtho(-1.0f, 1.0f, scroll - h, scroll, -1.0f, 1.0f);
+    glOrtho(-1.0f, 1.0f, -h, 0.0f, -1.0f, 1.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -56,6 +58,13 @@ void OpenGLTileSelector::do_render()
     }
 
     glEnable(GL_TEXTURE_2D);
+
+    float ytrans = 0.0f;
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+        ytrans = scr->get_vadjustment()->get_value();
+    }
+
+    glTranslatef(0.0f, ytrans, 0.0f);
 
     for(int i = 0; i < tileset_->get_tile_count(); ++i) {
         Tile* t = tileset_->get_tile_at(i);
@@ -84,6 +93,13 @@ void OpenGLTileSelector::do_render()
 bool OpenGLTileSelector::initialize()
 {
     picker_.reset(new OpenGLPicker<Tile::ptr>());
+
+    gtk_tile_edit_menu_ = new Gtk::Menu();
+    gtk_edit_tile_item_ = new Gtk::MenuItem("Edit");
+    gtk_edit_tile_item_->signal_activate().connect(sigc::mem_fun(this, &OpenGLTileSelector::on_tile_edit));
+
+    gtk_tile_edit_menu_->add(*gtk_edit_tile_item_);
+    gtk_tile_edit_menu_->show_all();
     return true;
 }
 
@@ -99,6 +115,8 @@ GLuint OpenGLTileSelector::generate_texture(int width, int height, int channels,
     glTexImage2D(GL_TEXTURE_2D, 0, (channels == 4) ? GL_RGBA : GL_RGB, width, height, 0, (channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	// Linear Filtering
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	// Linear Filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     assert(tex);
 
@@ -127,29 +145,35 @@ GLuint OpenGLTileSelector::get_texture_for_tile(Tile* tile)
   */
 void OpenGLTileSelector::do_button_press(GdkEventButton* event)
 {
-    MakeCurrent context(this);
-    if(!context.ok) {
+    if(event->type == GDK_BUTTON_PRESS && event->button == 3 && active_tile_ != -1) {
+        gtk_tile_edit_menu_->popup(event->button, event->time);
         return;
     }
 
-    assert(picker_);
+    if(event->type == GDK_BUTTON_PRESS && event->button == 1 && tileset_) {
+        MakeCurrent context(this);
+        if(!context.ok) {
+            return;
+        }
 
-    int tile_count = tileset_->get_tile_count();
-    if(tile_count == 0) {
-        return;
-    }
+        assert(picker_);
 
-    gfloat x = event->x;
-    gfloat y = event->y;
+        int tile_count = tileset_->get_tile_count();
+        if(tile_count == 0) {
+            return;
+        }
 
-    Tileset::IteratorPair iterators = tileset_->get_iterators();
+        gfloat x = event->x;
+        gfloat y = event->y;
 
-    Tile::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
-    if(t) {
-        active_tile_ = t->get_id();
-        std::cout << "Tile clicked: " << active_tile_ << std::endl;
-    } else {
-        active_tile_ = -1;
+        Tileset::IteratorPair iterators = tileset_->get_iterators();
+
+        Tile::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
+        if(t) {
+            active_tile_ = t->get_id();
+        } else {
+            active_tile_ = -1;
+        }
     }
 }
 
@@ -170,6 +194,22 @@ void OpenGLTileSelector::set_tileset(Tileset* tileset)
         y -= 1.25f;
     }
 
+}
+
+/** @brief on_tile_edit
+  *
+  * @todo: document this function
+  */
+void OpenGLTileSelector::on_tile_edit()
+{
+    if(active_tile_ == -1) {
+        return;
+    }
+
+    tile_editor_.reset(new OpenGLTileEditor(tileset_->get_tile_by_id(active_tile_)));
+    if(tile_editor_->run() == Gtk::RESPONSE_OK) {
+        //tile->save();
+    }
 }
 
 

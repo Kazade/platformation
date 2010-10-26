@@ -1,6 +1,7 @@
 #ifndef LEVEL_H_INCLUDED
 #define LEVEL_H_INCLUDED
 
+#include <utility>
 #include <list>
 #include <boost/shared_ptr.hpp>
 
@@ -13,6 +14,9 @@ class Tileset;
 class Level {
 public:
     typedef boost::shared_ptr<Level> ptr;
+
+    typedef std::list<TileInstance::ptr> ObjectList;
+    typedef std::pair<ObjectList::iterator, ObjectList::iterator> ObjectListIteratorPair;
 
     Level(Tileset* tileset);
 
@@ -34,8 +38,12 @@ public:
     bool save(const std::string& filename) const;
     bool load(const std::string& filename);
 
+    ObjectListIteratorPair get_iterators() {
+        return std::make_pair(tile_instances_.begin(), tile_instances_.end());
+    }
+
 private:
-    std::list<TileInstance::ptr> tile_instances_;
+    ObjectList tile_instances_;
     Tileset* tileset_;
 
 };

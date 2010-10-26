@@ -90,3 +90,14 @@ void OpenGLGrid::set_big_step_frequency(int i)
     big_step_frequency_ = i;
 }
 
+/** @brief snap_to
+  *
+  * @todo: document this function
+  */
+void OpenGLGrid::snap_to(double& x, double& y)
+{
+    float hs = small_step_ / 2.0f;
+    x = int((x + hs) / small_step_) * small_step_;
+    y = int((y + hs) / small_step_) * small_step_;
+}
+

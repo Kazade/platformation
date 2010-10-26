@@ -30,6 +30,7 @@ private:
     Gtk::Button* gtk_add_tile_button_;
     Gtk::DrawingArea* gtk_canvas_, *gtk_tile_selector_canvas_;
 
+
     void initialize_tile_canvas();
     void connect_signals();
 

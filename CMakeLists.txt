@@ -47,6 +47,7 @@ set(sources
     src/editor_view.cpp
     src/opengl_grid.cpp
     src/opengl_tile_selector.cpp
+    src/opengl_tile_editor.cpp
 )
 
 set(headers

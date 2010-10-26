@@ -9,6 +9,7 @@
 class OpenGLWidget {
 public:
     OpenGLWidget(Gtk::DrawingArea* widget);
+    virtual ~OpenGLWidget() {}
 
     void initialize_context();
 
@@ -30,7 +31,7 @@ private:
     virtual void do_init() {}
     virtual void do_resize(int width, int height) {}
     virtual void do_button_press(GdkEventButton* event) {}
-
+    virtual void do_motion(GdkEventMotion* event) {}
 protected:
     struct MakeCurrent {
         Glib::RefPtr<Gdk::GL::Context> context_;

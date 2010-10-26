@@ -18,6 +18,7 @@ public:
     void set_big_step_frequency(int i);
     void set_colour(const GridColour& c);
 
+    void snap_to(double& x, double& y);
 private:
     float small_step_;
     int big_step_frequency_;

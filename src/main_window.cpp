@@ -31,6 +31,7 @@ void MainWindow::create_widgets() {
 
     assert(gtk_tile_selector_canvas_);
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
+    editor_view_->set_tile_selector(selector_.get());
 
     gtk_window_->show_all();
 }
@@ -53,6 +54,7 @@ void MainWindow::on_new_level_activate() {
         tileset_ = Tileset::load_from_directory(tileset_path);
         selector_->set_tileset(tileset_.get());
         level_.reset(new Level(tileset_.get()));
+        editor_view_->set_level(level_.get());
     }
 }
 
@@ -74,7 +76,7 @@ void MainWindow::connect_signals() {
   */
 void MainWindow::on_add_tile_clicked()
 {
-    if(!level_) {
+    if(!level_ || selector_->get_active_tile_id() == -1) {
         return;
     }
 

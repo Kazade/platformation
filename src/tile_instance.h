@@ -1,26 +1,25 @@
 #ifndef TILE_INSTANCE_H_INCLUDED
 #define TILE_INSTANCE_H_INCLUDED
 
-#include <clutter/clutter.h>
 #include <boost/shared_ptr.hpp>
+
+#include "object.h"
 
 class Tileset;
 class Tile;
 
-class TileInstance {
+class TileInstance : public Object {
 public:
     typedef boost::shared_ptr<TileInstance> ptr;
 
     TileInstance(Tileset* tileset, int tile_id);
 
-    void set_position() const;
-    void get_position(float& x, float& y);
+    void render_geometry();
 
-    ClutterActor* get_actor() const;
-
+    Tile* get_tile() { return tile_; }
 private:
     Tile* tile_;
-    ClutterTexture* actor_;
+
 };
 
 #endif // TILE_INSTANCE_H_INCLUDED
