@@ -14,6 +14,8 @@ enum GeometryLayer {
 
 class GeometryElement : public Object {
 public:
+    typedef boost::shared_ptr<GeometryElement> ptr;
+
     static GeometryElement create_box_from(const kmVec2& v1, const kmVec2& v2);
     static GeometryElement create_triangle_from(const kmVec2& v1, const kmVec2& v2);
     static GeometryElement create_curve_from(const kmVec2& v1, const kmVec2& v2);

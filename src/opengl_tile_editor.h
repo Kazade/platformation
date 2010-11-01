@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include "opengl_widget.h"
 #include "geometry_element.h"
+#include "opengl_picker.h"
 
 enum GeomDrawMode {
     GDM_BOX,
@@ -22,6 +23,8 @@ public:
     OpenGLTileEditorCanvas(Gtk::DrawingArea* area, OpenGLTileEditor* parent);
 
 private:
+    OpenGLPicker<GeometryElement::ptr>::ptr picker_;
+
     OpenGLTileEditor* parent_;
     GLuint tile_texture_;
 

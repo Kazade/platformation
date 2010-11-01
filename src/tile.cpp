@@ -108,8 +108,29 @@ void Tile::render_geometry() {
   *
   * @todo: document this function
   */
-void Tile::add_geometry_element(GeometryElement element)
+void Tile::add_geometry_element(GeometryElement::ptr element)
 {
     geometry_.push_back(element);
 }
+
+/** @brief delete_geometry_element
+  *
+  * @todo: document this function
+  */
+void Tile::delete_geometry_element(GeometryElement* element)
+{
+    GeometryArray::iterator it = geometry_.begin();
+    for(; it != geometry_.end(); ++it) {
+        if((*it).get() == element) {
+            break;
+        }
+    }
+
+    if(it == geometry_.end()) {
+        return;
+    }
+
+    geometry_.erase(std::remove(geometry_.begin(), geometry_.end(), (*it)), geometry_.end());
+}
+
 

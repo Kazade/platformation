@@ -13,6 +13,8 @@ class Tile : public Object {
 public:
     typedef boost::shared_ptr<Tile> ptr;
     typedef int id_type;
+    typedef std::vector<GeometryElement::ptr> GeometryArray;
+    typedef std::pair<GeometryArray::iterator, GeometryArray::iterator > GeometryIteratorPair;
 
     Tile(const std::string& path);
 
@@ -28,10 +30,14 @@ public:
 
     std::pair<float, float> get_rendered_dimensions() const;
 
-    void add_geometry_element(GeometryElement element);
+    void add_geometry_element(GeometryElement::ptr element);
     int get_geometry_element_count() const { return (int) geometry_.size(); }
-    GeometryElement* get_geometry_element_at(int i) { return &geometry_[i]; }
+    GeometryElement* get_geometry_element_at(int i) { return geometry_[i].get(); }
+    void delete_geometry_element(GeometryElement* element);
 
+    GeometryIteratorPair get_geometry_iterators() {
+        return std::make_pair(geometry_.begin(), geometry_.end());
+    }
 private:
     std::string path_;
 
@@ -49,7 +55,7 @@ private:
         return id++;
     }
 
-    std::vector<GeometryElement> geometry_;
+    GeometryArray geometry_;
 };
 
 

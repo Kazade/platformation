@@ -115,7 +115,7 @@ parent_(parent),
 tile_texture_(0),
 drawing_(false)
 {
-
+    picker_.reset(new OpenGLPicker<GeometryElement::ptr>());
 }
 
 /** @brief do_render
@@ -235,8 +235,15 @@ void OpenGLTileEditorCanvas::do_button_press(GdkEventButton* event)
         current_element_ = get_element_from_draw_mode(v1, v2);
 
         drawing_ = true;
-    } else if (event->button == 2) {
+    } else if (event->button == 3) {
+        //TODO: Only the current layer iterators should be passed to pick() otherwise we'll get
+        //false positives
 
+        Tile::GeometryIteratorPair iters = parent_->get_tile()->get_geometry_iterators();
+        GeometryElement::ptr elem = picker_->pick(event->x, event->y, iters.first, iters.second);
+        if(elem && elem->get_layer() == parent_->get_geom_layer_mode()) {
+            parent_->get_tile()->delete_geometry_element(elem.get());
+        }
     }
 }
 
@@ -256,7 +263,7 @@ void OpenGLTileEditorCanvas::do_button_release(GdkEventButton* event)
 
         current_element_ = get_element_from_draw_mode(v1, v2);
 
-        parent_->get_tile()->add_geometry_element(current_element_);
+        parent_->get_tile()->add_geometry_element(GeometryElement::ptr(new GeometryElement(current_element_)));
 
         drawing_ = false;
     }
