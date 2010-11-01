@@ -103,3 +103,13 @@ void Tile::render_geometry() {
     glEnd();
     glPopMatrix();
 }
+
+    /** @brief add_geometry_element
+  *
+  * @todo: document this function
+  */
+void Tile::add_geometry_element(GeometryElement element)
+{
+    geometry_.push_back(element);
+}
+

@@ -207,7 +207,8 @@ void OpenGLTileSelector::on_tile_edit()
     }
 
     tile_editor_.reset(new OpenGLTileEditor(tileset_->get_tile_by_id(active_tile_)));
-    if(tile_editor_->run() == Gtk::RESPONSE_OK) {
+
+    if(tile_editor_->run(dynamic_cast<Gtk::Window*>(get_widget()->get_toplevel())) == Gtk::RESPONSE_OK) {
         //tile->save();
     }
 }

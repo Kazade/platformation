@@ -6,10 +6,16 @@
 #include <gtkglmm.h>
 #include <GL/gl.h>
 
+#include <kazmath/vec2.h>
+
 class OpenGLWidget {
 public:
     OpenGLWidget(Gtk::DrawingArea* widget);
-    virtual ~OpenGLWidget() {}
+    virtual ~OpenGLWidget() {
+        if(idle_connection_.connected()) {
+            idle_connection_.disconnect();
+        }
+    }
 
     void initialize_context();
 
@@ -32,6 +38,10 @@ private:
     virtual void do_resize(int width, int height) {}
     virtual void do_button_press(GdkEventButton* event) {}
     virtual void do_motion(GdkEventMotion* event) {}
+    virtual void do_button_release(GdkEventButton* event) {}
+
+    sigc::connection idle_connection_;
+
 protected:
     struct MakeCurrent {
         Glib::RefPtr<Gdk::GL::Context> context_;
@@ -52,7 +62,7 @@ protected:
         }
     };
 
-
+    kmVec2 unproject(gdouble x, gdouble y);
 };
 
 #endif // OPENGL_WIDGET_H_INCLUDED

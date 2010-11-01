@@ -48,6 +48,7 @@ set(sources
     src/opengl_grid.cpp
     src/opengl_tile_selector.cpp
     src/opengl_tile_editor.cpp
+    src/geometry_element.cpp
 )
 
 set(headers

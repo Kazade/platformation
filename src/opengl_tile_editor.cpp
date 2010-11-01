@@ -1,3 +1,4 @@
+#include <iostream>
 #include "opengl_tile_editor.h"
 
 #include "tile.h"
@@ -9,8 +10,47 @@
   * @todo: document this function
   */
 OpenGLTileEditor::OpenGLTileEditor(Tile* tile):
-tile_(tile)
+tile_(tile),
+dialog_(NULL)
 {
+    create_dialog();
+}
+
+/** @brief get_geom_draw_mode
+  *
+  * @todo: document this function
+  */
+GeomDrawMode OpenGLTileEditor::get_geom_draw_mode() const
+{
+    if(gtk_radio_triangle_->get_active()) {
+        return GDM_TRIANGLE;
+    } else if (gtk_radio_curve_->get_active()) {
+        return GDM_CURVE;
+    }
+
+    return GDM_BOX;
+}
+/** @brief get_geom_layer_mode
+  *
+  * @todo: document this function
+  */
+GeometryLayer OpenGLTileEditor::get_geom_layer_mode() const
+{
+    if(gtk_radio_back_->get_active()) {
+        return GEO_BACK;
+    } else if (gtk_radio_front_->get_active()) {
+        return GEO_FRONT;
+    }
+
+    return GEO_NORMAL;
+}
+
+
+void OpenGLTileEditor::create_dialog() {
+    if(dialog_) {
+        return;
+    }
+
     Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create();
     builder->add_from_file(UI_FILE);
 
@@ -22,20 +62,43 @@ tile_(tile)
 
     canvas_.reset(new OpenGLTileEditorCanvas(tile_editor_canvas_, this));
     dialog_->show_all();
+
+    builder->get_widget("radio_triangle", gtk_radio_triangle_);
+    builder->get_widget("radio_box", gtk_radio_box_);
+    builder->get_widget("radio_curve", gtk_radio_curve_);
+    builder->get_widget("radio_front", gtk_radio_front_);
+    builder->get_widget("radio_normal", gtk_radio_normal_);
+    builder->get_widget("radio_back", gtk_radio_back_);
+
+    assert(gtk_radio_triangle_);
+    assert(gtk_radio_box_);
+    assert(gtk_radio_curve_);
+    assert(gtk_radio_back_);
+    assert(gtk_radio_normal_);
+    assert(gtk_radio_front_);
 }
 
 /** @brief run
   *
   * @todo: document this function
   */
-int OpenGLTileEditor::run()
+int OpenGLTileEditor::run(Gtk::Window* parent)
 {
+    if(!dialog_) {
+        create_dialog();
+    }
+
     //gtk_level_name_->set_text(""); //Clear the level name on load
 
-    //dialog_->set_transient_for(*parent);
+    if(parent) {
+        dialog_->set_transient_for(*parent);
+    }
 
     int result = dialog_->run();
     dialog_->hide();
+
+    delete dialog_;
+    dialog_ = NULL;
 
     //level_name_ = gtk_level_name_->get_text().raw();
     //tileset_path_ = gtk_directory_->get_text().raw();
@@ -49,7 +112,8 @@ int OpenGLTileEditor::run()
 OpenGLTileEditorCanvas::OpenGLTileEditorCanvas(Gtk::DrawingArea* area, OpenGLTileEditor* parent):
 OpenGLWidget(area),
 parent_(parent),
-tile_texture_(0)
+tile_texture_(0),
+drawing_(false)
 {
 
 }
@@ -87,6 +151,23 @@ void OpenGLTileEditorCanvas::do_render()
         glTexCoord2f(1, 1); glVertex2f(t->get_width(), t->get_height());
         glTexCoord2f(0, 1); glVertex2f(0, t->get_height());
     glEnd();
+
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(0.0f, 0.0f, 0.0f, 0.9f);
+
+        for(int i = 0; i < t->get_geometry_element_count(); ++i) {
+            if(t->get_geometry_element_at(i)->get_layer() != parent_->get_geom_layer_mode()) {
+                continue;
+            }
+
+            t->get_geometry_element_at(i)->render_geometry();
+        }
+
+        current_element_.render_geometry();
+    glPopAttrib();
 }
 
 /** @brief do_resize
@@ -106,9 +187,78 @@ void OpenGLTileEditorCanvas::do_resize(int width, int height)
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, max, 0, max, -1, 1);
+        glOrtho(-2, max+2, -2, max+2, -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+    }
+}
+
+/** @brief get_element_from_draw_mode
+  *
+  * @todo: document this function
+  */
+GeometryElement OpenGLTileEditorCanvas::get_element_from_draw_mode(const kmVec2& v1, const kmVec2& v2)
+{
+    if(parent_->get_geom_draw_mode() == GDM_TRIANGLE) {
+        return GeometryElement::create_triangle_from(v1, v2);
+    } else if (parent_->get_geom_draw_mode() == GDM_CURVE) {
+        return GeometryElement::create_curve_from(v1, v2);
+    }
+
+    return GeometryElement::create_box_from(v1, v2);
+}
+
+/** @brief do_motion
+  *
+  * @todo: document this function
+  */
+void OpenGLTileEditorCanvas::do_motion(GdkEventMotion* event)
+{
+    if(drawing_) {
+        kmVec2 pos = unproject(event->x, event->y);
+        v2 = pos;
+
+        current_element_ = get_element_from_draw_mode(v1, v2);
+    }
+}
+
+/** @brief do_button_press
+  *
+  * @todo: document this function
+  */
+void OpenGLTileEditorCanvas::do_button_press(GdkEventButton* event)
+{
+    if(event->button == 1) {
+        kmVec2 pos = unproject(event->x, event->y);
+        v1 = v2 = pos;
+
+        current_element_ = get_element_from_draw_mode(v1, v2);
+
+        drawing_ = true;
+    } else if (event->button == 2) {
+
+    }
+}
+
+/** @brief do_button_release
+  *
+  * @todo: document this function
+  */
+void OpenGLTileEditorCanvas::do_button_release(GdkEventButton* event)
+{
+    if(!drawing_) {
+        return;
+    }
+
+    if(event->button == 1) {
+        kmVec2 pos = unproject(event->x, event->y);
+        v2 = pos;
+
+        current_element_ = get_element_from_draw_mode(v1, v2);
+
+        parent_->get_tile()->add_geometry_element(current_element_);
+
+        drawing_ = false;
     }
 }
 

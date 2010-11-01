@@ -7,6 +7,7 @@
 #include <string>
 
 #include "object.h"
+#include "geometry_element.h"
 
 class Tile : public Object {
 public:
@@ -27,6 +28,10 @@ public:
 
     std::pair<float, float> get_rendered_dimensions() const;
 
+    void add_geometry_element(GeometryElement element);
+    int get_geometry_element_count() const { return (int) geometry_.size(); }
+    GeometryElement* get_geometry_element_at(int i) { return &geometry_[i]; }
+
 private:
     std::string path_;
 
@@ -43,6 +48,8 @@ private:
         static Tile::id_type id = 0;
         return id++;
     }
+
+    std::vector<GeometryElement> geometry_;
 };
 
 

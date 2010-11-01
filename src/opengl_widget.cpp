@@ -1,4 +1,5 @@
 #include <cassert>
+#include <GL/glu.h>
 
 #include "opengl_widget.h"
 
@@ -31,7 +32,7 @@ void OpenGLWidget::initialize_context()
     widget_->signal_button_release_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_button_release));
     widget_->signal_scroll_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_scroll));
 
-    Glib::signal_idle().connect(sigc::mem_fun(this, &OpenGLWidget::on_idle));
+    idle_connection_ = Glib::signal_idle().connect(sigc::mem_fun(this, &OpenGLWidget::on_idle));
 }
 
 /** @brief OpenGLWidget
@@ -59,7 +60,7 @@ bool OpenGLWidget::on_scroll(GdkEventScroll* event)
   */
 bool OpenGLWidget::on_button_release(GdkEventButton* event)
 {
-
+    do_button_release(event);
     return true;
 }
 
@@ -142,6 +143,37 @@ bool OpenGLWidget::on_idle()
 {
     widget_->queue_draw();
     return true;
+}
+
+/** @brief unproject
+  *
+  * @todo: document this function
+  */
+kmVec2 OpenGLWidget::unproject(gdouble winx, gdouble winy)
+{
+    GLdouble winz = 0.0;
+
+    MakeCurrent context(this);
+
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+    GLdouble x, y, z;
+
+    winy = double(viewport[3]) - winy;
+
+    glReadPixels(winx, winy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winz);
+    gluUnProject(winx, winy, winz, modelview, projection, viewport, &x, &y, &z);
+
+    kmVec2 result;
+    result.x = x;
+    result.y = y;
+
+    return result;
 }
 
 
