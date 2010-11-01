@@ -152,6 +152,22 @@ void EditorView::do_button_press(GdkEventButton* event)
         if(id != -1) {
             level_->spawn_tile_instance(id);
         }
+    } else if (event->button == 3) {
+        MakeCurrent context(this);
+        if(!context.ok) {
+            return;
+        }
+
+        gfloat x = event->x;
+        gfloat y = event->y;
+
+        Level::ObjectListIteratorPair iterators = level_->get_iterators();
+
+        Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
+
+        if(t) {
+            level_->delete_tile_instance(t.get());
+        }
     }
 }
 
@@ -176,21 +192,9 @@ void EditorView::do_motion(GdkEventMotion* event)
             return;
         }
 
-        GLint viewport[4];
-        GLdouble modelview[16];
-        GLdouble projection[16];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-        glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
-        GLdouble x, y, z;
-
-        glReadPixels(winx, double(viewport[3]) - winy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winz);
-        gluUnProject(winx, winy, winz, modelview, projection, viewport, &x, &y, &z);
-
-        grid_->snap_to(x, y);
-
-        active_object_->set_position(x, -y);
+        kmVec2 pos = unproject(event->x, event->y);
+        grid_->snap_to(pos.x, pos.y);
+        active_object_->set_position(pos.x, pos.y);
     }
 }
 

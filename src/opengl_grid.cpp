@@ -101,3 +101,14 @@ void OpenGLGrid::snap_to(double& x, double& y)
     y = int((y + hs) / small_step_) * small_step_;
 }
 
+/** @brief snap_to
+  *
+  * @todo: document this function
+  */
+void OpenGLGrid::snap_to(float& x, float& y)
+{
+    float hs = small_step_ / 2.0f;
+    x = int((x + hs) / small_step_) * small_step_;
+    y = int((y + hs) / small_step_) * small_step_;
+}
+

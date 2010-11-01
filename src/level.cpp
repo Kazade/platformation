@@ -57,3 +57,12 @@ tileset_(tileset)
 
 }
 
+/** @brief delete_tile_instance
+  *
+  * @todo: document this function
+  */
+void Level::delete_tile_instance(TileInstance* instance)
+{
+    assert(0);
+}
+

@@ -28,6 +28,7 @@ public:
 
     int get_tile_instance_count() const;
     TileInstance* get_tile_instance_at(int i) const;
+    void delete_tile_instance(TileInstance* instance);
 
     /*int get_entity_instance_count() const;
     EntityInstance* get_entity_instance_at(int i) const;

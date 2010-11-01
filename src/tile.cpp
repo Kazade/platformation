@@ -130,7 +130,7 @@ void Tile::delete_geometry_element(GeometryElement* element)
         return;
     }
 
-    geometry_.erase(std::remove(geometry_.begin(), geometry_.end(), (*it)), geometry_.end());
+    geometry_.erase(it);
 }
 
 

@@ -238,11 +238,13 @@ void OpenGLTileEditorCanvas::do_button_press(GdkEventButton* event)
     } else if (event->button == 3) {
         //TODO: Only the current layer iterators should be passed to pick() otherwise we'll get
         //false positives
+        MakeCurrent context(this);
 
         Tile::GeometryIteratorPair iters = parent_->get_tile()->get_geometry_iterators();
         GeometryElement::ptr elem = picker_->pick(event->x, event->y, iters.first, iters.second);
         if(elem && elem->get_layer() == parent_->get_geom_layer_mode()) {
             parent_->get_tile()->delete_geometry_element(elem.get());
+            current_element_ = GeometryElement();
         }
     }
 }
@@ -261,10 +263,12 @@ void OpenGLTileEditorCanvas::do_button_release(GdkEventButton* event)
         kmVec2 pos = unproject(event->x, event->y);
         v2 = pos;
 
+        //TODO: if the length of v2-v1 is less than a certain value, don't create the element
+
         current_element_ = get_element_from_draw_mode(v1, v2);
 
         parent_->get_tile()->add_geometry_element(GeometryElement::ptr(new GeometryElement(current_element_)));
-
+        current_element_ = GeometryElement();
         drawing_ = false;
     }
 }
