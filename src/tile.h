@@ -38,6 +38,11 @@ public:
     GeometryIteratorPair get_geometry_iterators() {
         return std::make_pair(geometry_.begin(), geometry_.end());
     }
+
+    bool save();
+    bool load();
+
+    std::string get_name() const;
 private:
     std::string path_;
 

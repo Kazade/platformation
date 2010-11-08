@@ -63,6 +63,19 @@ tileset_(tileset)
   */
 void Level::delete_tile_instance(TileInstance* instance)
 {
-    assert(0);
+    TileListIteratorPair iters = get_iterators();
+
+    for(; iters.first != iters.second; ++iters.first) {
+        TileInstance* rhs = (*iters.first).get();
+        if(rhs == instance) {
+            break;
+        }
+    }
+
+    if(iters.first == iters.second) {
+        return;
+    }
+
+    tile_instances_.erase(iters.first);
 }
 

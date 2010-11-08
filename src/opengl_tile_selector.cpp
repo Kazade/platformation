@@ -10,7 +10,8 @@ OpenGLTileSelector::OpenGLTileSelector(Gtk::DrawingArea* canvas):
 OpenGLWidget(canvas),
 tileset_(NULL),
 active_tile_(-1),
-gtk_tile_edit_menu_(NULL) {
+gtk_tile_edit_menu_(NULL),
+total_display_height_(1.0f) {
     initialize();
 }
 
@@ -36,9 +37,9 @@ void OpenGLTileSelector::do_resize(int width, int height)
     float h = float(height);
 
     float ratio = h / w;
-    h = 2.0f * ratio;
+    h = 2.0f * tile_size * ratio;
 
-    glOrtho(-1.0f, 1.0f, -h, 0.0f, -1.0f, 1.0f);
+    glOrtho(-tile_size, tile_size, -h, 0.0f, -1.0f, 1.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -139,6 +140,26 @@ GLuint OpenGLTileSelector::get_texture_for_tile(Tile* tile)
     return tex_id;
 }
 
+/** @brief do_Scroll
+  *
+  * @todo: document this function
+  */
+void OpenGLTileSelector::do_scroll(GdkEventScroll* event)
+{
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+        gdouble val = scr->get_vadjustment()->get_value();
+
+        if(event->direction == GDK_SCROLL_UP) {
+            val -= 1.0;
+        } else {
+            val += 1.0;
+        }
+
+        scr->get_vadjustment()->set_value(val);
+    }
+}
+
+
 /** @brief on_button_press
   *
   * @todo: document this function
@@ -191,9 +212,17 @@ void OpenGLTileSelector::set_tileset(Tileset* tileset)
     Tileset::IteratorPair iterators = tileset->get_iterators();
     for(; iterators.first != iterators.second; ++iterators.first) {
         (*iterators.first)->set_position(0.0f, y);
-        y -= 1.25f;
+        std::pair<float, float> dim = (*iterators.first)->get_rendered_dimensions();
+
+        y -= (tile_size * dim.second) + tile_spacing;
     }
 
+    total_display_height_ = -y;
+
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+        scr->get_vadjustment()->set_upper(total_display_height_ + 1.0f);
+        scr->get_vadjustment()->set_value(0);
+    }
 }
 
 /** @brief on_tile_edit
@@ -206,10 +235,12 @@ void OpenGLTileSelector::on_tile_edit()
         return;
     }
 
-    tile_editor_.reset(new OpenGLTileEditor(tileset_->get_tile_by_id(active_tile_)));
+    Tile* tile = tileset_->get_tile_by_id(active_tile_);
+
+    tile_editor_.reset(new OpenGLTileEditor(tile));
 
     if(tile_editor_->run(dynamic_cast<Gtk::Window*>(get_widget()->get_toplevel())) == Gtk::RESPONSE_OK) {
-        //tile->save();
+        tile->save();
     }
 }
 

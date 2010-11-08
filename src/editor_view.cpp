@@ -37,12 +37,12 @@ void EditorView::do_render()
         xtrans = scr->get_hadjustment()->get_value();
     }
 
-    glTranslatef(0.0f, ytrans, 0.0f);
+    glTranslatef(xtrans, ytrans, 0.0f);
 
     grid_->render();
 
     if(level_) {
-        Level::ObjectListIteratorPair iters = level_->get_iterators();
+        Level::TileListIteratorPair iters = level_->get_iterators();
 
         for(; iters.first != iters.second; iters.first++) {
             Object* obj = (*iters.first).get();
@@ -73,7 +73,8 @@ EditorView::EditorView(Gtk::DrawingArea* widget):
 OpenGLWidget(widget),
 level_(NULL),
 active_object_(NULL),
-tile_selector_(NULL)
+tile_selector_(NULL),
+zoom_(1.0f)
 {
     GridColour c;
     c.r = c.b = c.g = 0.5f;
@@ -91,7 +92,7 @@ void EditorView::do_resize(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    float zoom = 1.0f;
+    float zoom = zoom_;
 
     float num_tiles_across = 40.0f;
 
@@ -120,12 +121,36 @@ void EditorView::set_level(Level* level)
     level_ = level;
 }
 
+/** @brief do_scroll
+  *
+  * @todo: document this function
+  */
+void EditorView::do_scroll(GdkEventScroll* event)
+{
+    if(event->direction == GDK_SCROLL_UP) {
+        zoom_ -= 0.2;
+    } else {
+        zoom_ += 0.2;
+    }
+
+    if(zoom_ <= 0.2f) zoom_ = 0.2f;
+
+    MakeCurrent context(this);
+    do_resize(get_widget()->get_width(), get_widget()->get_height());
+}
+
+
+
 /** @brief do_button_press
   *
   * @todo: document this function
   */
 void EditorView::do_button_press(GdkEventButton* event)
 {
+    if(!level_) {
+        return;
+    }
+
     if(event->button == 1) {
         MakeCurrent context(this);
         if(!context.ok) {
@@ -137,7 +162,7 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Level::ObjectListIteratorPair iterators = level_->get_iterators();
+        Level::TileListIteratorPair iterators = level_->get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
         if(t) {
@@ -150,7 +175,13 @@ void EditorView::do_button_press(GdkEventButton* event)
     } else if (event->button == 2 && tile_selector_) {
         Tile::id_type id = tile_selector_->get_active_tile_id();
         if(id != -1) {
-            level_->spawn_tile_instance(id);
+            TileInstance* ni = level_->spawn_tile_instance(id);
+            if(ni) {
+                MakeCurrent context(this);
+                kmVec2 pos = unproject(event->x, event->y);
+                grid_->snap_to(pos.x, pos.y);
+                ni->set_position(pos.x, pos.y);
+            }
         }
     } else if (event->button == 3) {
         MakeCurrent context(this);
@@ -161,12 +192,17 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Level::ObjectListIteratorPair iterators = level_->get_iterators();
+        Level::TileListIteratorPair iterators = level_->get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
 
         if(t) {
-            level_->delete_tile_instance(t.get());
+            TileInstance* ti = dynamic_cast<TileInstance*>(t.get());
+            if(ti) {
+                level_->delete_tile_instance(ti);
+                active_object_ = NULL;
+            }
+
         }
     }
 }

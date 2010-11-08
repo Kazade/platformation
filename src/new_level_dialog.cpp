@@ -1,8 +1,11 @@
 #include <cassert>
+#include <boost/filesystem.hpp>
 
 #include "new_level_dialog.h"
 
 #define UI_FILE "ui/new_level.glade"
+
+namespace bfs = boost::filesystem;
 
 NewLevelDialog::NewLevelDialog():
 dialog_(NULL) {
@@ -58,6 +61,13 @@ int NewLevelDialog::run_dialog(Gtk::Window* parent) {
 void NewLevelDialog::on_browse_directory_clicked() {
     Gtk::FileChooserDialog dialog("Please choose a folder", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     dialog.set_transient_for(*dialog_);
+
+    //Attempt to set the default directory to ~/Pictures/Tilesets if it exists
+    bfs::path home(getenv("USERPROFILE") ? getenv("USERPROFILE") : getenv("HOME"));
+    bfs::path tileset_dir = home / "Pictures" / "Tilesets";
+    if(bfs::exists(tileset_dir)) {
+        dialog.set_current_folder(tileset_dir.string());
+    }
 
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     dialog.add_button("Select", Gtk::RESPONSE_OK);

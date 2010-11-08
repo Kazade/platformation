@@ -49,6 +49,7 @@ set(sources
     src/opengl_tile_selector.cpp
     src/opengl_tile_editor.cpp
     src/geometry_element.cpp
+    src/natural_sort.cpp
 )
 
 set(headers
@@ -66,7 +67,7 @@ set(ui_files
 )
 
 add_executable(gnovaedit ${sources})
-target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a)
+target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)

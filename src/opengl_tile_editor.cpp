@@ -156,7 +156,7 @@ void OpenGLTileEditorCanvas::do_render()
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(0.0f, 0.0f, 0.0f, 0.9f);
+        glColor4f(1.0f, 0.0f, 0.0f, 0.9f);
 
         for(int i = 0; i < t->get_geometry_element_count(); ++i) {
             if(t->get_geometry_element_at(i)->get_layer() != parent_->get_geom_layer_mode()) {

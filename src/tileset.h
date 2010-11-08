@@ -26,6 +26,7 @@ public:
         return std::make_pair(tiles_.begin(), tiles_.end());
     }
 
+    void sort_tiles();
 private:
     void add_tile(const std::string& path);
 

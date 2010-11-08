@@ -30,6 +30,7 @@ private:
 
     void do_render();
     void do_resize(int width, int height);
+    void do_scroll(GdkEventScroll* event);
 
     Tileset* tileset_;
 
@@ -46,6 +47,8 @@ private:
     Gtk::MenuItem* gtk_edit_tile_item_;
 
     OpenGLTileEditor::ptr tile_editor_;
+
+    float total_display_height_;
 };
 
 #endif // OPENGL_TILE_SELECTOR_H_INCLUDED

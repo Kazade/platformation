@@ -39,6 +39,7 @@ private:
     virtual void do_button_press(GdkEventButton* event) {}
     virtual void do_motion(GdkEventMotion* event) {}
     virtual void do_button_release(GdkEventButton* event) {}
+    virtual void do_scroll(GdkEventScroll* event) {}
 
     sigc::connection idle_connection_;
 

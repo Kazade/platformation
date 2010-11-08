@@ -51,6 +51,7 @@ widget_(widget)
   */
 bool OpenGLWidget::on_scroll(GdkEventScroll* event)
 {
+    do_scroll(event);
     return true;
 }
 

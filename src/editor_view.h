@@ -25,6 +25,7 @@ private:
     void do_resize(int width, int height);
     void do_button_press(GdkEventButton* event);
     void do_motion(GdkEventMotion* event);
+    void do_scroll(GdkEventScroll* event);
 
     OpenGLGrid::ptr grid_;
     Level* level_;
@@ -37,6 +38,8 @@ private:
 
     std::map<Object*, GLuint> texture_ids_;
     OpenGLTileSelector* tile_selector_;
+
+    float zoom_;
 };
 
 

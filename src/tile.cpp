@@ -1,15 +1,24 @@
 #include <SOIL/SOIL.h>
 #include <GL/gl.h>
+#include <boost/filesystem.hpp>
+#include <tinyxml.h>
 
 #include "tile.h"
+
+namespace bfs = boost::filesystem;
 
 /** @brief Tile
   *
   * @todo: document this function
   */
-Tile::Tile(const std::string& path) {
+Tile::Tile(const std::string& path):
+path_(path) {
     load_tile(path);
     id_ = next_id();
+}
+
+std::string Tile::get_name() const {
+    return bfs::path(path_).leaf();
 }
 
 void Tile::load_tile(const std::string& path) {
@@ -110,6 +119,20 @@ void Tile::render_geometry() {
   */
 void Tile::add_geometry_element(GeometryElement::ptr element)
 {
+
+    //Clamp the vertices before adding
+
+    GeometryElement::PointArrayIteratorPair iters = element->get_point_iterators();
+    for(; iters.first != iters.second; ++iters.first) {
+        kmVec2* v = &(*iters.first);
+        if(v->x < 0.0f) v->x = 0.0f;
+        if(v->x > width_) v->x = (float) width_;
+
+        if(v->y < 0.0f) v->y = 0.0f;
+        if(v->y > width_) v->y = (float) height_;
+    }
+
+
     geometry_.push_back(element);
 }
 
@@ -133,4 +156,69 @@ void Tile::delete_geometry_element(GeometryElement* element)
     geometry_.erase(it);
 }
 
+bool Tile::load() {
+    bfs::path properties_file = bfs::path(path_).replace_extension(".properties");
+    if(!bfs::exists(properties_file)) {
+        //If there is no properties file, that's OK.
+        return true;
+    }
 
+    TiXmlDocument doc(properties_file.string().c_str());
+    if(!doc.LoadFile()) {
+        throw std::runtime_error("Couldn't load the tile properties file: " + properties_file.string());
+    }
+
+    TiXmlElement* root = doc.FirstChildElement("tile");
+    TiXmlElement* geom = root->FirstChildElement("geometry");
+
+
+
+    return true;
+}
+
+bool Tile::save() {
+    bfs::path properties_file = bfs::path(path_).replace_extension(".properties");
+
+    if(geometry_.empty()) {
+        //If there is no geometry, but the properties file exists, then remove it
+        if(bfs::exists(properties_file)) {
+            bfs::remove(properties_file);
+        }
+        return true;
+    }
+
+    TiXmlDocument doc;
+	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );
+	doc.LinkEndChild(decl);
+
+	TiXmlElement* element = new TiXmlElement("tile");
+	doc.LinkEndChild(element);
+
+	TiXmlElement* geom = new TiXmlElement("geometry");
+	element->LinkEndChild(geom);
+
+    GeometryIteratorPair iters = get_geometry_iterators();
+    for(; iters.first != iters.second; ++iters.first) {
+        //TODO: set the layer
+
+        TiXmlElement* geom_element = new TiXmlElement("element");
+        geom->LinkEndChild(geom_element);
+
+        GeometryElement::PointArrayIteratorPair point_iters = (*iters.first)->get_point_iterators();
+
+        TiXmlElement* vertices = new TiXmlElement("points");
+        for(; point_iters.first != point_iters.second; ++point_iters.first) {
+            TiXmlElement* vert_element = new TiXmlElement("point");
+            vert_element->SetAttribute("x", (*point_iters.first).x);
+            vert_element->SetAttribute("y", (*point_iters.first).y);
+
+            vertices->LinkEndChild(vert_element);
+        }
+
+        geom_element->LinkEndChild(vertices);
+    }
+
+    doc.SaveFile(properties_file.string().c_str());
+
+    return true;
+}

@@ -64,6 +64,8 @@
 		<Unit filename="../src/main.cpp" />
 		<Unit filename="../src/main_window.cpp" />
 		<Unit filename="../src/main_window.h" />
+		<Unit filename="../src/natural_sort.cpp" />
+		<Unit filename="../src/natural_sort.h" />
 		<Unit filename="../src/new_level_dialog.cpp" />
 		<Unit filename="../src/new_level_dialog.h" />
 		<Unit filename="../src/object.h" />
