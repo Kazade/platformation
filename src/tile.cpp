@@ -171,7 +171,9 @@ bool Tile::load() {
     TiXmlElement* root = doc.FirstChildElement("tile");
     TiXmlElement* geom = root->FirstChildElement("geometry");
 
+    for(TiXmlElement* element = geom->FirstChildElement("element"); element; element = element->NextSiblingElement()) {
 
+    }
 
     return true;
 }
