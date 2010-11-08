@@ -266,6 +266,7 @@ void OpenGLTileEditorCanvas::do_button_release(GdkEventButton* event)
         //TODO: if the length of v2-v1 is less than a certain value, don't create the element
 
         current_element_ = get_element_from_draw_mode(v1, v2);
+        current_element_.set_layer(parent_->get_geom_layer_mode());
 
         parent_->get_tile()->add_geometry_element(GeometryElement::ptr(new GeometryElement(current_element_)));
         current_element_ = GeometryElement();

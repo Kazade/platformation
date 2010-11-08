@@ -219,10 +219,6 @@ void EditorView::do_motion(GdkEventMotion* event)
     */
 
     if(active_object_ && event->state & GDK_BUTTON1_MASK && active_timer_.elapsed() >= 0.2) {
-        gdouble winx = event->x;
-        gdouble winy = event->y;
-        GLdouble winz = 0.0;
-
         MakeCurrent context(this);
         if(!context.ok) {
             return;

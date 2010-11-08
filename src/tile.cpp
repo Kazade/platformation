@@ -1,6 +1,7 @@
 #include <SOIL/SOIL.h>
 #include <GL/gl.h>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <tinyxml.h>
 
 #include "tile.h"
@@ -29,7 +30,7 @@ void Tile::load_tile(const std::string& path) {
     data_ = std::vector<unsigned char>(data, data + (width_ * height_ * channels_));
 
     //SOIL loads images upside-down this loop will flip it the right way
-    for(uint32_t j = 0; j * 2 < height_; ++j)
+    for(int32_t j = 0; j * 2 < height_; ++j)
     {
         int index1 = j * width_ * channels_;
         int index2 = (height_ - 1 - j) * width_ * channels_;
@@ -157,6 +158,8 @@ void Tile::delete_geometry_element(GeometryElement* element)
 }
 
 bool Tile::load() {
+    geometry_.clear();
+
     bfs::path properties_file = bfs::path(path_).replace_extension(".properties");
     if(!bfs::exists(properties_file)) {
         //If there is no properties file, that's OK.
@@ -165,14 +168,34 @@ bool Tile::load() {
 
     TiXmlDocument doc(properties_file.string().c_str());
     if(!doc.LoadFile()) {
+        //If a file exists, but it's not valid XML, that's not OK
         throw std::runtime_error("Couldn't load the tile properties file: " + properties_file.string());
     }
 
+    std::cout << "Loading XML for tile from: " <<  properties_file.string() << std::endl;
+
     TiXmlElement* root = doc.FirstChildElement("tile");
+    assert(root);
+
     TiXmlElement* geom = root->FirstChildElement("geometry");
+    assert(geom);
 
     for(TiXmlElement* element = geom->FirstChildElement("element"); element; element = element->NextSiblingElement()) {
+        std::vector<kmVec2> points;
+        for(TiXmlElement* xml_point = element->FirstChildElement("point"); xml_point; xml_point = xml_point->NextSiblingElement()) {
+            kmVec2 np;
+            np.x = boost::lexical_cast<float>(xml_point->Attribute("x"));
+            np.y = boost::lexical_cast<float>(xml_point->Attribute("y"));
 
+            points.push_back(np);
+        }
+
+        if(!points.empty()) {
+            GeometryElement::ptr new_elem(new GeometryElement(points));
+            GeometryLayer layer = (GeometryLayer) boost::lexical_cast<int>(element->Attribute("layer"));
+            new_elem->set_layer(layer);
+            add_geometry_element(new_elem);
+        }
     }
 
     return true;
@@ -204,20 +227,19 @@ bool Tile::save() {
         //TODO: set the layer
 
         TiXmlElement* geom_element = new TiXmlElement("element");
+        geom_element->SetAttribute("layer", boost::lexical_cast<std::string>((*iters.first)->get_layer()));
+
         geom->LinkEndChild(geom_element);
 
         GeometryElement::PointArrayIteratorPair point_iters = (*iters.first)->get_point_iterators();
 
-        TiXmlElement* vertices = new TiXmlElement("points");
         for(; point_iters.first != point_iters.second; ++point_iters.first) {
             TiXmlElement* vert_element = new TiXmlElement("point");
             vert_element->SetAttribute("x", (*point_iters.first).x);
             vert_element->SetAttribute("y", (*point_iters.first).y);
 
-            vertices->LinkEndChild(vert_element);
+            geom_element->LinkEndChild(vert_element);
         }
-
-        geom_element->LinkEndChild(vertices);
     }
 
     doc.SaveFile(properties_file.string().c_str());

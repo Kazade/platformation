@@ -8,8 +8,8 @@ float tile_spacing = 0.25f;
 
 OpenGLTileSelector::OpenGLTileSelector(Gtk::DrawingArea* canvas):
 OpenGLWidget(canvas),
-tileset_(NULL),
 active_tile_(-1),
+tileset_(NULL),
 gtk_tile_edit_menu_(NULL),
 total_display_height_(1.0f) {
     initialize();
@@ -29,9 +29,6 @@ void OpenGLTileSelector::do_resize(int width, int height)
     glLoadIdentity();
 
     glViewport(0, 0, width, height);
-
-    float ortho_height = num_tiles_visible * (tile_size + tile_spacing);
-
 
     float w = float(width);
     float h = float(height);

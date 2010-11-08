@@ -58,8 +58,8 @@ private:
 
         bool operator<(const PickColour& rhs) const {
             if (r < rhs.r ||
-                r == rhs.r && g < rhs.g ||
-                r == rhs.r && g == rhs.g && b < rhs.b) {
+                (r == rhs.r && g < rhs.g) ||
+                (r == rhs.r && g == rhs.g && b < rhs.b)) {
                 return true;
             }
 

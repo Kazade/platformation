@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "level.h"
 
 /** @brief load
@@ -6,7 +8,8 @@
   */
 bool Level::load(const std::string& filename)
 {
-
+    assert(0);
+    return false;
 }
 
 /** @brief save
@@ -15,7 +18,8 @@ bool Level::load(const std::string& filename)
   */
 bool Level::save(const std::string& filename) const
 {
-
+    assert(0);
+    return false;
 }
 
 /** @brief get_tile_instance_at
@@ -24,7 +28,8 @@ bool Level::save(const std::string& filename) const
   */
 TileInstance* Level::get_tile_instance_at(int i) const
 {
-
+    assert(0);
+    return NULL;
 }
 
 /** @brief get_tile_instance_count
@@ -33,7 +38,8 @@ TileInstance* Level::get_tile_instance_at(int i) const
   */
 int Level::get_tile_instance_count() const
 {
-
+    assert(0);
+    return 0;
 }
 
 /** @brief spawn_tile_instance

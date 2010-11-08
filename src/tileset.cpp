@@ -44,6 +44,9 @@ Tileset::ptr Tileset::load_from_directory(const std::string& path) {
   */
 void Tileset::add_tile(const std::string& path) {
     Tile::ptr new_tile(new Tile(path));
+
+    new_tile->load();
+
     tiles_.push_back(new_tile);
 }
 /** @brief get_tile_by_id

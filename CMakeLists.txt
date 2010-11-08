@@ -66,6 +66,7 @@ set(ui_files
     ui/new_level_dialog.glade
 )
 
+set(CMAKE_CXX_FLAGS "-Wall")
 add_executable(gnovaedit ${sources})
 target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
 
