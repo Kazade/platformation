@@ -37,7 +37,7 @@ void EditorView::do_render()
         xtrans = scr->get_hadjustment()->get_value();
     }
 
-    glTranslatef(xtrans, ytrans, 0.0f);
+    glTranslatef(-xtrans, ytrans, 0.0f);
 
     grid_->render();
 

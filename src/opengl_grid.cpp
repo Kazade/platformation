@@ -17,10 +17,10 @@ void OpenGLGrid::set_small_step(float x)
   */
 void OpenGLGrid::render()
 {
-    float left_start = -(100 * small_step_);
-    float right_start = (100 * small_step_);
-    float top_start = (100 * small_step_);
-    float bottom_start = -(100 * small_step_);
+    float left_start = min_x_; //-(100 * small_step_);
+    float right_start = max_x_; //(100 * small_step_);
+    float top_start = max_y_; //(100 * small_step_);
+    float bottom_start = min_y_; //-(100 * small_step_);
 
     glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT);
     glDisable(GL_TEXTURE_2D);
@@ -66,7 +66,11 @@ void OpenGLGrid::render()
 OpenGLGrid::OpenGLGrid(float small_step, int big_step_every, const GridColour& c):
 small_step_(small_step),
 big_step_frequency_(big_step_every),
-colour_(c)
+colour_(c),
+min_x_(0.0f),
+max_x_(100.0f),
+min_y_(-50.0f),
+max_y_(50.0f)
 {
     assert(small_step > 0.0f);
     assert(big_step_every > 0);
@@ -99,6 +103,11 @@ void OpenGLGrid::snap_to(double& x, double& y)
     float hs = small_step_ / 2.0f;
     x = int((x + hs) / small_step_) * small_step_;
     y = int((y + hs) / small_step_) * small_step_;
+
+    if(x < min_x_) x = min_x_;
+    if(x > max_x_) x = max_x_;
+    if(y < min_y_) y = min_y_;
+    if(y > max_y_) y = max_x_;
 }
 
 /** @brief snap_to
@@ -110,5 +119,10 @@ void OpenGLGrid::snap_to(float& x, float& y)
     float hs = small_step_ / 2.0f;
     x = int((x + hs) / small_step_) * small_step_;
     y = int((y + hs) / small_step_) * small_step_;
+
+    if(x < min_x_) x = min_x_;
+    if(x > max_x_) x = max_x_;
+    if(y < min_y_) y = min_y_;
+    if(y > max_y_) y = max_x_;
 }
 
