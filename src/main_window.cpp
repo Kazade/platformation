@@ -25,6 +25,7 @@ void MainWindow::create_widgets() {
     builder->get_widget("new_level_item", gtk_new_level_item_);
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
     builder->get_widget("canvas", gtk_canvas_);
+    builder->get_widget("layer_tree_view", gtk_layer_view_);
 
     assert(gtk_canvas_);
     editor_view_.reset(new EditorView(gtk_canvas_));
@@ -32,6 +33,8 @@ void MainWindow::create_widgets() {
     assert(gtk_tile_selector_canvas_);
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
     editor_view_->set_tile_selector(selector_.get());
+
+    layer_manager_.reset(new LayerManager(gtk_layer_view_));
 
     gtk_window_->show_all();
 }
@@ -54,7 +57,9 @@ void MainWindow::on_new_level_activate() {
         tileset_ = Tileset::load_from_directory(tileset_path);
         selector_->set_tileset(tileset_.get());
         level_.reset(new Level(tileset_.get()));
+        level_->set_level_size(dialog->get_level_size());
         editor_view_->set_level(level_.get());
+        layer_manager_->set_level(level_.get());
     }
 }
 
@@ -80,6 +85,7 @@ void MainWindow::on_add_tile_clicked()
         return;
     }
 
-    level_->spawn_tile_instance(selector_->get_active_tile_id());
+    //FIXME: Get active layer from the layer manager
+    level_->get_layer_at(0)->spawn_tile_instance(selector_->get_active_tile_id());
 }
 

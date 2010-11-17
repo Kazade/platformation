@@ -42,7 +42,9 @@ void EditorView::do_render()
     grid_->render();
 
     if(level_) {
-        Level::TileListIteratorPair iters = level_->get_iterators();
+        Layer* layer = level_->get_layer_at(0);
+
+        Layer::TileListIteratorPair iters = layer->get_iterators();
 
         for(; iters.first != iters.second; iters.first++) {
             Object* obj = (*iters.first).get();
@@ -119,6 +121,23 @@ void EditorView::do_resize(int width, int height)
 void EditorView::set_level(Level* level)
 {
     level_ = level;
+
+    std::pair<int, int> level_size = level_->get_level_size();
+    grid_->set_max_x(level_size.first / 64);
+    grid_->set_min_x(0);
+    grid_->set_max_y(level_size.second / 64 / 2);
+    grid_->set_min_y(-level_size.second / 64 / 2);
+
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+        kmVec2 tl = unproject(0, 0);
+        kmVec2 br = unproject(get_widget()->get_width(), get_widget()->get_height());
+        float visible_width = br.x - tl.x;
+        int lower = int(visible_width) / 2;
+        scr->get_hadjustment()->set_lower(lower);
+        scr->get_hadjustment()->set_value(lower);
+        scr->get_hadjustment()->set_step_increment(1);
+        scr->get_hadjustment()->set_upper(level_size.first / 64); //FIXME: This is wrong, need to correctly calculate max
+    }
 }
 
 /** @brief do_scroll
@@ -162,7 +181,9 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Level::TileListIteratorPair iterators = level_->get_iterators();
+        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
+
+        Layer::TileListIteratorPair iterators = layer->get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
         if(t) {
@@ -173,9 +194,10 @@ void EditorView::do_button_press(GdkEventButton* event)
             active_timer_.reset();
         }
     } else if (event->button == 2 && tile_selector_) {
+        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
         Tile::id_type id = tile_selector_->get_active_tile_id();
         if(id != -1) {
-            TileInstance* ni = level_->spawn_tile_instance(id);
+            TileInstance* ni = layer->spawn_tile_instance(id);
             if(ni) {
                 MakeCurrent context(this);
                 kmVec2 pos = unproject(event->x, event->y);
@@ -192,14 +214,15 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Level::TileListIteratorPair iterators = level_->get_iterators();
+        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
+        Level::TileListIteratorPair iterators = layer->get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
 
         if(t) {
             TileInstance* ti = dynamic_cast<TileInstance*>(t.get());
             if(ti) {
-                level_->delete_tile_instance(ti);
+                layer->delete_tile_instance(ti);
                 active_object_ = NULL;
             }
 

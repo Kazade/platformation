@@ -60,6 +60,10 @@
 		<Unit filename="../src/geometry_element.cpp" />
 		<Unit filename="../src/geometry_element.h" />
 		<Unit filename="../src/import_export_plugin.h" />
+		<Unit filename="../src/layer.cpp" />
+		<Unit filename="../src/layer.h" />
+		<Unit filename="../src/layer_manager.cpp" />
+		<Unit filename="../src/layer_manager.h" />
 		<Unit filename="../src/level.cpp" />
 		<Unit filename="../src/level.h" />
 		<Unit filename="../src/main.cpp" />

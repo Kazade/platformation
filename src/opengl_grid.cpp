@@ -126,3 +126,22 @@ void OpenGLGrid::snap_to(float& x, float& y)
     if(y > max_y_) y = max_x_;
 }
 
+void OpenGLGrid::set_min_x(float x)
+{
+    min_x_ = x;
+}
+
+void OpenGLGrid::set_max_x(float x)
+{
+    max_x_ = x;
+}
+
+void OpenGLGrid::set_min_y(float y)
+{
+    min_y_ = y;
+}
+
+void OpenGLGrid::set_max_y(float y)
+{
+    max_y_ = y;
+}

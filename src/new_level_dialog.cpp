@@ -8,7 +8,11 @@
 namespace bfs = boost::filesystem;
 
 NewLevelDialog::NewLevelDialog():
-dialog_(NULL) {
+dialog_(NULL),
+gtk_directory_(NULL),
+gtk_browse_directory_(NULL),
+gtk_level_name_(NULL),
+gtk_level_size_(NULL) {
     Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create();
     builder->add_from_file(UI_FILE);
 
@@ -17,10 +21,12 @@ dialog_(NULL) {
     builder->get_widget("directory_entry", gtk_directory_);
     builder->get_widget("browse_directory", gtk_browse_directory_);
     builder->get_widget("level_name", gtk_level_name_);
+    builder->get_widget("level_size_box", gtk_level_size_);
 
     assert(dialog_);
     assert(gtk_browse_directory_);
     assert(gtk_level_name_);
+    assert(gtk_level_size_);
 
     gtk_browse_directory_->signal_clicked().connect(sigc::mem_fun(this, &NewLevelDialog::on_browse_directory_clicked));
 
@@ -29,6 +35,17 @@ dialog_(NULL) {
     gtk_ok_button_->set_sensitive(false);
     //dialog_->add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     //dialog_->add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
+
+
+    level_size_model_ = Gtk::ListStore::create(size_columns_);
+    gtk_level_size_->set_model(level_size_model_);
+    Gtk::TreeModel::Row row = *(level_size_model_->append());
+    row[size_columns_.column_id_] = 1;
+    row[size_columns_.column_name_] = "Small (10240px x 1280px)";
+
+    //gtk_level_size_->pack_start(size_columns_.column_id_);
+    gtk_level_size_->pack_start(size_columns_.column_name_);
+    gtk_level_size_->set_active(0);
 
     gtk_directory_->signal_changed().connect(sigc::mem_fun(this, &NewLevelDialog::on_entry_changed));
     gtk_level_name_->signal_changed().connect(sigc::mem_fun(this, &NewLevelDialog::on_entry_changed));
@@ -55,6 +72,9 @@ int NewLevelDialog::run_dialog(Gtk::Window* parent) {
 
     level_name_ = gtk_level_name_->get_text().raw();
     tileset_path_ = gtk_directory_->get_text().raw();
+
+    chosen_level_size_ = std::make_pair(10240, 1280);
+
     return result;
 }
 
@@ -100,5 +120,10 @@ const std::string& NewLevelDialog::get_level_name() const
 const std::string& NewLevelDialog::get_tileset_path() const
 {
     return tileset_path_;
+}
+
+const std::pair<int, int> NewLevelDialog::get_level_size() const
+{
+    return chosen_level_size_;
 }
 

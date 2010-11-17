@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(gnova_edit)
 
 find_package(PkgConfig)
-find_package(Boost COMPONENTS system filesystem REQUIRED)
+find_package(Boost COMPONENTS system filesystem signals REQUIRED)
 
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
 IF(GTKMM_FOUND)
@@ -50,6 +50,8 @@ set(sources
     src/opengl_tile_editor.cpp
     src/geometry_element.cpp
     src/natural_sort.cpp
+    src/layer.cpp
+    src/layer_manager.cpp
 )
 
 set(headers
@@ -68,7 +70,7 @@ set(ui_files
 
 set(CMAKE_CXX_FLAGS "-Wall")
 add_executable(gnovaedit ${sources})
-target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
+target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)
