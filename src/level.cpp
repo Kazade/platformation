@@ -106,6 +106,8 @@ active_layer_(0)
 }*/
 
 Layer* Level::create_new_layer() {
+    rDebug("Creating a new layer");
+
     Layer::ptr new_layer(new Layer(tileset_));
     layers_.push_back(new_layer);
     active_layer_ = layers_.size() - 1;

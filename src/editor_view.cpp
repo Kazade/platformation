@@ -1,16 +1,16 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -60,14 +60,25 @@ void EditorView::do_render()
     grid_->render();
 
     if(level_) {
-        Layer* layer = level_->get_layer_at(0);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
+        for(uint32_t i = 0; i < level_->get_layer_count(); ++i) {
+            Layer* layer = level_->get_layer_at(i);
 
-        Layer::TileListIteratorPair iters = layer->get_iterators();
+            if(layer != level_->get_active_layer()) {
+                glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+            } else {
+                glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            }
 
-        for(; iters.first != iters.second; iters.first++) {
-            Object* obj = (*iters.first).get();
-            glBindTexture(GL_TEXTURE_2D, get_texture_for_object(obj));
-            obj->render_geometry();
+            Layer::TileListIteratorPair iters = layer->get_iterators();
+
+            for(; iters.first != iters.second; iters.first++) {
+                Object* obj = (*iters.first).get();
+                glBindTexture(GL_TEXTURE_2D, get_texture_for_object(obj));
+                obj->render_geometry();
+            }
         }
 
         if(active_object_) {
@@ -199,7 +210,7 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
+        Layer* layer = level_->get_active_layer();
 
         Layer::TileListIteratorPair iterators = layer->get_iterators();
 
@@ -212,7 +223,7 @@ void EditorView::do_button_press(GdkEventButton* event)
             active_timer_.reset();
         }
     } else if (event->button == 2 && tile_selector_) {
-        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
+        Layer* layer = level_->get_active_layer();
         Tile::id_type id = tile_selector_->get_active_tile_id();
         if(id != -1) {
             TileInstance* ni = layer->spawn_tile_instance(id);
@@ -232,7 +243,7 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Layer* layer = level_->get_layer_at(0); //FIXME: Get active layer from layer manager
+        Layer* layer = level_->get_active_layer();
         Level::TileListIteratorPair iterators = layer->get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
