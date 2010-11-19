@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(gnova_edit)
+project(Platformation)
 
 find_package(PkgConfig)
 find_package(Boost COMPONENTS system filesystem signals REQUIRED)
@@ -69,8 +69,8 @@ set(ui_files
 )
 
 set(CMAKE_CXX_FLAGS "-Wall")
-add_executable(gnovaedit ${sources})
-target_link_libraries(gnovaedit ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
+add_executable(platformation ${sources})
+target_link_libraries(platformation ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)
@@ -79,4 +79,4 @@ add_custom_target(install_glade ALL ${CMAKE_COMMAND} -E copy_directory
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 ${CMAKE_CURRENT_BINARY_DIR}/ui/ )
 
-add_dependencies(gnovaedit install_glade)
+add_dependencies(platformation install_glade)
