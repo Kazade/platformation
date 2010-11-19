@@ -40,6 +40,8 @@ void MainWindow::create_widgets() {
     builder->get_widget("main_window", gtk_window_);
     builder->get_widget("tile_selector_canvas", gtk_tile_selector_canvas_);
     builder->get_widget("new_level_item", gtk_new_level_item_);
+    builder->get_widget("save_level_item", gtk_save_level_item_);
+
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
     builder->get_widget("canvas", gtk_canvas_);
     builder->get_widget("layer_tree_view", gtk_layer_view_);
@@ -82,6 +84,10 @@ void MainWindow::on_new_level_activate() {
     }
 }
 
+void MainWindow::on_save_level_activate()
+{
+}
+
 /** @brief connect_signals
   *
   * @todo: document this function
@@ -91,6 +97,8 @@ void MainWindow::connect_signals() {
     assert(gtk_add_tile_button_);
 
     gtk_new_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_new_level_activate));
+    gtk_save_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_save_level_activate));
+
     gtk_add_tile_button_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_add_tile_clicked));
 }
 

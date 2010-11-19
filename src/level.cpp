@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <rlog/rlog.h>
+#include <tinyxml.h>
 
 #include "level.h"
 
@@ -37,8 +38,12 @@ bool Level::load(const std::string& filename)
   */
 bool Level::save(const std::string& filename) const
 {
-    assert(0);
-    return false;
+    TiXmlDocument doc;
+	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
+	doc.LinkEndChild(decl);
+
+    doc.SaveFile(filename.c_str());
+    return true;
 }
 
 /** @brief get_tile_instance_at
