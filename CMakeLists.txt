@@ -35,6 +35,12 @@ IF(GTKGLEXTMM_FOUND)
     include_directories(${GTKGLEXTMM_INCLUDE_DIRS})
 ENDIF(GTKGLEXTMM_FOUND)
 
+pkg_check_modules(RLOG REQUIRED librlog)
+IF(RLOG_FOUND)
+    link_directories(${RLOG_LIBRARY_DIRS})
+    include_directories(${RLOG_INCLUDE_DIRS})
+ENDIF(RLOG_FOUND)
+
 set(sources
     src/main.cpp
     src/main_window.cpp
@@ -70,7 +76,7 @@ set(ui_files
 
 set(CMAKE_CXX_FLAGS "-Wall")
 add_executable(platformation ${sources})
-target_link_libraries(platformation ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
+target_link_libraries(platformation ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} ${RLOG_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)

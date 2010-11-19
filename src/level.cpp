@@ -1,22 +1,23 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
 
 
 #include <cassert>
+#include <rlog/rlog.h>
 
 #include "level.h"
 
@@ -115,8 +116,37 @@ Layer* Level::create_new_layer() {
 }
 
 void Level::destroy_layer(Layer* layer) {
-    assert(0);
-    layer_destroyed_(layer);
+    rDebug("Destroying layer %x", layer);
+
+    if(!layer) {
+        return;
+    }
+
+    LayerArray::iterator it = layers_.begin();
+    for(; it != layers_.end(); ++it) {
+        if((*it).get() == layer) {
+            break;
+        }
+    }
+
+    //If we couldn't find the layer, do nothing
+    if(it == layers_.end()) {
+        rWarning("Couldn't find the layer to delete");
+        return;
+    }
+
+    layers_.erase(it);
+    active_layer_ = 0;
+
+    rDebug("Layer destroyed");
+
+    if(layers_.empty()) {
+        //There must always be one layer, so if it's the last one create a new empty one
+        create_new_layer();
+        rDebug("New layer created, final one was destroyed");
+    }
+
+    layer_destroyed_(NULL); //FIXME: Argument is useless
 }
 
 uint32_t Level::get_layer_count() const {
