@@ -58,7 +58,8 @@ bool Level::save(const std::string& filename) const
   * @todo: document this function
   */
 Level::Level(Tileset* tileset):
-tileset_(tileset)
+tileset_(tileset),
+active_layer_(0)
 {
     create_new_layer();
 }
@@ -88,6 +89,7 @@ tileset_(tileset)
 Layer* Level::create_new_layer() {
     Layer::ptr new_layer(new Layer(tileset_));
     layers_.push_back(new_layer);
+    active_layer_ = layers_.size() - 1;
 
     //Call signal
     layer_created_(new_layer.get());

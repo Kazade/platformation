@@ -26,6 +26,8 @@ void MainWindow::create_widgets() {
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
     builder->get_widget("canvas", gtk_canvas_);
     builder->get_widget("layer_tree_view", gtk_layer_view_);
+    builder->get_widget("add_layer_button", gtk_add_layer_button_);
+    builder->get_widget("delete_layer_button", gtk_delete_layer_button_);
 
     assert(gtk_canvas_);
     editor_view_.reset(new EditorView(gtk_canvas_));
@@ -34,7 +36,7 @@ void MainWindow::create_widgets() {
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
     editor_view_->set_tile_selector(selector_.get());
 
-    layer_manager_.reset(new LayerManager(gtk_layer_view_));
+    layer_manager_.reset(new LayerManager(gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
 
     gtk_window_->show_all();
 }

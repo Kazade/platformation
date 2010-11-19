@@ -29,6 +29,9 @@ private:
     Gtk::VBox* gtk_tile_vbox_;
     Gtk::MenuItem* gtk_new_level_item_;
     Gtk::Button* gtk_add_tile_button_;
+    Gtk::Button* gtk_add_layer_button_;
+    Gtk::Button* gtk_delete_layer_button_;
+
     Gtk::DrawingArea* gtk_canvas_, *gtk_tile_selector_canvas_;
     Gtk::TreeView* gtk_layer_view_;
 

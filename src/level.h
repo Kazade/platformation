@@ -36,6 +36,8 @@ public:
     void destroy_layer(Layer* layer);
     uint32_t get_layer_count() const;
     Layer* get_layer_at(uint32_t i);
+    Layer* get_active_layer() { return layers_[active_layer_].get(); }
+    void set_active_layer(uint32_t layer_num) { active_layer_ = layer_num; }
 
 /*    int get_tile_instance_count() const;
     TileInstance* get_tile_instance_at(int i) const;
@@ -75,6 +77,8 @@ private:
 
     LayerCreatedSignal layer_created_;
     LayerDestroyedSignal layer_destroyed_;
+
+    uint32_t active_layer_;
 };
 
 
