@@ -1,16 +1,16 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -26,6 +26,7 @@
 
 #include "object.h"
 #include "geometry_element.h"
+#include "transparent_colour.h"
 
 class Tile : public Object {
 public:
@@ -34,7 +35,7 @@ public:
     typedef std::vector<GeometryElement::ptr> GeometryArray;
     typedef std::pair<GeometryArray::iterator, GeometryArray::iterator > GeometryIteratorPair;
 
-    Tile(const std::string& path);
+    Tile(const std::string& path, const TransparentColour& c);
 
     id_type get_id() const { return id_; }
 
@@ -69,7 +70,7 @@ private:
     int channels_;
     std::vector<unsigned char> data_;
 
-    void load_tile(const std::string& path);
+    void load_tile(const std::string& path, const TransparentColour& c);
 
     Tile::id_type id_;
 

@@ -35,7 +35,9 @@ void EditorView::do_init()
 {
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LEQUAL);
-    glClearColor( 0.7, 0.7, 0.8, 1.0);
+    glAlphaFunc(GL_GREATER, 0.1f);
+    glEnable(GL_ALPHA_TEST);
+    glClearColor( 0.7, 0.7, 0.8, 0.5);
 }
 
 /** @brief do_render
@@ -47,6 +49,7 @@ void EditorView::do_render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
 
     float ytrans = 0.0f;
     float xtrans = 0.0f;

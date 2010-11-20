@@ -26,8 +26,8 @@
 #define UI_FILE "ui/main_window.glade"
 
 MainWindow::MainWindow():
-gtk_window_(NULL),
-gtk_add_tile_button_(NULL) {
+    gtk_window_(NULL),
+    gtk_add_tile_button_(NULL) {
     create_widgets();
     connect_signals();
 }
@@ -74,8 +74,11 @@ void MainWindow::on_new_level_activate() {
     if(result == Gtk::RESPONSE_OK) {
         std::string level_name = dialog->get_level_name();
         std::string tileset_path = dialog->get_tileset_path();
+        uint8_t r, g, b;
+        dialog->get_transparent_colour(r, g, b);
 
-        tileset_ = Tileset::load_from_directory(tileset_path);
+        tileset_ = Tileset::load_from_directory(tileset_path, TransparentColour(r, g, b));
+
         selector_->set_tileset(tileset_.get());
         level_.reset(new Level(tileset_.get()));
         level_->set_level_size(dialog->get_level_size());
@@ -84,8 +87,8 @@ void MainWindow::on_new_level_activate() {
     }
 }
 
-void MainWindow::on_save_level_activate()
-{
+void MainWindow::on_save_level_activate() {
+
 }
 
 /** @brief connect_signals
@@ -112,7 +115,6 @@ void MainWindow::on_add_tile_clicked()
         return;
     }
 
-    //FIXME: Get active layer from the layer manager
-    level_->get_layer_at(0)->spawn_tile_instance(selector_->get_active_tile_id());
+    level_->get_active_layer()->spawn_tile_instance(selector_->get_active_tile_id());
 }
 

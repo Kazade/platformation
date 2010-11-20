@@ -52,7 +52,7 @@ void OpenGLTileSelector::do_resize(int width, int height)
     float ratio = h / w;
     h = 2.0f * tile_size * ratio;
 
-    glOrtho(-tile_size, tile_size, -h, 0.0f, -1.0f, 1.0f);
+    glOrtho(-tile_size, tile_size, -h, 0.0f, 0.0f, 10.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -64,7 +64,7 @@ void OpenGLTileSelector::do_resize(int width, int height)
   */
 void OpenGLTileSelector::do_render()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
     if(!tileset_) {
@@ -72,13 +72,15 @@ void OpenGLTileSelector::do_render()
     }
 
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     float ytrans = 0.0f;
     if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
         ytrans = scr->get_vadjustment()->get_value();
     }
 
-    glTranslatef(0.0f, ytrans, 0.0f);
+    glTranslatef(0.0f, ytrans, -5.0f);
 
     for(int i = 0; i < tileset_->get_tile_count(); ++i) {
         Tile* t = tileset_->get_tile_at(i);
@@ -87,7 +89,7 @@ void OpenGLTileSelector::do_render()
 
         if(active_tile_ == t->get_id()) {
             glPushMatrix();
-            glTranslatef(0.0f, 0.0f, -0.1f);
+            glTranslatef(0.0f, 0.0f, 0.1f);
             glLineWidth(2);
             glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_POLYGON_BIT);
                 glColor3f(1.0f, 0.0f, 0.0f);

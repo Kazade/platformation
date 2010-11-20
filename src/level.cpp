@@ -123,7 +123,7 @@ Layer* Level::create_new_layer() {
 }
 
 void Level::destroy_layer(Layer* layer) {
-    rDebug("Destroying layer %x", layer);
+    rDebug("Destroying layer %p", layer);
 
     if(!layer) {
         return;

@@ -1,16 +1,16 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -31,7 +31,7 @@ void OpenGLWidget::initialize_context()
     assert(widget_);
 
     Glib::RefPtr<Gdk::GL::Config> gl_config;
-    gl_config = Gdk::GL::Config::create(Gdk::GL::MODE_RGB | Gdk::GL::MODE_DEPTH  | Gdk::GL::MODE_DOUBLE);
+    gl_config = Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_ALPHA | Gdk::GL::MODE_DEPTH  | Gdk::GL::MODE_DOUBLE);
 
     assert(gl_config);
 

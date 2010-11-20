@@ -1,16 +1,16 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -34,6 +34,7 @@ public:
     const std::string& get_level_name() const;
     const std::string& get_tileset_path() const;
     const std::pair<int, int> get_level_size() const;
+    const void get_transparent_colour(uint8_t& r, uint8_t& g, uint8_t& b);
 
     void on_browse_directory_clicked();
     void on_entry_changed();
@@ -57,6 +58,8 @@ private:
     Gtk::Button* gtk_browse_directory_;
     Gtk::Button* gtk_ok_button_;
     Gtk::ComboBox* gtk_level_size_;
+    Gtk::ColorButton* gtk_transparent_colour_button_;
+
     Glib::RefPtr<Gtk::ListStore> level_size_model_;
     //Gtk::TextEntry* gtk_level_name_;
 };

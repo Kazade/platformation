@@ -1,16 +1,16 @@
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -30,9 +30,9 @@ namespace bfs = boost::filesystem;
   *
   * @todo: document this function
   */
-Tile::Tile(const std::string& path):
+Tile::Tile(const std::string& path, const TransparentColour& c):
 path_(path) {
-    load_tile(path);
+    load_tile(path, c);
     id_ = next_id();
 }
 
@@ -40,12 +40,13 @@ std::string Tile::get_name() const {
     return bfs::path(path_).leaf();
 }
 
-void Tile::load_tile(const std::string& path) {
+void Tile::load_tile(const std::string& path, const TransparentColour& c) {
     unsigned char* data = SOIL_load_image(path.c_str(), &width_, &height_, &channels_, SOIL_LOAD_AUTO);
 
     assert(data);
+    assert(channels_ == 4 || channels_ == 3); //FIXME: Handle if this is not the case
 
-    data_ = std::vector<unsigned char>(data, data + (width_ * height_ * channels_));
+    data_ = std::vector<uint8_t>(data, data + (width_ * height_ * channels_));
 
     //SOIL loads images upside-down this loop will flip it the right way
     for(int32_t j = 0; j * 2 < height_; ++j)
@@ -63,6 +64,26 @@ void Tile::load_tile(const std::string& path) {
     }
 
     SOIL_free_image_data(data);
+
+    std::vector<uint8_t> new_data;
+
+    //Now, we convert to 4 channels if there are 3 and set the alpha to the transparent colour
+    for(int i = 0; i < width_ * height_; ++i) {
+        uint8_t r = data_[i * channels_];
+        uint8_t g = data_[(i * channels_) + 1];
+        uint8_t b = data_[(i * channels_) + 2];
+        uint8_t a = 255;
+        if(r == c.r && g == c.g && b == c.b) {
+            a = 0;
+        }
+
+        new_data.push_back(r);
+        new_data.push_back(g);
+        new_data.push_back(b);
+        new_data.push_back(a);
+    }
+    data_ = new_data;
+    channels_ = 4;
 }
 
 /** @brief get_height

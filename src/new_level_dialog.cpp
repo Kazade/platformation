@@ -40,11 +40,13 @@ gtk_level_size_(NULL) {
     builder->get_widget("browse_directory", gtk_browse_directory_);
     builder->get_widget("level_name", gtk_level_name_);
     builder->get_widget("level_size_box", gtk_level_size_);
+    builder->get_widget("transparent_colour_button", gtk_transparent_colour_button_);
 
     assert(dialog_);
     assert(gtk_browse_directory_);
     assert(gtk_level_name_);
     assert(gtk_level_size_);
+    assert(gtk_transparent_colour_button_);
 
     gtk_browse_directory_->signal_clicked().connect(sigc::mem_fun(this, &NewLevelDialog::on_browse_directory_clicked));
 
@@ -144,4 +146,11 @@ const std::pair<int, int> NewLevelDialog::get_level_size() const
 {
     return chosen_level_size_;
 }
+
+const void NewLevelDialog::get_transparent_colour(uint8_t& r, uint8_t& g, uint8_t& b) {
+    r = gtk_transparent_colour_button_->get_color().get_red();
+    g = gtk_transparent_colour_button_->get_color().get_green();
+    b = gtk_transparent_colour_button_->get_color().get_blue();
+}
+
 
