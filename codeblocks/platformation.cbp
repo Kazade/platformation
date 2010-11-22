@@ -54,7 +54,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../src/clutter_helper.h" />
 		<Unit filename="../src/editor_view.cpp" />
 		<Unit filename="../src/editor_view.h" />
 		<Unit filename="../src/geometry_element.cpp" />
@@ -91,6 +90,7 @@
 		<Unit filename="../src/tile_selector.h" />
 		<Unit filename="../src/tileset.cpp" />
 		<Unit filename="../src/tileset.h" />
+		<Unit filename="../src/transparent_colour.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

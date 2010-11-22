@@ -19,6 +19,7 @@
 #include <cassert>
 #include <boost/bind.hpp>
 #include <iostream>
+#include <rlog/rlog.h>
 
 #include "main_window.h"
 #include "new_level_dialog.h"
@@ -72,6 +73,8 @@ void MainWindow::on_new_level_activate() {
     int result = dialog->run_dialog(gtk_window_);
 
     if(result == Gtk::RESPONSE_OK) {
+        rDebug("Creating a new level");
+
         std::string level_name = dialog->get_level_name();
         std::string tileset_path = dialog->get_tileset_path();
         uint8_t r, g, b;
@@ -88,7 +91,29 @@ void MainWindow::on_new_level_activate() {
 }
 
 void MainWindow::on_save_level_activate() {
+    if(!level_) {
+        rWarning("Tried to save when there is no level");
+        return;
+    }
 
+    Gtk::FileChooserDialog dialog("Please choose a filename", Gtk::FILE_CHOOSER_ACTION_SAVE);
+
+    dialog.set_transient_for(get_window_ref());
+
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+
+    Gtk::FileFilter filter_text;
+    filter_text.set_name("Platformation files (*.plfn)");
+    filter_text.add_pattern("*.plfn");
+    dialog.add_filter(filter_text);
+
+    int result = dialog.run();
+
+    if(result == Gtk::RESPONSE_OK) {
+        rDebug("Saving level");
+        level_->save(dialog.get_filename()); //TODO: Handle errors
+    }
 }
 
 /** @brief connect_signals
