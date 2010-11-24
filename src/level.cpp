@@ -21,6 +21,7 @@
 #include <tinyxml.h>
 
 #include "level.h"
+#include "tileset.h"
 
 /** @brief load
   *
@@ -41,6 +42,13 @@ bool Level::save(const std::string& filename) const
     TiXmlDocument doc;
 	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
 	doc.LinkEndChild(decl);
+
+    TiXmlElement* root = new TiXmlElement("level");
+    doc.LinkEndChild(root);
+
+    TiXmlElement* tileset = new TiXmlElement("tileset");
+    tileset->SetAttribute("path", tileset_->get_path());
+    root->LinkEndChild(tileset);
 
     doc.SaveFile(filename.c_str());
     return true;

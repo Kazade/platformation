@@ -44,13 +44,18 @@ public:
         return std::make_pair(tiles_.begin(), tiles_.end());
     }
 
+    Tileset(const std::string& path);
+
     void sort_tiles();
     void set_transparent_colour(const TransparentColour& c);
+
+    std::string get_path() const { return path_; }
 private:
     void add_tile(const std::string& path);
 
     TileArray tiles_;
     TransparentColour transparent_colour_;
+    std::string path_;
 };
 
 #endif // TILESET_H_INCLUDED
