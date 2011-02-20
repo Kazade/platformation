@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
+SET(CMAKE_VERBOSE_MAKEFILE ON)   
+
 project(Platformation)
 
 find_package(PkgConfig)
@@ -17,20 +19,9 @@ IF(LIBGLADEMM_FOUND)
     include_directories(${LIBGLADEMM_INCLUDE_DIRS})
 ENDIF(LIBGLADEMM_FOUND)
 
-pkg_check_modules(CLUTTER REQUIRED clutter-1.0)
-IF(CLUTTER_FOUND)
-    link_directories(${CLUTTER_LIBRARY_DIRS})
-    include_directories(${CLUTTER_INCLUDE_DIRS})
-ENDIF(CLUTTER_FOUND)
-
-pkg_check_modules(CLUTTERGTK REQUIRED clutter-gtk-0.10)
-IF(CLUTTERGTK_FOUND)
-    link_directories(${CLUTTERGTK_LIBRARY_DIRS})
-    include_directories(${CLUTTERGTK_INCLUDE_DIRS})
-ENDIF(CLUTTERGTK_FOUND)
-
 pkg_check_modules(GTKGLEXTMM REQUIRED gtkglextmm-1.2)
 IF(GTKGLEXTMM_FOUND)
+    message(STATUS ${GTKGLEXTMM_CFLAGS})
     link_directories(${GTKGLEXTMM_LIBRARY_DIRS})
     include_directories(${GTKGLEXTMM_INCLUDE_DIRS})
 ENDIF(GTKGLEXTMM_FOUND)

@@ -203,6 +203,7 @@ void EditorView::do_button_press(GdkEventButton* event)
     }
 
     if(event->button == 1) {
+        //Select the tile instance under the cursor
         MakeCurrent context(this);
         if(!context.ok) {
             return;
@@ -225,7 +226,10 @@ void EditorView::do_button_press(GdkEventButton* event)
             active_object_ = NULL;
             active_timer_.reset();
         }
+
     } else if (event->button == 2 && tile_selector_) {
+        //Spawn a new tile instance
+
         Layer* layer = level_->get_active_layer();
         Tile::id_type id = tile_selector_->get_active_tile_id();
         if(id != -1) {
@@ -238,6 +242,7 @@ void EditorView::do_button_press(GdkEventButton* event)
             }
         }
     } else if (event->button == 3) {
+        //Delete the instance under the cursor
         MakeCurrent context(this);
         if(!context.ok) {
             return;

@@ -32,7 +32,6 @@ int main(int argc, char* argv[]) {
     std_log->subscribeTo(RLOG_CHANNEL(""));
 
     g_thread_init (NULL);
-    clutter_init (&argc, &argv);
 
     Gtk::Main kit(argc, argv);
     Gtk::GL::init(argc, argv);

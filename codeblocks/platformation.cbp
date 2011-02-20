@@ -4,6 +4,7 @@
 	<Project>
 		<Option title="Platformation" />
 		<Option makefile_is_custom="1" />
+		<Option execution_dir="../codeblocks" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<MakeCommands>
@@ -24,12 +25,12 @@
 					<Add option="-g" />
 				</Compiler>
 				<ExtraCommands>
-					<Add before="cmake -DCMAKE_BUILD_TYPE=Debug .." />
+					<Add before="cmake .. -DCMAKE_BUILD_TYPE=Debug" />
 				</ExtraCommands>
 				<MakeCommands>
-					<Build command="$make -f $makefile" />
-					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
+					<Build command="$make -f $makefile VERBOSE=1" />
+					<CompileFile command="$make -f $makefile $file VERBOSE=1" />
+					<Clean command="$make -f $makefile clean VERBOSE=1" />
 					<DistClean command="$make -f $makefile distclean$target" />
 					<AskRebuildNeeded command="$make -q -f $makefile" />
 					<SilentBuild command="$make -s -f $makefile" />

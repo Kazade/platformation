@@ -32,7 +32,10 @@ level_(NULL) {
     tree_model_ = Gtk::TreeStore::create(columns_);
     view_->set_model(tree_model_);
     view_->append_column("Name", columns_.column_name_);
-    view_->signal_row_activated().connect(sigc::mem_fun(*this, &LayerManager::on_layer_manager_row_activate));
+
+    Glib::RefPtr<Gtk::TreeSelection> selection = view_->get_selection();
+    selection->set_mode (Gtk::SELECTION_SINGLE);
+    selection->signal_changed().connect(sigc::mem_fun(*this, &LayerManager::on_layer_manager_row_activate));
 
     assert(add_layer_button);
     assert(delete_layer_button);
@@ -84,12 +87,13 @@ void LayerManager::update_list_view() {
     }
 }
 
-void LayerManager::on_layer_manager_row_activate(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn*) {
+void LayerManager::on_layer_manager_row_activate() {
     if(!level_) {
         return;
     }
 
-    Gtk::TreeModel::iterator iter = tree_model_->get_iter(path);
+    Glib::RefPtr<Gtk::TreeSelection> selection = view_->get_selection();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     if(iter) {
         Gtk::TreeModel::Row row = *iter;
         uint32_t active_layer = row[columns_.column_id_];

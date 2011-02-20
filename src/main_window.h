@@ -1,3 +1,6 @@
+#ifndef HEADER_DF63FFB8B9673A8D
+#define HEADER_DF63FFB8B9673A8D
+
 /***********************************************************************************
 *
 *  This program is free software; you can redistribute it and/or modify
@@ -21,7 +24,6 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <clutter/clutter.h>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
@@ -67,3 +69,5 @@ private:
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED
+
+#endif // header guard 
