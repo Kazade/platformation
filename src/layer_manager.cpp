@@ -34,6 +34,8 @@ level_(NULL) {
     view_->append_column("Name", columns_.column_name_);
     view_->append_column("Active?", columns_.checked_);
 
+    view_->signal_button_press_event().connect(sigc::mem_fun(*this, &LayerManager::on_layer_popup), false);
+
     Glib::RefPtr<Gtk::TreeSelection> selection = view_->get_selection();
     selection->set_mode (Gtk::SELECTION_SINGLE);
     selection->signal_changed().connect(sigc::mem_fun(*this, &LayerManager::on_layer_manager_row_activate));
@@ -43,6 +45,32 @@ level_(NULL) {
 
     add_layer_button->signal_clicked().connect(sigc::mem_fun(*this, &LayerManager::on_add_layer_clicked));
     delete_layer_button->signal_clicked().connect(sigc::mem_fun(*this, &LayerManager::on_delete_layer_clicked));
+
+    gtk_layer_menu_ = manage(new Gtk::Menu());
+    gtk_rename_menu_item_ = manage(new Gtk::MenuItem("Rename..."));
+    gtk_move_down_menu_item_ = manage(new Gtk::MenuItem("Lower"));
+    gtk_move_up_menu_item_ = manage(new Gtk::MenuItem("Raise"));
+
+    gtk_rename_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_rename));
+    //TODO: Connect the other menu signals
+
+    gtk_layer_menu_->add(*gtk_rename_menu_item_);
+    gtk_layer_menu_->add(*gtk_move_down_menu_item_);
+    gtk_layer_menu_->add(*gtk_move_up_menu_item_);
+    gtk_layer_menu_->show_all();
+}
+
+bool LayerManager::on_layer_popup(GdkEventButton* event) {
+    if(event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        gtk_layer_menu_->popup(event->button, event->time);
+        return true;
+    }
+
+    return false;
+}
+
+void LayerManager::on_layer_rename() {
+    //TODO: display a layer rename dialog
 }
 
 void LayerManager::on_layer_created(Layer* layer) {

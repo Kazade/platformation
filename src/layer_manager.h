@@ -49,10 +49,19 @@ public:
     void on_delete_layer_clicked();
 
     Layer* get_active_layer();
+
+    void on_layer_rename();
+    bool on_layer_popup(GdkEventButton* event);
+
 private:
     Gtk::TreeView* view_;
     Gtk::Button* add_button_;
     Gtk::Button* delete_button_;
+
+    Gtk::Menu* gtk_layer_menu_;
+    Gtk::MenuItem* gtk_rename_menu_item_;
+    Gtk::MenuItem* gtk_move_up_menu_item_;
+    Gtk::MenuItem* gtk_move_down_menu_item_;
 
     Glib::RefPtr<Gtk::TreeStore> tree_model_;
 
