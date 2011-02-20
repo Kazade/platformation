@@ -48,8 +48,8 @@ private:
     Gtk::Window* gtk_window_;
 
     Gtk::VBox* gtk_tile_vbox_;
-    Gtk::MenuItem* gtk_new_level_item_;
-    Gtk::MenuItem* gtk_save_level_item_;
+    Gtk::ToolButton* gtk_new_toolbutton_;
+    Gtk::ToolButton* gtk_save_toolbutton_;
 
     Gtk::Button* gtk_add_tile_button_;
     Gtk::Button* gtk_add_layer_button_;
@@ -70,4 +70,4 @@ private:
 
 #endif // MAIN_WINDOW_H_INCLUDED
 
-#endif // header guard 
+#endif // header guard

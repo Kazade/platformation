@@ -110,8 +110,8 @@ bool OpenGLTileSelector::initialize()
 {
     picker_.reset(new OpenGLPicker<Tile::ptr>());
 
-    gtk_tile_edit_menu_ = new Gtk::Menu();
-    gtk_edit_tile_item_ = new Gtk::MenuItem("Edit");
+    gtk_tile_edit_menu_ = manage(new Gtk::Menu());
+    gtk_edit_tile_item_ = manage(new Gtk::MenuItem("Edit"));
     gtk_edit_tile_item_->signal_activate().connect(sigc::mem_fun(this, &OpenGLTileSelector::on_tile_edit));
 
     gtk_tile_edit_menu_->add(*gtk_edit_tile_item_);

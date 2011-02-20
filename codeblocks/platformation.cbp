@@ -3,7 +3,6 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="Platformation" />
-		<Option makefile_is_custom="1" />
 		<Option execution_dir="../codeblocks" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -54,7 +53,16 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="`pkg-config gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog --cflags`" />
 		</Compiler>
+		<Linker>
+			<Add option="`pkg-config gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog --libs`" />
+			<Add library="boost_system" />
+			<Add library="boost_filesystem" />
+			<Add library="boost_signals" />
+			<Add library="SOIL" />
+			<Add library="tinyxml" />
+		</Linker>
 		<Unit filename="../src/editor_view.cpp" />
 		<Unit filename="../src/editor_view.h" />
 		<Unit filename="../src/geometry_element.cpp" />
@@ -87,8 +95,6 @@
 		<Unit filename="../src/tile.h" />
 		<Unit filename="../src/tile_instance.cpp" />
 		<Unit filename="../src/tile_instance.h" />
-		<Unit filename="../src/tile_selector.cpp" />
-		<Unit filename="../src/tile_selector.h" />
 		<Unit filename="../src/tileset.cpp" />
 		<Unit filename="../src/tileset.h" />
 		<Unit filename="../src/transparent_colour.h" />

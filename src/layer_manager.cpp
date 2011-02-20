@@ -86,6 +86,7 @@ void LayerManager::update_list_view() {
         row[columns_.column_id_] = i;
         row[columns_.column_name_] = l->get_name();
 
+        //If this is the active layer, display a tick next to it
         if(l == level_->get_active_layer()) {
             row[columns_.checked_] = view_->render_icon(Gtk::Stock::YES, Gtk::ICON_SIZE_MENU);
         } else {
@@ -108,6 +109,10 @@ void LayerManager::on_layer_manager_row_activate() {
         level_->set_active_layer(active_layer);
     }
 
+    /*
+        Go through the rows of the tree view, set the active one to have a checkmark, and the inactive
+        ones to have no image
+    */
     for(Gtk::TreeModel::iterator it = tree_model_->children().begin(); it != tree_model_->children().end(); ++it) {
         Gtk::TreeModel::Row row = *it;
         if(row[columns_.column_id_] != (*iter)[columns_.column_id_]) {

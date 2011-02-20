@@ -40,8 +40,8 @@ void MainWindow::create_widgets() {
     builder->add_from_file(UI_FILE);
     builder->get_widget("main_window", gtk_window_);
     builder->get_widget("tile_selector_canvas", gtk_tile_selector_canvas_);
-    builder->get_widget("new_level_item", gtk_new_level_item_);
-    builder->get_widget("save_level_item", gtk_save_level_item_);
+    builder->get_widget("new_toolbutton", gtk_new_toolbutton_);
+    builder->get_widget("save_toolbutton", gtk_save_toolbutton_);
 
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
     builder->get_widget("canvas", gtk_canvas_);
@@ -121,12 +121,11 @@ void MainWindow::on_save_level_activate() {
   * @todo: document this function
   */
 void MainWindow::connect_signals() {
-    assert(gtk_new_level_item_);
-    assert(gtk_add_tile_button_);
+    assert(gtk_new_toolbutton_);
+    assert(gtk_save_toolbutton_);
 
-    gtk_new_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_new_level_activate));
-    gtk_save_level_item_->signal_activate().connect(sigc::mem_fun(this, &MainWindow::on_save_level_activate));
-
+    gtk_new_toolbutton_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_new_level_activate));
+    gtk_save_toolbutton_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_save_level_activate));
     gtk_add_tile_button_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_add_tile_clicked));
 }
 
