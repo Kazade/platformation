@@ -57,9 +57,10 @@ private:
     Glib::RefPtr<Gtk::TreeStore> tree_model_;
 
     struct ModelColumns : public Gtk::TreeModel::ColumnRecord {
-        ModelColumns() { add(column_id_); add(column_name_); }
+        ModelColumns() { add(column_id_); add(column_name_); add(checked_); }
         Gtk::TreeModelColumn<int> column_id_;
         Gtk::TreeModelColumn<Glib::ustring> column_name_;
+        Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > checked_;
     };
     ModelColumns columns_;
 
@@ -70,4 +71,4 @@ private:
 
 #endif // LAYER_MANAGER_H_INCLUDED
 
-#endif // header guard 
+#endif // header guard

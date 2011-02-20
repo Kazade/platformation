@@ -32,6 +32,7 @@ level_(NULL) {
     tree_model_ = Gtk::TreeStore::create(columns_);
     view_->set_model(tree_model_);
     view_->append_column("Name", columns_.column_name_);
+    view_->append_column("Active?", columns_.checked_);
 
     Glib::RefPtr<Gtk::TreeSelection> selection = view_->get_selection();
     selection->set_mode (Gtk::SELECTION_SINGLE);
@@ -84,6 +85,12 @@ void LayerManager::update_list_view() {
         Gtk::TreeModel::Row row = *(tree_model_->append());
         row[columns_.column_id_] = i;
         row[columns_.column_name_] = l->get_name();
+
+        if(l == level_->get_active_layer()) {
+            row[columns_.checked_] = view_->render_icon(Gtk::Stock::YES, Gtk::ICON_SIZE_MENU);
+        } else {
+            row[columns_.checked_] = Glib::RefPtr<Gdk::Pixbuf>();
+        }
     }
 }
 
@@ -94,10 +101,20 @@ void LayerManager::on_layer_manager_row_activate() {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = view_->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
+
     if(iter) {
         Gtk::TreeModel::Row row = *iter;
         uint32_t active_layer = row[columns_.column_id_];
         level_->set_active_layer(active_layer);
+    }
+
+    for(Gtk::TreeModel::iterator it = tree_model_->children().begin(); it != tree_model_->children().end(); ++it) {
+        Gtk::TreeModel::Row row = *it;
+        if(row[columns_.column_id_] != (*iter)[columns_.column_id_]) {
+            row[columns_.checked_] = Glib::RefPtr<Gdk::Pixbuf>();
+        } else {
+            row[columns_.checked_] = view_->render_icon(Gtk::Stock::YES, Gtk::ICON_SIZE_MENU);
+        }
     }
 }
 
