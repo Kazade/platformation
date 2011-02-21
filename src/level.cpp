@@ -126,7 +126,8 @@ Layer* Level::create_new_layer() {
     active_layer_ = layers_.size() - 1;
 
     //Call signal
-    layer_created_(new_layer.get());
+    signal_layer_created_(new_layer.get());
+    signal_changed_();
     return new_layer.get();
 }
 
@@ -161,7 +162,8 @@ void Level::destroy_layer(Layer* layer) {
         rDebug("New layer created, final one was destroyed");
     }
 
-    layer_destroyed_(NULL); //FIXME: Argument is useless
+    signal_changed_();
+    signal_layer_destroyed_(NULL); //FIXME: Argument is useless
 }
 
 uint32_t Level::get_layer_count() const {

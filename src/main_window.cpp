@@ -61,6 +61,15 @@ void MainWindow::create_widgets() {
 
     gtk_window_->show_all();
     set_side_panel_visible(false);
+    gtk_save_toolbutton_->set_sensitive(false);
+}
+
+void MainWindow::on_level_changed() {
+    gtk_save_toolbutton_->set_sensitive(true);
+}
+
+void MainWindow::on_level_saved() {
+    gtk_save_toolbutton_->set_sensitive(false);
 }
 
 /** @brief on_new_level
@@ -87,6 +96,18 @@ void MainWindow::on_new_level_activate() {
         selector_->set_tileset(tileset_.get());
         level_.reset(new Level(tileset_.get()));
         level_->set_level_size(dialog->get_level_size());
+
+        if(level_changed_connection_.connected()) {
+            level_changed_connection_.disconnect();
+        }
+
+        if(level_saved_connection_.connected()) {
+            level_saved_connection_.disconnect();
+        }
+
+        level_changed_connection_ = level_->signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_level_changed));
+        level_saved_connection_ = level_->signal_saved().connect(sigc::mem_fun(this, &MainWindow::on_level_saved));
+
         editor_view_->set_level(level_.get());
         layer_manager_->set_level(level_.get());
         set_side_panel_visible(true);

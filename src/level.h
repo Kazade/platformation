@@ -1,3 +1,6 @@
+#ifndef HEADER_14EA6F342AC2C52C
+#define HEADER_14EA6F342AC2C52C
+
 /***********************************************************************************
 *
 *  This program is free software; you can redistribute it and/or modify
@@ -18,12 +21,14 @@
 
 #ifndef LEVEL_H_INCLUDED
 #define LEVEL_H_INCLUDED
+#include <cstdint>
 
 #include <vector>
 #include <utility>
 #include <list>
 #include <boost/shared_ptr.hpp>
-#include <boost/signals.hpp>
+
+#include <sigc++/sigc++.h>
 
 #include "layer.h"
 #include "tile_instance.h"
@@ -39,8 +44,8 @@ public:
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
-    typedef boost::signal<void (Layer*)> LayerCreatedSignal;
-    typedef boost::signal<void (Layer*)> LayerDestroyedSignal;
+    //typedef boost::signal<void (Layer*)> LayerCreatedSignal;
+   // typedef boost::signal<void (Layer*)> LayerDestroyedSignal;
 
     Level(Tileset* tileset);
 
@@ -75,6 +80,8 @@ public:
     }*/
 
     void set_level_size(const std::pair<int, int> level_size) {
+        signal_changed_();
+
         level_size_ = level_size;
     }
 
@@ -82,10 +89,17 @@ public:
         return level_size_;
     }
 
-    LayerCreatedSignal& layer_created() { return layer_created_; }
-    LayerDestroyedSignal& layer_destroyed() { return layer_destroyed_; }
+    sigc::signal<void, Layer*>& layer_created() { return signal_layer_created_; }
+    sigc::signal<void, Layer*>& layer_destroyed() { return signal_layer_destroyed_; }
+    sigc::signal<void>& signal_changed() { return signal_changed_; }
+    sigc::signal<void>& signal_saved() { return signal_saved_; }
 
 private:
+    sigc::signal<void> signal_changed_;
+    sigc::signal<void> signal_saved_;
+    sigc::signal<void, Layer*> signal_layer_created_;
+    sigc::signal<void, Layer*> signal_layer_destroyed_;
+
     typedef std::vector<Layer::ptr> LayerArray;
     LayerArray layers_;
 
@@ -93,12 +107,10 @@ private:
     Tileset* tileset_;
 
     std::pair<int, int> level_size_;
-
-    LayerCreatedSignal layer_created_;
-    LayerDestroyedSignal layer_destroyed_;
-
     uint32_t active_layer_;
 };
 
 
 #endif // LEVEL_H_INCLUDED
+
+#endif // header guard

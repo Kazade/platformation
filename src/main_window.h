@@ -44,6 +44,9 @@ public:
     void on_save_level_activate();
     void on_add_tile_clicked();
 
+    void on_level_changed();
+    void on_level_saved();
+
 private:
     Gtk::Window* gtk_window_;
 
@@ -69,6 +72,9 @@ private:
     LayerManager::ptr layer_manager_;
 
     void set_side_panel_visible(bool v);
+
+    sigc::connection level_changed_connection_;
+    sigc::connection level_saved_connection_;
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED
