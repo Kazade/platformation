@@ -61,6 +61,7 @@ level_(NULL) {
 }
 
 bool LayerManager::on_layer_popup(GdkEventButton* event) {
+    //Popup the layer context menu if this is the right mouse button
     if(event->type == GDK_BUTTON_PRESS && event->button == 3) {
         gtk_layer_menu_->popup(event->button, event->time);
         return true;

@@ -50,6 +50,7 @@ private:
     Gtk::VBox* gtk_tile_vbox_;
     Gtk::ToolButton* gtk_new_toolbutton_;
     Gtk::ToolButton* gtk_save_toolbutton_;
+    Gtk::Alignment* gtk_side_bar_;
 
     Gtk::Button* gtk_add_tile_button_;
     Gtk::Button* gtk_add_layer_button_;
@@ -66,6 +67,8 @@ private:
     OpenGLTileSelector::ptr selector_;
     EditorView::ptr editor_view_;
     LayerManager::ptr layer_manager_;
+
+    void set_side_panel_visible(bool v);
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED

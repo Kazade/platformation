@@ -48,6 +48,7 @@ void MainWindow::create_widgets() {
     builder->get_widget("layer_tree_view", gtk_layer_view_);
     builder->get_widget("add_layer_button", gtk_add_layer_button_);
     builder->get_widget("delete_layer_button", gtk_delete_layer_button_);
+    builder->get_widget("side_bar_alignment", gtk_side_bar_);
 
     assert(gtk_canvas_);
     editor_view_.reset(new EditorView(gtk_canvas_));
@@ -59,6 +60,7 @@ void MainWindow::create_widgets() {
     layer_manager_.reset(new LayerManager(gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
 
     gtk_window_->show_all();
+    set_side_panel_visible(false);
 }
 
 /** @brief on_new_level
@@ -87,6 +89,7 @@ void MainWindow::on_new_level_activate() {
         level_->set_level_size(dialog->get_level_size());
         editor_view_->set_level(level_.get());
         layer_manager_->set_level(level_.get());
+        set_side_panel_visible(true);
     }
 }
 
@@ -114,6 +117,10 @@ void MainWindow::on_save_level_activate() {
         rDebug("Saving level");
         level_->save(dialog.get_filename()); //TODO: Handle errors
     }
+}
+
+void MainWindow::set_side_panel_visible(bool v) {
+    gtk_side_bar_->set_visible(v);
 }
 
 /** @brief connect_signals
