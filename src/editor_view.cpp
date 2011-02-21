@@ -37,7 +37,7 @@ void EditorView::do_init()
     //glDepthFunc(GL_LEQUAL);
     glAlphaFunc(GL_GREATER, 0.1f);
     glEnable(GL_ALPHA_TEST);
-    glClearColor( 0.7, 0.7, 0.8, 0.5);
+    glClearColor(0.2078, 0.494, 0.78, 0.5);
 }
 
 /** @brief do_render
@@ -60,7 +60,9 @@ void EditorView::do_render()
 
     glTranslatef(-xtrans, ytrans, 0.0f);
 
-    grid_->render();
+    if(level_) {
+        grid_->render();
+    }
 
     if(level_) {
         glEnable(GL_BLEND);
@@ -111,7 +113,7 @@ tile_selector_(NULL),
 zoom_(1.0f)
 {
     GridColour c;
-    c.r = c.b = c.g = 0.5f;
+    c.r = c.b = c.g = 1.0f;
     grid_.reset(new OpenGLGrid(1.0f, 4, c));
     picker_.reset(new OpenGLPicker<Object::ptr>());
 }

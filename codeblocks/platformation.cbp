@@ -52,6 +52,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++0x" />
 			<Add option="-Wall" />
 			<Add option="`pkg-config  --cflags gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog`" />
 		</Compiler>
