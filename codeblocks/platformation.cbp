@@ -53,10 +53,10 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="`pkg-config gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog --cflags`" />
+			<Add option="`pkg-config  --cflags gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog`" />
 		</Compiler>
 		<Linker>
-			<Add option="`pkg-config gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog --libs`" />
+			<Add option="`pkg-config --libs gtkmm-2.4 libglademm-2.4 gtkglextmm-1.2 librlog`" />
 			<Add library="boost_system" />
 			<Add library="boost_filesystem" />
 			<Add library="boost_signals" />
