@@ -1,16 +1,19 @@
+#ifndef HEADER_82F5ABE51BFF30B2
+#define HEADER_82F5ABE51BFF30B2
+
 /***********************************************************************************
 *
-*  This program is free software; you can redistribute it and/or modify 
-*  it under the terms of the GNU Lesser General Public License as published 
-*  by the Free Software Foundation; either version 3 of the License, or (at 
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU Lesser General Public License as published
+*  by the Free Software Foundation; either version 3 of the License, or (at
 *  your option) any later version.
 *
-*  This program is distributed in the hope that it will be useful, but 
-*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+*  This program is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 *  License for more details.
 *
-*  You should have received a copy of the GNU Lesser General Public License 
+*  You should have received a copy of the GNU Lesser General Public License
 *  along with this program; if not, see <http://www.gnu.org/copyleft/lesser.html>.
 *
 **********************************************************************************/
@@ -28,16 +31,19 @@
 
 class Level;
 class Object;
+class MainWindow;
 
 class EditorView : public OpenGLWidget {
 public:
     typedef boost::shared_ptr<EditorView> ptr;
 
-    EditorView(Gtk::DrawingArea* widget);
+    EditorView(Gtk::DrawingArea* widget, MainWindow* parent);
 
     void set_level(Level* level);
     void set_tile_selector(OpenGLTileSelector* selector);
 private:
+    MainWindow* parent_;
+
     void do_render();
     void do_init();
     void do_resize(int width, int height);
@@ -62,3 +68,5 @@ private:
 
 
 #endif // EDITOR_VIEW_H_INCLUDED
+
+#endif // header guard

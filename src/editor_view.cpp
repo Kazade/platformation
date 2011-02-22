@@ -21,11 +21,13 @@
 
 #include <iostream>
 
+#include "main_window.h"
 #include "opengl_tile_selector.h"
 #include "tile.h"
 #include "object.h"
 #include "level.h"
 #include "editor_view.h"
+#include "actions/spawn_tile_instance_action.h"
 
 /** @brief do_init
   *
@@ -105,12 +107,13 @@ void EditorView::do_render()
   *
   * @todo: document this function
   */
-EditorView::EditorView(Gtk::DrawingArea* widget):
+EditorView::EditorView(Gtk::DrawingArea* widget, MainWindow* parent):
 OpenGLWidget(widget),
 level_(NULL),
 active_object_(NULL),
 tile_selector_(NULL),
-zoom_(1.0f)
+zoom_(1.0f),
+parent_(parent)
 {
     GridColour c;
     c.r = c.b = c.g = 1.0f;
@@ -232,16 +235,18 @@ void EditorView::do_button_press(GdkEventButton* event)
     } else if (event->button == 2 && tile_selector_) {
         //Spawn a new tile instance
 
-        Layer* layer = level_->get_active_layer();
-        Tile::id_type id = tile_selector_->get_active_tile_id();
-        if(id != -1) {
-            TileInstance* ni = layer->spawn_tile_instance(id);
-            if(ni) {
-                MakeCurrent context(this);
-                kmVec2 pos = unproject(event->x, event->y);
-                grid_->snap_to(pos.x, pos.y);
-                ni->set_position(pos.x, pos.y);
-            }
+        //Get the spawn position (where we clicked
+        MakeCurrent context(this);
+        kmVec2 pos = unproject(event->x, event->y);
+        //Snap the position to the grid
+        grid_->snap_to(pos.x, pos.y);
+
+        //Run the action, if it does anything we should get a new instance
+        SpawnTileInstanceAction::ptr action(new SpawnTileInstanceAction(level_, tile_selector_, pos.x, pos.y));
+        action->do_action();
+        TileInstance* ni = action->get_spawned_instance();
+        if(ni) {
+            parent_->get_action_manager().push_action(action); //Add to the undo queue, but only if the action did something
         }
     } else if (event->button == 3) {
         //Delete the instance under the cursor

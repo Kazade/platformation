@@ -32,6 +32,7 @@
 #include "opengl_tile_selector.h"
 #include "editor_view.h"
 #include "layer_manager.h"
+#include "action_manager.h"
 
 class MainWindow {
 public:
@@ -46,13 +47,17 @@ public:
 
     void on_level_changed();
     void on_level_saved();
+    void on_action_manager_change();
 
+    ActionManager& get_action_manager() { return action_manager_; }
 private:
     Gtk::Window* gtk_window_;
 
     Gtk::VBox* gtk_tile_vbox_;
     Gtk::ToolButton* gtk_new_toolbutton_;
     Gtk::ToolButton* gtk_save_toolbutton_;
+    Gtk::ToolButton* gtk_undo_toolbutton_;
+    Gtk::ToolButton* gtk_redo_toolbutton_;
     Gtk::Alignment* gtk_side_bar_;
 
     Gtk::Button* gtk_add_tile_button_;
@@ -75,6 +80,8 @@ private:
 
     sigc::connection level_changed_connection_;
     sigc::connection level_saved_connection_;
+
+    ActionManager action_manager_;
 };
 
 #endif // MAIN_WINDOW_H_INCLUDED

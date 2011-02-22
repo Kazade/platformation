@@ -36,10 +36,6 @@ bool TileSortPredicate(const Tile::ptr d1, const Tile::ptr d2) {
 
 void Tileset::sort_tiles() {
     std::sort(tiles_.begin(), tiles_.end(), TileSortPredicate);
-
-    for(unsigned int i = 0; i < tiles_.size(); ++i) {
-        std::cout << tiles_[i]->get_name() << std::endl;
-    }
 }
 
 Tileset::ptr Tileset::load_from_directory(const std::string& path, const TransparentColour& c) {

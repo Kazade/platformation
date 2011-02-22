@@ -42,6 +42,8 @@ void MainWindow::create_widgets() {
     builder->get_widget("tile_selector_canvas", gtk_tile_selector_canvas_);
     builder->get_widget("new_toolbutton", gtk_new_toolbutton_);
     builder->get_widget("save_toolbutton", gtk_save_toolbutton_);
+    builder->get_widget("undo_toolbutton", gtk_undo_toolbutton_);
+    builder->get_widget("redo_toolbutton", gtk_redo_toolbutton_);
 
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
     builder->get_widget("canvas", gtk_canvas_);
@@ -51,7 +53,7 @@ void MainWindow::create_widgets() {
     builder->get_widget("side_bar_alignment", gtk_side_bar_);
 
     assert(gtk_canvas_);
-    editor_view_.reset(new EditorView(gtk_canvas_));
+    editor_view_.reset(new EditorView(gtk_canvas_, this));
 
     assert(gtk_tile_selector_canvas_);
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
@@ -61,7 +63,26 @@ void MainWindow::create_widgets() {
 
     gtk_window_->show_all();
     set_side_panel_visible(false);
+
     gtk_save_toolbutton_->set_sensitive(false);
+    gtk_undo_toolbutton_->set_sensitive(false);
+    gtk_redo_toolbutton_->set_sensitive(false);
+
+    get_action_manager().signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_action_manager_change));
+}
+
+void MainWindow::on_action_manager_change() {
+    if(get_action_manager().can_redo()) {
+        gtk_redo_toolbutton_->set_sensitive(true);
+    } else {
+        gtk_redo_toolbutton_->set_sensitive(false);
+    }
+
+    if(get_action_manager().can_undo()) {
+        gtk_undo_toolbutton_->set_sensitive(true);
+    } else {
+        gtk_undo_toolbutton_->set_sensitive(false);
+    }
 }
 
 void MainWindow::on_level_changed() {

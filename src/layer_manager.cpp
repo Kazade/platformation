@@ -83,11 +83,6 @@ void LayerManager::on_layer_destroyed(Layer* layer){
 }
 
 void LayerManager::set_level(Level* level) {
-    if(level_) {
-        assert(0);
-        //FIXME: Disconnect the signals
-    }
-
     level_ = level;
 
     if(level_) {

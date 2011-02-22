@@ -64,6 +64,10 @@
 			<Add library="SOIL" />
 			<Add library="tinyxml" />
 		</Linker>
+		<Unit filename="../src/action_manager.h" />
+		<Unit filename="../src/actions/action.h" />
+		<Unit filename="../src/actions/spawn_tile_instance_action.cpp" />
+		<Unit filename="../src/actions/spawn_tile_instance_action.h" />
 		<Unit filename="../src/editor_view.cpp" />
 		<Unit filename="../src/editor_view.h" />
 		<Unit filename="../src/geometry_element.cpp" />
