@@ -13,6 +13,15 @@ private:
 public:
     void push_action(Action::ptr action) {
         undo_stack_.push(action);
+
+        if(can_redo()) {
+            //If we have just pushed a new action, but we have stuff in the redo
+            //stack, we need to clear it, otherwise the redos won't make sense
+            while(!redo_stack_.empty()) {
+                redo_stack_.pop();
+            }
+        }
+
         signal_changed_();
     }
 

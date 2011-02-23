@@ -49,6 +49,9 @@ public:
     void on_level_saved();
     void on_action_manager_change();
 
+    void on_undo();
+    void on_redo();
+
     ActionManager& get_action_manager() { return action_manager_; }
 private:
     Gtk::Window* gtk_window_;

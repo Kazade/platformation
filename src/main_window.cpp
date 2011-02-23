@@ -68,7 +68,17 @@ void MainWindow::create_widgets() {
     gtk_undo_toolbutton_->set_sensitive(false);
     gtk_redo_toolbutton_->set_sensitive(false);
 
+    gtk_undo_toolbutton_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_undo));
+    gtk_redo_toolbutton_->signal_clicked().connect(sigc::mem_fun(this, &MainWindow::on_redo));
     get_action_manager().signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_action_manager_change));
+}
+
+void MainWindow::on_undo() {
+    get_action_manager().undo();
+}
+
+void MainWindow::on_redo() {
+    get_action_manager().redo();
 }
 
 void MainWindow::on_action_manager_change() {

@@ -19,6 +19,7 @@
 #include <cassert>
 #include <rlog/rlog.h>
 #include <tinyxml.h>
+#include <boost/lexical_cast.hpp>
 
 #include "level.h"
 #include "tileset.h"
@@ -119,9 +120,19 @@ active_layer_(0)
 }*/
 
 Layer* Level::create_new_layer() {
+    static int layer_counter = 0;
+
     rDebug("Creating a new layer");
 
     Layer::ptr new_layer(new Layer(tileset_));
+
+    for(LayerArray::iterator it = layers_.begin(); it != layers_.end(); ++it) {
+        if((*it)->get_name() == new_layer->get_name()) {
+            new_layer->set_name("Untitled " + boost::lexical_cast<std::string>(++layer_counter));
+            break;
+        }
+    }
+
     layers_.push_back(new_layer);
     active_layer_ = layers_.size() - 1;
 
@@ -173,4 +184,15 @@ uint32_t Level::get_layer_count() const {
 Layer* Level::get_layer_at(uint32_t i) {
     assert(i >= 0 && i < layers_.size());
     return layers_[i].get();
+}
+
+Layer* Level::get_layer_by_name(const std::string& name) {
+    for(uint32_t i = 0; i < get_layer_count(); ++i) {
+        Layer* l = get_layer_at(i);
+        if(l->get_name() == name) {
+            return l;
+        }
+    }
+
+    return NULL;
 }

@@ -2,6 +2,7 @@
 #define SPAWN_TILE_INSTANCE_ACTION_H_INCLUDED
 
 #include "action.h"
+#include "../tile.h"
 
 class OpenGLTileSelector;
 
@@ -22,6 +23,8 @@ private:
     float x_, y_;
 
     TileInstance* spawned_instance_;
+    Tile::id_type tile_id_;
+    std::string layer_name_;
 };
 
 #endif // SPAWN_TILE_INSTANCE_ACTION_H_INCLUDED
