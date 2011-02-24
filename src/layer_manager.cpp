@@ -58,6 +58,7 @@ LayerManager::LayerManager(MainWindow* parent, Gtk::TreeView* view, Gtk::Button*
     gtk_move_up_menu_item_ = manage(new Gtk::MenuItem("Raise"));
 
     gtk_rename_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_rename));
+    gtk_move_up_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_raise));
     //TODO: Connect the other menu signals
 
     gtk_layer_menu_->add(*gtk_rename_menu_item_);
@@ -74,6 +75,10 @@ bool LayerManager::on_layer_popup(GdkEventButton* event) {
     }
 
     return false;
+}
+
+void LayerManager::on_layer_raise() {
+    //TODO: Raise the layer
 }
 
 void LayerManager::on_layer_rename() {

@@ -66,6 +66,8 @@
 		</Linker>
 		<Unit filename="../src/action_manager.h" />
 		<Unit filename="../src/actions/action.h" />
+		<Unit filename="../src/actions/layer_rename_action.cpp" />
+		<Unit filename="../src/actions/layer_rename_action.h" />
 		<Unit filename="../src/actions/spawn_tile_instance_action.cpp" />
 		<Unit filename="../src/actions/spawn_tile_instance_action.h" />
 		<Unit filename="../src/editor_view.cpp" />
@@ -77,6 +79,8 @@
 		<Unit filename="../src/layer.h" />
 		<Unit filename="../src/layer_manager.cpp" />
 		<Unit filename="../src/layer_manager.h" />
+		<Unit filename="../src/layer_rename_dialog.cpp" />
+		<Unit filename="../src/layer_rename_dialog.h" />
 		<Unit filename="../src/level.cpp" />
 		<Unit filename="../src/level.h" />
 		<Unit filename="../src/main.cpp" />

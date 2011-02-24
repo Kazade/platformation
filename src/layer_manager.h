@@ -52,6 +52,8 @@ public:
     Layer* get_active_layer();
 
     void on_layer_rename();
+    void on_layer_raise();
+
     bool on_layer_popup(GdkEventButton* event);
 
     MainWindow* get_main_window() { return parent_; }
