@@ -17,18 +17,24 @@
 
 
 #include <boost/bind.hpp>
+#include <rlog/rlog.h>
 
+#include "main_window.h"
 #include "layer.h"
 #include "level.h"
 #include "layer_manager.h"
+#include "layer_rename_dialog.h"
+#include "actions/layer_rename_action.h"
 
 using boost::bind;
 
-LayerManager::LayerManager(Gtk::TreeView* view, Gtk::Button* add_layer_button, Gtk::Button* delete_layer_button):
-view_(view),
-add_button_(add_layer_button),
-delete_button_(delete_layer_button),
-level_(NULL) {
+LayerManager::LayerManager(MainWindow* parent, Gtk::TreeView* view, Gtk::Button* add_layer_button, Gtk::Button* delete_layer_button):
+    parent_(parent),
+    view_(view),
+    add_button_(add_layer_button),
+    delete_button_(delete_layer_button),
+    level_(NULL) {
+
     tree_model_ = Gtk::TreeStore::create(columns_);
     view_->set_model(tree_model_);
     view_->append_column("Name", columns_.column_name_);
@@ -71,11 +77,29 @@ bool LayerManager::on_layer_popup(GdkEventButton* event) {
 }
 
 void LayerManager::on_layer_rename() {
-    //TODO: display a layer rename dialog
+    LayerRenameDialog::ptr dialog(new LayerRenameDialog());
+    int result = dialog->run_dialog();
+
+    if(result == Gtk::RESPONSE_OK) {
+        rDebug("Renaming layer");
+
+        std::string new_name = dialog->get_layer_name();
+
+        Level* level = get_main_window()->get_level();
+        assert(level);
+
+        std::string old_name = level->get_active_layer()->get_name();
+
+        Action::ptr rename_action(new LayerRenameAction(level, old_name, new_name));
+        rename_action->do_action();
+
+        get_main_window()->get_action_manager().push_action(rename_action);
+    }
 }
 
 void LayerManager::on_layer_created(Layer* layer) {
     update_list_view();
+    layer->signal_changed().connect(sigc::mem_fun(this, &LayerManager::update_list_view));
 }
 
 void LayerManager::on_layer_destroyed(Layer* layer){

@@ -65,6 +65,7 @@ void Layer::delete_tile_instance(TileInstance* instance) {
 
 void Layer::set_name(const std::string& name) {
     name_ = name;
+    signal_changed_();
 }
 
 string Layer::get_name() const {

@@ -53,6 +53,10 @@ public:
     void on_redo();
 
     ActionManager& get_action_manager() { return action_manager_; }
+
+    Level* get_level() {
+        return level_.get();
+    }
 private:
     Gtk::Window* gtk_window_;
 

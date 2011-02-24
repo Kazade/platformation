@@ -28,6 +28,7 @@
 
 class Level;
 class Layer;
+class MainWindow;
 
 /*
     Keeps the layer list view updated and in
@@ -37,7 +38,7 @@ class LayerManager {
 public:
     typedef boost::shared_ptr<LayerManager> ptr;
 
-    LayerManager(Gtk::TreeView* view, Gtk::Button* add_layer_button, Gtk::Button* delete_layer_button);
+    LayerManager(MainWindow* parent, Gtk::TreeView* view, Gtk::Button* add_layer_button, Gtk::Button* delete_layer_button);
 
     void on_layer_created(Layer* layer);
     void on_layer_destroyed(Layer* layer);
@@ -53,7 +54,10 @@ public:
     void on_layer_rename();
     bool on_layer_popup(GdkEventButton* event);
 
+    MainWindow* get_main_window() { return parent_; }
 private:
+    MainWindow* parent_;
+
     Gtk::TreeView* view_;
     Gtk::Button* add_button_;
     Gtk::Button* delete_button_;

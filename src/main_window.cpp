@@ -59,7 +59,7 @@ void MainWindow::create_widgets() {
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
     editor_view_->set_tile_selector(selector_.get());
 
-    layer_manager_.reset(new LayerManager(gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
+    layer_manager_.reset(new LayerManager(this, gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
 
     gtk_window_->show_all();
     set_side_panel_visible(false);
