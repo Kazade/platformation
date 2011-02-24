@@ -139,6 +139,9 @@ Layer* Level::create_new_layer() {
     //Call signal
     signal_layer_created_(new_layer.get());
     signal_changed_();
+
+    //We want layer changes to trigger level changed signals
+    new_layer->signal_changed().connect(sigc::mem_fun(this, &Level::on_layer_changed));
     return new_layer.get();
 }
 

@@ -4,12 +4,20 @@
 #include <sigc++/sigc++.h>
 #include "actions/action.h"
 
+/**
+    @brief Manages the undo/redo stack
+
+    The action manager stores two stacks of actions, one for undos
+    and one for redos. If there is an action in the undo stack, and
+    it is undone, that action is then moved to the redo stack.
+*/
 class ActionManager {
 private:
     std::stack<Action::ptr> undo_stack_;
     std::stack<Action::ptr> redo_stack_;
 
     sigc::signal<void> signal_changed_;
+
 public:
     void push_action(Action::ptr action) {
         undo_stack_.push(action);
@@ -58,6 +66,7 @@ public:
         signal_changed_();
     }
 
+    //Useful for altering the undo/redo icons sensitivity
     sigc::signal<void>& signal_changed() { return signal_changed_; }
 };
 

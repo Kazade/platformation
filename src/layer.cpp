@@ -29,6 +29,9 @@ name_("Untitled") {
 TileInstance* Layer::spawn_tile_instance(int tile_id, bool select) {
     TileInstance::ptr new_tile_instance(new TileInstance(tileset_, tile_id));
     tile_instances_.push_back(new_tile_instance);
+
+    signal_changed_();
+
     return new_tile_instance.get();
 }
 
@@ -56,6 +59,8 @@ void Layer::delete_tile_instance(TileInstance* instance) {
     }
 
     tile_instances_.erase(iters.first);
+
+    signal_changed_();
 }
 
 void Layer::set_name(const std::string& name) {

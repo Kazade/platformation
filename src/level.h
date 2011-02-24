@@ -96,6 +96,8 @@ public:
     sigc::signal<void>& signal_changed() { return signal_changed_; }
     sigc::signal<void>& signal_saved() { return signal_saved_; }
 
+    //If a layer is changed, then the level is classed as altered
+    void on_layer_changed() { signal_changed_(); }
 private:
     sigc::signal<void> signal_changed_;
     sigc::signal<void> signal_saved_;
