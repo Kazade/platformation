@@ -107,6 +107,7 @@
 		<Unit filename="../src/tileset.cpp" />
 		<Unit filename="../src/tileset.h" />
 		<Unit filename="../src/transparent_colour.h" />
+		<Unit filename="../src/transparent_colour_detector.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
