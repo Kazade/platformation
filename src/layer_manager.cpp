@@ -78,7 +78,8 @@ bool LayerManager::on_layer_popup(GdkEventButton* event) {
 }
 
 void LayerManager::on_layer_raise() {
-    //TODO: Raise the layer
+    level_->raise_layer(level_->get_active_layer());
+    update_list_view();
 }
 
 void LayerManager::on_layer_rename() {
@@ -132,7 +133,7 @@ void LayerManager::update_list_view() {
 
     tree_model_->clear();
 
-    for(uint32_t i = 0; i < level_->get_layer_count(); ++i) {
+    for(int32_t i = (int32_t) level_->get_layer_count() - 1; i >= 0; --i) {
         Layer* l = level_->get_layer_at(i);
 
         Gtk::TreeModel::Row row = *(tree_model_->append());

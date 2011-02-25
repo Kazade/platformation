@@ -199,3 +199,24 @@ Layer* Level::get_layer_by_name(const std::string& name) {
 
     return NULL;
 }
+
+void Level::raise_layer(Layer* l) {
+    LayerArray::size_type i = 0;
+    for(; i < layers_.size(); ++i) {
+        Layer* rhs = layers_[i].get();
+        if(rhs == l) {
+            break;
+        }
+    }
+
+    assert(i != layers_.size());
+
+    if(i < layers_.size() - 1) {
+        rDebug("Raising layer");
+        //We can swap
+        std::swap(layers_[i], layers_[i+1]);
+        active_layer_++;
+
+        signal_changed_();
+    }
+}
