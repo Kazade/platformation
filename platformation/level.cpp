@@ -17,10 +17,10 @@
 
 
 #include <cassert>
-#include <rlog/rlog.h>
 #include <tinyxml.h>
 #include <boost/lexical_cast.hpp>
 
+#include "kazbase/logging/logging.h"
 #include "level.h"
 #include "tileset.h"
 
@@ -122,7 +122,7 @@ active_layer_(0)
 Layer* Level::create_new_layer() {
     static int layer_counter = 0;
 
-    rDebug("Creating a new layer");
+    L_DEBUG("Creating a new layer");
 
     Layer::ptr new_layer(new Layer(tileset_));
 
@@ -146,7 +146,7 @@ Layer* Level::create_new_layer() {
 }
 
 void Level::destroy_layer(Layer* layer) {
-    rDebug("Destroying layer %p", layer);
+    L_DEBUG("Destroying layer");
 
     if(!layer) {
         return;
@@ -161,19 +161,19 @@ void Level::destroy_layer(Layer* layer) {
 
     //If we couldn't find the layer, do nothing
     if(it == layers_.end()) {
-        rWarning("Couldn't find the layer to delete");
+        L_WARN("Couldn't find the layer to delete");
         return;
     }
 
     layers_.erase(it);
     active_layer_ = 0;
 
-    rDebug("Layer destroyed");
+    L_DEBUG("Layer destroyed");
 
     if(layers_.empty()) {
         //There must always be one layer, so if it's the last one create a new empty one
         create_new_layer();
-        rDebug("New layer created, final one was destroyed");
+        L_DEBUG("New layer created, final one was destroyed");
     }
 
     signal_changed_();
@@ -212,7 +212,7 @@ void Level::raise_layer(Layer* l) {
     assert(i != layers_.size());
 
     if(i < layers_.size() - 1) {
-        rDebug("Raising layer");
+        L_DEBUG("Raising layer");
         //We can swap
         std::swap(layers_[i], layers_[i+1]);
         active_layer_++;

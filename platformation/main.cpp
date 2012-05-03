@@ -19,18 +19,9 @@
 #include <gtkmm.h>
 #include <gtkglmm.h>
 
-#include <rlog/rlog.h>
-#include <rlog/StdioNode.h>
-#include <rlog/RLogChannel.h>
-
 #include "main_window.h"
 
-std::auto_ptr<rlog::StdioNode> std_log;
-
 int main(int argc, char* argv[]) {
-    std_log.reset(new rlog::StdioNode(STDOUT_FILENO));
-    std_log->subscribeTo(RLOG_CHANNEL(""));
-
     g_thread_init (NULL);
 
     Gtk::Main kit(argc, argv);

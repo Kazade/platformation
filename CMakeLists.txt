@@ -30,12 +30,6 @@ IF(GTKGLEXTMM_FOUND)
     include_directories(${GTKGLEXTMM_INCLUDE_DIRS})
 ENDIF(GTKGLEXTMM_FOUND)
 
-pkg_check_modules(RLOG REQUIRED librlog)
-IF(RLOG_FOUND)
-    link_directories(${RLOG_LIBRARY_DIRS})
-    include_directories(${RLOG_INCLUDE_DIRS})
-ENDIF(RLOG_FOUND)
-
 link_directories(${CURL_LIBRARY_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
 
@@ -69,7 +63,6 @@ target_link_libraries(
     ${Boost_SIGNALS_LIBRARY} 
     ${Boost_SYSTEM_LIBRARY} 
     ${GTKGLEXTMM_LIBRARIES} 
-    ${RLOG_LIBRARIES} 
     /usr/lib/libSOIL.a 
     /usr/lib/libtinyxml.a 
     ${CURL_LIBRARIES}

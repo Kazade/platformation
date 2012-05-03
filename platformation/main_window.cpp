@@ -19,8 +19,8 @@
 #include <cassert>
 #include <boost/bind.hpp>
 #include <iostream>
-#include <rlog/rlog.h>
 
+#include "kazbase/logging/logging.h"
 #include "main_window.h"
 #include "new_level_dialog.h"
 
@@ -117,7 +117,7 @@ void MainWindow::on_new_level_activate() {
     int result = dialog->run_dialog(gtk_window_);
 
     if(result == Gtk::RESPONSE_OK) {
-        rDebug("Creating a new level");
+        L_DEBUG("Creating a new level");
 
         std::string level_name = dialog->get_level_name();
         std::string tileset_path = dialog->get_tileset_path();
@@ -149,7 +149,7 @@ void MainWindow::on_new_level_activate() {
 
 void MainWindow::on_save_level_activate() {
     if(!level_) {
-        rWarning("Tried to save when there is no level");
+        L_WARN("Tried to save when there is no level");
         return;
     }
 
@@ -168,7 +168,7 @@ void MainWindow::on_save_level_activate() {
     int result = dialog.run();
 
     if(result == Gtk::RESPONSE_OK) {
-        rDebug("Saving level");
+        L_DEBUG("Saving level");
         level_->save(dialog.get_filename()); //TODO: Handle errors
     }
 }

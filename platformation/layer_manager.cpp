@@ -17,8 +17,8 @@
 
 
 #include <boost/bind.hpp>
-#include <rlog/rlog.h>
 
+#include "kazbase/logging/logging.h"
 #include "main_window.h"
 #include "layer.h"
 #include "level.h"
@@ -87,7 +87,7 @@ void LayerManager::on_layer_rename() {
     int result = dialog->run_dialog();
 
     if(result == Gtk::RESPONSE_OK) {
-        rDebug("Renaming layer");
+        L_DEBUG("Renaming layer");
 
         std::string new_name = dialog->get_layer_name();
 
