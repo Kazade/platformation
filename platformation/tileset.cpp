@@ -15,7 +15,7 @@
 *
 **********************************************************************************/
 
-
+#define BOOST_FILESYSTEM_VERSION 2
 #include <boost/filesystem.hpp>
 #include <iostream>
 
@@ -45,7 +45,7 @@ Tileset::ptr Tileset::load_from_directory(const std::string& path, const Transpa
     bfs::path p(path);
 
     for(bfs::directory_iterator file(path), filesEnd; file != filesEnd; ++file) {
-        if(!bfs::is_directory(*file) && bfs::extension(*file) == ".png") {
+        if(!bfs::is_directory(*file) && bfs::extension(*file) == ".png") {			
             tileset->add_tile(file->string());
         }
     }

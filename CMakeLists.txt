@@ -4,8 +4,12 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 project(Platformation)
 
+ADD_DEFINITIONS("-Wall -std=c++0x -g")
+
 find_package(PkgConfig)
-find_package(Boost COMPONENTS system filesystem signals REQUIRED)
+find_package(Boost COMPONENTS system filesystem signals thread date_time regex REQUIRED)
+
+pkg_check_modules(CURL REQUIRED libcurl)
 
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
 IF(GTKMM_FOUND)
@@ -32,24 +36,13 @@ IF(RLOG_FOUND)
     include_directories(${RLOG_INCLUDE_DIRS})
 ENDIF(RLOG_FOUND)
 
-set(sources
-    src/main.cpp
-    src/main_window.cpp
-    src/new_level_dialog.cpp
-    src/tileset.cpp
-    src/level.cpp
-    src/tile.cpp
-    src/tile_instance.cpp
-    src/opengl_widget.cpp
-    src/editor_view.cpp
-    src/opengl_grid.cpp
-    src/opengl_tile_selector.cpp
-    src/opengl_tile_editor.cpp
-    src/geometry_element.cpp
-    src/natural_sort.cpp
-    src/layer.cpp
-    src/layer_manager.cpp
-)
+link_directories(${CURL_LIBRARY_DIRS})
+include_directories(${CURL_INCLUDE_DIRS})
+
+FILE(GLOB_RECURSE sources platformation/*.cpp)
+FILE(GLOB_RECURSE kazbase kazbase/*.cpp)
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 set(headers
     src/main_window.h
@@ -66,8 +59,21 @@ set(ui_files
 )
 
 set(CMAKE_CXX_FLAGS "-Wall")
-add_executable(platformation ${sources})
-target_link_libraries(platformation ${GTKMM_LIBRARIES} ${CLUTTER_LIBRARIES} ${CLUTTERGTK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${GTKGLEXTMM_LIBRARIES} ${RLOG_LIBRARIES} /usr/lib/libSOIL.a /usr/lib/libtinyxml.a)
+add_executable(platformation ${sources} ${kazbase})
+target_link_libraries(
+    platformation 
+    ${GTKMM_LIBRARIES} 
+    ${Boost_FILESYSTEM_LIBRARY} 
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_THREAD_LIBRARY} 
+    ${Boost_SIGNALS_LIBRARY} 
+    ${Boost_SYSTEM_LIBRARY} 
+    ${GTKGLEXTMM_LIBRARIES} 
+    ${RLOG_LIBRARIES} 
+    /usr/lib/libSOIL.a 
+    /usr/lib/libtinyxml.a 
+    ${CURL_LIBRARIES}
+)
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(destination_dir ${EXECUTABLE_OUTPUT_PATH}/ui)

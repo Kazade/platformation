@@ -22,6 +22,7 @@
 #include <boost/lexical_cast.hpp>
 #include <tinyxml.h>
 
+#include "kazbase/os/path.h"
 #include "tile.h"
 
 namespace bfs = boost::filesystem;
@@ -37,7 +38,7 @@ path_(path) {
 }
 
 std::string Tile::get_name() const {
-    return bfs::path(path_).leaf();
+	return os::path::split(path_).second;
 }
 
 void Tile::load_tile(const std::string& path, const TransparentColour& c) {
