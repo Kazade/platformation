@@ -7,7 +7,7 @@ project(Platformation)
 ADD_DEFINITIONS("-Wall -std=c++0x -g")
 
 find_package(PkgConfig)
-find_package(Boost COMPONENTS system filesystem signals thread date_time regex REQUIRED)
+find_package(Boost COMPONENTS system filesystem thread date_time regex REQUIRED)
 
 pkg_check_modules(CURL REQUIRED libcurl)
 
@@ -60,7 +60,6 @@ target_link_libraries(
     ${Boost_FILESYSTEM_LIBRARY} 
     ${Boost_REGEX_LIBRARY}
     ${Boost_THREAD_LIBRARY} 
-    ${Boost_SIGNALS_LIBRARY} 
     ${Boost_SYSTEM_LIBRARY} 
     ${Boost_DATE_TIME_LIBRARY}
     ${GTKGLEXTMM_LIBRARIES} 

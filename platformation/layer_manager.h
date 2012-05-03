@@ -57,6 +57,7 @@ public:
     bool on_layer_popup(GdkEventButton* event);
 
     MainWindow* get_main_window() { return parent_; }
+    
 private:
     MainWindow* parent_;
 
