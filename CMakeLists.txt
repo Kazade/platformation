@@ -62,6 +62,7 @@ target_link_libraries(
     ${Boost_THREAD_LIBRARY} 
     ${Boost_SIGNALS_LIBRARY} 
     ${Boost_SYSTEM_LIBRARY} 
+    ${Boost_DATE_TIME_LIBRARY}
     ${GTKGLEXTMM_LIBRARIES} 
     /usr/lib/libSOIL.a 
     /usr/lib/libtinyxml.a 

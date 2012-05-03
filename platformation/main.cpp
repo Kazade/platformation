@@ -18,10 +18,12 @@
 
 #include <gtkmm.h>
 #include <gtkglmm.h>
-
+#include "kazbase/logging/logging.h"
 #include "main_window.h"
 
 int main(int argc, char* argv[]) {
+	logging::get_logger("/")->add_handler(logging::Handler::ptr(new logging::StdIOHandler));
+	
     g_thread_init (NULL);
 
     Gtk::Main kit(argc, argv);
