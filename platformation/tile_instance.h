@@ -19,8 +19,7 @@
 #ifndef TILE_INSTANCE_H_INCLUDED
 #define TILE_INSTANCE_H_INCLUDED
 
-#include <boost/shared_ptr.hpp>
-
+#include <tr1/memory>
 #include "object.h"
 
 class Tileset;
@@ -28,9 +27,9 @@ class Tile;
 
 class TileInstance : public Object {
 public:
-    typedef boost::shared_ptr<TileInstance> ptr;
+    typedef std::tr1::shared_ptr<TileInstance> ptr;
 
-    TileInstance(Tileset* tileset, int tile_id);
+    TileInstance(Tileset::ptr tileset, int tile_id);
 
     void render_geometry();
 

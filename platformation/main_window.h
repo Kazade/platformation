@@ -58,6 +58,8 @@ public:
         return level_.get();
     }
 private:
+	void create_new_level(const std::string& name, uint32_t tile_size);
+
     Gtk::Window* gtk_window_;
 
     Gtk::VBox* gtk_tile_vbox_;

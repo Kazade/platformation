@@ -33,7 +33,7 @@ enum GeometryLayer {
 
 class GeometryElement : public Object {
 public:
-    typedef boost::shared_ptr<GeometryElement> ptr;
+    typedef std::tr1::shared_ptr<GeometryElement> ptr;
     typedef std::vector<kmVec2> PointArray;
     typedef std::pair<PointArray::iterator, PointArray::iterator> PointArrayIteratorPair;
 

@@ -17,6 +17,7 @@
 
 
 #include <GL/gl.h>
+#include <cassert>
 
 #include "geometry_element.h"
 

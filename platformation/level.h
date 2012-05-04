@@ -21,8 +21,9 @@
 
 #ifndef LEVEL_H_INCLUDED
 #define LEVEL_H_INCLUDED
-#include <cstdint>
 
+#include <cstdint>
+#include <set>
 #include <vector>
 #include <utility>
 #include <list>
@@ -32,6 +33,8 @@
 
 #include "layer.h"
 #include "tile_instance.h"
+#include "tileset.h"
+
 //#include "gimmick_instance.h"
 //#include "entity_instance.h"
 
@@ -39,7 +42,7 @@ class Tileset;
 
 class Level {
 public:
-    typedef boost::shared_ptr<Level> ptr;
+    typedef std::tr1::shared_ptr<Level> ptr;
 
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
@@ -47,7 +50,9 @@ public:
     //typedef boost::signal<void (Layer*)> LayerCreatedSignal;
    // typedef boost::signal<void (Layer*)> LayerDestroyedSignal;
 
-    Level(Tileset* tileset);
+    Level(const std::string& name, const uint32_t tile_size);
+	void set_dimensions(uint32_t tiles_across, uint32_t tiles_down);
+
 
     //SceneObject* get_selected_object() const;
 
@@ -100,7 +105,24 @@ public:
 
     //If a layer is changed, then the level is classed as altered
     void on_layer_changed() { signal_changed_(); }
+    
+    void add_tile_directory(const std::string& directory) {
+		tile_directories_.insert(directory);
+	}
+	
+    void remove_tile_directrory(const std::string& directory) {
+		tile_directories_.erase(directory);
+	}
+	
+    const std::set<std::string>& tile_directories() const { return tile_directories_; }
+        
 private:
+	std::string name_;	
+	uint32_t tile_size_;
+	std::set<std::string> tile_directories_;
+	Tileset::ptr tileset_;
+	
+	
     sigc::signal<void> signal_changed_;
     sigc::signal<void> signal_saved_;
     sigc::signal<void, Layer*> signal_layer_created_;
@@ -108,9 +130,6 @@ private:
 
     typedef std::vector<Layer::ptr> LayerArray;
     LayerArray layers_;
-
-    /*TileList tile_instances_; */
-    Tileset* tileset_;
 
     std::pair<int, int> level_size_;
     uint32_t active_layer_;

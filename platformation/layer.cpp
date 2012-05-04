@@ -20,7 +20,7 @@
 
 using namespace std;
 
-Layer::Layer(Tileset* tileset):
+Layer::Layer(Tileset::ptr tileset):
 tileset_(tileset),
 name_("Untitled") {
 

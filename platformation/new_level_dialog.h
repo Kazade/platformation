@@ -21,11 +21,11 @@
 
 #include <gtkmm.h>
 
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
 
 class NewLevelDialog {
 public:
-    typedef boost::shared_ptr<NewLevelDialog> ptr;
+    typedef std::tr1::shared_ptr<NewLevelDialog> ptr;
 
     NewLevelDialog();
 

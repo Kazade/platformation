@@ -30,7 +30,7 @@
 
 class Tile : public Object {
 public:
-    typedef boost::shared_ptr<Tile> ptr;
+    typedef std::tr1::shared_ptr<Tile> ptr;
     typedef int id_type;
     typedef std::vector<GeometryElement::ptr> GeometryArray;
     typedef std::pair<GeometryArray::iterator, GeometryArray::iterator > GeometryIteratorPair;

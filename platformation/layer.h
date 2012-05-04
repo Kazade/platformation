@@ -27,17 +27,19 @@
 #include <string>
 
 #include <sigc++/sigc++.h>
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
+
+#include "tileset.h"
 #include "tile_instance.h"
 
 class Layer {
 public:
-    typedef boost::shared_ptr<Layer> ptr;
+    typedef std::tr1::shared_ptr<Layer> ptr;
 
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
-    Layer(Tileset* tileset);
+    Layer(Tileset::ptr tileset);
     TileInstance* spawn_tile_instance(int tile_id, bool select=true);
 
     int get_tile_instance_count() const;
@@ -55,7 +57,7 @@ public:
 
 private:
     TileList tile_instances_;
-    Tileset* tileset_;
+    Tileset::ptr tileset_;
     std::string name_;
 
     sigc::signal<void> signal_changed_;

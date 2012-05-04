@@ -36,7 +36,7 @@ class OpenGLTileEditor;
 
 class OpenGLTileEditorCanvas : public OpenGLWidget {
 public:
-    typedef boost::shared_ptr<OpenGLTileEditorCanvas> ptr;
+    typedef std::tr1::shared_ptr<OpenGLTileEditorCanvas> ptr;
 
     OpenGLTileEditorCanvas(Gtk::DrawingArea* area, OpenGLTileEditor* parent);
 
@@ -61,7 +61,7 @@ private:
 
 class OpenGLTileEditor {
 public:
-    typedef boost::shared_ptr<OpenGLTileEditor> ptr;
+    typedef std::tr1::shared_ptr<OpenGLTileEditor> ptr;
 
     OpenGLTileEditor(Tile* tile);
     int run(Gtk::Window* parent=NULL);

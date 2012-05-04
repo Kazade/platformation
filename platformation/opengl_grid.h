@@ -19,7 +19,8 @@
 #ifndef OPENGL_GRID_H_INCLUDED
 #define OPENGL_GRID_H_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
+#include <cassert>
 
 struct GridColour {
     float r, g, b;
@@ -27,7 +28,7 @@ struct GridColour {
 
 class OpenGLGrid {
 public:
-    typedef boost::shared_ptr<OpenGLGrid> ptr;
+    typedef std::tr1::shared_ptr<OpenGLGrid> ptr;
 
     OpenGLGrid(float small_step, int big_step_frequency, const GridColour& colour);
     void render();

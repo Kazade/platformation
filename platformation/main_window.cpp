@@ -26,6 +26,19 @@
 
 #define UI_FILE "ui/main_window.glade"
 
+/**
+ * TODO:
+ * 
+ * 1. Move tiles into the level, instead of choosing a folder to work from, import tiles into the project
+ * 2. Allow changing the level size in its configuration, default to small
+ * 3. Allow changing the transparent colour in the configuration, default to pink or something
+ * 4. Make the initial screen start with a blank level with a single layer and no tiles
+ * 5. Fix the tile selector so the scrollbar isn't idiotic
+ * 6. Move all actions to the action framework
+ * 7. ???
+ * 8. Profit!
+ */
+
 MainWindow::MainWindow():
     gtk_window_(NULL),
     gtk_add_tile_button_(NULL) {
@@ -62,7 +75,6 @@ void MainWindow::create_widgets() {
     layer_manager_.reset(new LayerManager(this, gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
 
     gtk_window_->show_all();
-    set_side_panel_visible(false);
 
     gtk_save_toolbutton_->set_sensitive(false);
     gtk_undo_toolbutton_->set_sensitive(false);
@@ -73,6 +85,8 @@ void MainWindow::create_widgets() {
     get_action_manager().signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_action_manager_change));
 
     gtk_window_->maximize();
+    
+	create_new_level("Untitled", 128);    
 }
 
 void MainWindow::on_undo() {
@@ -105,6 +119,27 @@ void MainWindow::on_level_saved() {
     gtk_save_toolbutton_->set_sensitive(false);
 }
 
+void MainWindow::create_new_level(const std::string& name, uint32_t tile_size) {
+	L_DEBUG("Creating a level with name: " + name);
+	
+	level_.reset(new Level(name, tile_size));	
+	level_->set_dimensions(20, 6);
+	
+	if(level_changed_connection_.connected()) {
+		level_changed_connection_.disconnect();
+	}
+
+	if(level_saved_connection_.connected()) {
+		level_saved_connection_.disconnect();
+	}
+
+	level_changed_connection_ = level_->signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_level_changed));
+	level_saved_connection_ = level_->signal_saved().connect(sigc::mem_fun(this, &MainWindow::on_level_saved));
+	
+	editor_view_->set_level(level_.get());
+	layer_manager_->set_level(level_.get()); 
+}
+
 /** @brief on_new_level
   *
   * Display a dialog and create a new level if neccessary
@@ -117,7 +152,7 @@ void MainWindow::on_new_level_activate() {
     int result = dialog->run_dialog(gtk_window_);
 
     if(result == Gtk::RESPONSE_OK) {
-        L_DEBUG("Creating a new level");
+   /*     L_DEBUG("Creating a new level");
 
         std::string level_name = dialog->get_level_name();
         std::string tileset_path = dialog->get_tileset_path();
@@ -142,8 +177,7 @@ void MainWindow::on_new_level_activate() {
         level_saved_connection_ = level_->signal_saved().connect(sigc::mem_fun(this, &MainWindow::on_level_saved));
 
         editor_view_->set_level(level_.get());
-        layer_manager_->set_level(level_.get());
-        set_side_panel_visible(true);
+        layer_manager_->set_level(level_.get());        */
     }
 }
 

@@ -6,7 +6,7 @@
 
 class Action {
 public:
-    typedef boost::shared_ptr<Action> ptr;
+    typedef std::tr1::shared_ptr<Action> ptr;
 
     virtual ~Action() {}
 

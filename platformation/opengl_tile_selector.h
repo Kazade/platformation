@@ -31,7 +31,7 @@ class Tileset;
 
 class OpenGLTileSelector : public OpenGLWidget {
 public:
-    typedef boost::shared_ptr<OpenGLTileSelector> ptr;
+    typedef std::tr1::shared_ptr<OpenGLTileSelector> ptr;
 
     OpenGLTileSelector(Gtk::DrawingArea* canvas);
 

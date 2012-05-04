@@ -1,13 +1,14 @@
 #ifndef LAYER_RENAME_DIALOG_H_INCLUDED
 #define LAYER_RENAME_DIALOG_H_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
+#include <cassert>
 #include <string>
 #include <gtkmm.h>
 
 class LayerRenameDialog {
 public:
-    typedef boost::shared_ptr<LayerRenameDialog> ptr;
+    typedef std::tr1::shared_ptr<LayerRenameDialog> ptr;
 
     LayerRenameDialog();
 

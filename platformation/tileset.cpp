@@ -24,8 +24,7 @@
 
 namespace bfs = boost::filesystem;
 
-Tileset::Tileset(const std::string& path):
-    path_(path) {
+Tileset::Tileset() {
 
 }
 
@@ -39,9 +38,11 @@ void Tileset::sort_tiles() {
 }
 
 Tileset::ptr Tileset::load_from_directory(const std::string& path, const TransparentColour& c) {
-    Tileset::ptr tileset(new Tileset(path));
+    Tileset::ptr tileset(new Tileset());
+    tileset->add_directory(path);    
     tileset->set_transparent_colour(c);
 
+/*
     bfs::path p(path);
 
     for(bfs::directory_iterator file(path), filesEnd; file != filesEnd; ++file) {
@@ -50,7 +51,7 @@ Tileset::ptr Tileset::load_from_directory(const std::string& path, const Transpa
         }
     }
 
-    tileset->sort_tiles();
+    tileset->sort_tiles();*/
 
     return tileset;
 }

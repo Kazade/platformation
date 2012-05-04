@@ -36,7 +36,7 @@ class MainWindow;
 */
 class LayerManager {
 public:
-    typedef boost::shared_ptr<LayerManager> ptr;
+    typedef std::tr1::shared_ptr<LayerManager> ptr;
 
     LayerManager(MainWindow* parent, Gtk::TreeView* view, Gtk::Button* add_layer_button, Gtk::Button* delete_layer_button);
 

@@ -19,21 +19,40 @@
 #ifndef TILESET_H_INCLUDED
 #define TILESET_H_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
 #include <vector>
+#include <set>
 #include <string>
 #include <iterator>
 #include <utility>
 
+#include "kazbase/os/path.h"
 #include "tile.h"
 
 class Tileset {
 public:
-    typedef boost::shared_ptr<Tileset> ptr;
+    typedef std::tr1::shared_ptr<Tileset> ptr;
     typedef std::vector<Tile::ptr> TileArray;
     typedef std::pair<TileArray::iterator, TileArray::iterator > IteratorPair;
 
     static Tileset::ptr load_from_directory(const std::string& path, const TransparentColour& c);
+
+	void add_directory(const std::string& directory) {
+		directories_.insert(directory);
+		
+		for(std::string file: os::path::list_dir(directory)) {
+			std::string full_path = os::path::join(directory, file);
+			if(!os::path::is_dir(full_path) && os::path::split_ext(file).second == "png") {
+				add_tile(full_path);
+			}
+		}
+	}
+	
+	void remove_directory(const std::string& directory) {
+		directories_.erase(directory);
+	}
+	
+	const std::set<std::string> directories() const { return directories_; }
 
     Tile* get_tile_by_id(Tile::id_type id) const;
 
@@ -44,18 +63,18 @@ public:
         return std::make_pair(tiles_.begin(), tiles_.end());
     }
 
-    Tileset(const std::string& path);
+    Tileset();
 
     void sort_tiles();
     void set_transparent_colour(const TransparentColour& c);
 
-    std::string get_path() const { return path_; }
 private:
     void add_tile(const std::string& path);
 
     TileArray tiles_;
     TransparentColour transparent_colour_;
-    std::string path_;
+    
+    std::set<std::string> directories_;
 };
 
 #endif // TILESET_H_INCLUDED

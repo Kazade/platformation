@@ -40,7 +40,7 @@ bool Level::load(const std::string& filename)
   */
 bool Level::save(const std::string& filename) const
 {
-    TiXmlDocument doc;
+/*    TiXmlDocument doc;
 	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
 	doc.LinkEndChild(decl);
 
@@ -51,7 +51,7 @@ bool Level::save(const std::string& filename) const
     tileset->SetAttribute("path", tileset_->get_path());
     root->LinkEndChild(tileset);
 
-    doc.SaveFile(filename.c_str());
+    doc.SaveFile(filename.c_str());*/
     return true;
 }
 
@@ -90,11 +90,19 @@ bool Level::save(const std::string& filename) const
   *
   * @todo: document this function
   */
-Level::Level(Tileset* tileset):
-tileset_(tileset),
-active_layer_(0)
-{
+Level::Level(const std::string& name, const uint32_t tile_size):
+name_(name),
+tile_size_(tile_size),
+active_layer_(0) {
     create_new_layer();
+    
+    //Create a tileset for the level
+    tileset_.reset(new Tileset());
+}
+
+void Level::set_dimensions(uint32_t tiles_across, uint32_t tiles_down) {
+	level_size_.first = tiles_across;
+	level_size_.second = tiles_down;
 }
 
 /** @brief delete_tile_instance

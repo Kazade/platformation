@@ -27,7 +27,7 @@
   * @todo: document this function
   * @todo: Spawn a ClutterTexture
   */
-TileInstance::TileInstance(Tileset* tileset, int tile_id):
+TileInstance::TileInstance(Tileset::ptr tileset, int tile_id):
 tile_(NULL)
 {
     tile_ = tileset->get_tile_by_id(tile_id);

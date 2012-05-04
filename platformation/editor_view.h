@@ -35,7 +35,7 @@ class MainWindow;
 
 class EditorView : public OpenGLWidget {
 public:
-    typedef boost::shared_ptr<EditorView> ptr;
+    typedef std::tr1::shared_ptr<EditorView> ptr;
 
     EditorView(Gtk::DrawingArea* widget, MainWindow* parent);
 

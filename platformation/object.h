@@ -19,12 +19,12 @@
 #ifndef OBJECT_H_INCLUDED
 #define OBJECT_H_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <tr1/memory>
 #include <kazmath/vec2.h>
 
 class Object {
 public:
-    typedef boost::shared_ptr<Object> ptr;
+    typedef std::tr1::shared_ptr<Object> ptr;
 
     virtual ~Object() {}
 

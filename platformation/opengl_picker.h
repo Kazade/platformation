@@ -22,11 +22,12 @@
 #include <GL/gl.h>
 #include <map>
 #include <iterator>
+#include <tr1/memory>
 
 template<typename T>
 class OpenGLPicker {
 public:
-    typedef boost::shared_ptr<OpenGLPicker<T> > ptr;
+    typedef std::tr1::shared_ptr<OpenGLPicker<T> > ptr;
 
     OpenGLPicker() {
         reset_colour_counter();

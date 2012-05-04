@@ -8,7 +8,7 @@ class OpenGLTileSelector;
 
 class SpawnTileInstanceAction : public Action {
 public:
-    typedef boost::shared_ptr<SpawnTileInstanceAction> ptr;
+    typedef std::tr1::shared_ptr<SpawnTileInstanceAction> ptr;
 
     SpawnTileInstanceAction(Level* level, OpenGLTileSelector* selector, float x, float y);
 
