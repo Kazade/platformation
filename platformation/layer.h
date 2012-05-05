@@ -32,6 +32,8 @@
 #include "tileset.h"
 #include "tile_instance.h"
 
+class Level;
+
 class Layer {
 public:
     typedef std::tr1::shared_ptr<Layer> ptr;
@@ -39,11 +41,11 @@ public:
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
-    Layer(Tileset::ptr tileset);
-    TileInstance* spawn_tile_instance(int tile_id, bool select=true);
+    Layer(Level* parent, const std::string& name);
+    TileInstance* spawn_tile_instance(TileID tile_id, bool select=true);
 
-    int get_tile_instance_count() const;
-    TileInstance* get_tile_instance_at(int i) const;
+    uint32_t get_tile_instance_count() const;
+    TileInstance* get_tile_instance_at(uint32_t i) const;
     void delete_tile_instance(TileInstance* instance);
 
     TileListIteratorPair get_iterators() {
@@ -51,15 +53,24 @@ public:
     }
 
     void set_name(const std::string& name);
-    std::string get_name() const;
+    std::string name() const;
 
     sigc::signal<void>& signal_changed() { return signal_changed_; }
 
+    Level& level() { return *level_; }
+    
+    static LayerID generate_layer_id() {
+        static LayerID counter = 0;
+        return ++counter;
+    }
+    
+    LayerID id() const { return id_; }
 private:
-    TileList tile_instances_;
-    Tileset::ptr tileset_;
+    LayerID id_;
+    Level* level_;
     std::string name_;
-
+    
+    TileList tile_instances_;
     sigc::signal<void> signal_changed_;
 };
 

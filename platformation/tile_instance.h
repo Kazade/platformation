@@ -21,21 +21,24 @@
 
 #include <tr1/memory>
 #include "object.h"
+#include "typedefs.h"
 
 class Tileset;
-class Tile;
+class Layer;
 
 class TileInstance : public Object {
 public:
     typedef std::tr1::shared_ptr<TileInstance> ptr;
 
-    TileInstance(Tileset::ptr tileset, int tile_id);
-
+    TileInstance(Layer* parent, TileID tile_id);
     void render_geometry();
-
-    Tile* get_tile() { return tile_; }
+    TileID tile_id() { return tile_; }
+    
+    Layer& layer() { return *layer_; }
+    
 private:
-    Tile* tile_;
+    Layer* layer_;
+    TileID tile_;
 
 };
 

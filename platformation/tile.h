@@ -62,6 +62,7 @@ public:
     bool load();
 
     std::string get_name() const;
+    std::string absolute_path() const { return path_; }
 private:
     std::string path_;
 

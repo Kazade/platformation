@@ -17,17 +17,19 @@
 
 
 #include "layer.h"
+#include "level.h"
 
 using namespace std;
 
-Layer::Layer(Tileset::ptr tileset):
-tileset_(tileset),
-name_("Untitled") {
+Layer::Layer(Level* parent, const std::string& name):
+id_(Layer::generate_layer_id()),
+level_(parent),
+name_(name) {
 
 }
 
-TileInstance* Layer::spawn_tile_instance(int tile_id, bool select) {
-    TileInstance::ptr new_tile_instance(new TileInstance(tileset_, tile_id));
+TileInstance* Layer::spawn_tile_instance(TileID tile_id, bool select) {
+    TileInstance::ptr new_tile_instance(new TileInstance(this, tile_id));
     tile_instances_.push_back(new_tile_instance);
 
     signal_changed_();
@@ -35,11 +37,11 @@ TileInstance* Layer::spawn_tile_instance(int tile_id, bool select) {
     return new_tile_instance.get();
 }
 
-int Layer::get_tile_instance_count() const {
+uint32_t Layer::get_tile_instance_count() const {
     return tile_instances_.size();
 }
 
-TileInstance* Layer::get_tile_instance_at(int i) const {
+TileInstance* Layer::get_tile_instance_at(uint32_t i) const {
     assert(0);
     return NULL;
 }
@@ -57,7 +59,6 @@ void Layer::delete_tile_instance(TileInstance* instance) {
     if(iters.first == iters.second) {
         return;
     }
-
     tile_instances_.erase(iters.first);
 
     signal_changed_();
@@ -68,6 +69,6 @@ void Layer::set_name(const std::string& name) {
     signal_changed_();
 }
 
-string Layer::get_name() const {
+string Layer::name() const {
     return name_;
 }

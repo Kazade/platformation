@@ -19,6 +19,8 @@
 #include <GL/gl.h>
 #include <cassert>
 
+#include "layer.h"
+#include "level.h"
 #include "tileset.h"
 #include "tile_instance.h"
 
@@ -27,11 +29,10 @@
   * @todo: document this function
   * @todo: Spawn a ClutterTexture
   */
-TileInstance::TileInstance(Tileset::ptr tileset, int tile_id):
-tile_(NULL)
-{
-    tile_ = tileset->get_tile_by_id(tile_id);
-    assert(tile_);
+TileInstance::TileInstance(Layer* parent, TileID tile_id):
+layer_(parent),
+tile_(tile_id) {
+
 }
 
 
@@ -41,13 +42,13 @@ tile_(NULL)
   */
 void TileInstance::render_geometry()
 {
-    assert(tile_);
+    Tile& tile = layer().level().tile(tile_);
 
     //1 world unit = 64 pixels. THis should be render from the editor view
     float scale = 1.0f / 64.0f;
 
-    float w = float(tile_->get_width()) * scale;
-    float h = float(tile_->get_height()) * scale;
+    float w = float(tile.get_width()) * scale;
+    float h = float(tile.get_height()) * scale;
 
     float hw = w / 2.0f;
     float hh = h / 2.0f;

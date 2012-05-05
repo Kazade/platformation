@@ -32,6 +32,7 @@
 class Level;
 class Object;
 class MainWindow;
+class OpenGLTileSelector;
 
 class EditorView : public OpenGLWidget {
 public:
@@ -41,6 +42,9 @@ public:
 
     void set_level(Level* level);
     void set_tile_selector(OpenGLTileSelector* selector);
+    
+    GLuint get_texture_for_object(Object* obj);
+    
 private:
     MainWindow* parent_;
 
@@ -57,9 +61,6 @@ private:
     OpenGLPicker<Object::ptr>::ptr picker_;
     Object* active_object_;
     Glib::Timer active_timer_;
-
-    GLuint get_texture_for_object(Object* obj);
-
     std::map<Object*, GLuint> texture_ids_;
     OpenGLTileSelector* tile_selector_;
 

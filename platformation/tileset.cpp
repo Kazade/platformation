@@ -15,14 +15,11 @@
 *
 **********************************************************************************/
 
-#define BOOST_FILESYSTEM_VERSION 2
-#include <boost/filesystem.hpp>
 #include <iostream>
 
+#include "kazbase/exceptions.h"
 #include "natural_sort.h"
 #include "tileset.h"
-
-namespace bfs = boost::filesystem;
 
 Tileset::Tileset() {
 
@@ -72,15 +69,15 @@ void Tileset::add_tile(const std::string& path) {
   *
   * @todo: document this function
   */
-Tile* Tileset::get_tile_by_id(Tile::id_type id) const
+Tile::ptr Tileset::tile(Tile::id_type id) const
 {
     for(TileArray::const_iterator it = tiles_.begin(); it != tiles_.end(); ++it) {
         if((*it)->get_id() == id) {
-            return (*it).get();
+            return (*it);
         }
     }
 
-    return NULL;
+    throw DoesNotExist<Tile>();
 }
 
 void Tileset::set_transparent_colour(const TransparentColour& c) {

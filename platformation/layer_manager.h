@@ -53,6 +53,7 @@ public:
 
     void on_layer_rename();
     void on_layer_raise();
+    void on_layer_lower();
 
     bool on_layer_popup(GdkEventButton* event);
 

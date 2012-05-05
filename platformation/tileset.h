@@ -54,7 +54,7 @@ public:
 	
 	const std::set<std::string> directories() const { return directories_; }
 
-    Tile* get_tile_by_id(Tile::id_type id) const;
+    Tile::ptr tile(Tile::id_type id) const;
 
     int get_tile_count() const { return tiles_.size(); }
     Tile* get_tile_at(int i) { return tiles_[i].get(); }

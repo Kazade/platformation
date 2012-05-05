@@ -14,17 +14,17 @@ SpawnTileInstanceAction::SpawnTileInstanceAction(Level* level, OpenGLTileSelecto
 
 void SpawnTileInstanceAction::do_action() {
     //If this is not a redo, get the active layer
-    Layer* layer = level_->get_active_layer();
+    LayerID layer = level_->active_layer_id();
 
     //If this is a redo, we will have stored the layer name, so get that
     if(!layer_name_.empty()) {
-        layer = level_->get_layer_by_name(layer_name_);
+        layer = level_->layer_by_name(layer_name_);
+        //Make sure it's the active layer
+        level_->set_active_layer(layer);
     }
 
-    assert(layer);
-
     //Store the layer name (on a redo this will be a no-op)
-    layer_name_ = layer->get_name(); //For this to work, layer names must be unique, and undo of a layer delete should restore the name
+    layer_name_ = level_->layer_name(layer); //For this to work, layer names must be unique, and undo of a layer delete should restore the name
 
     if(tile_id_ == -1) {
         //This is not a redo (because there is no stored id) so use the active one
@@ -32,16 +32,21 @@ void SpawnTileInstanceAction::do_action() {
     }
 
     if(tile_id_ != -1) {
+        Tile::ptr tile = selector_->library().tile(tile_id_);
         //Finally, spawn the instance
-        spawned_instance_ = layer->spawn_tile_instance(tile_id_);
+        spawned_instance_ = level_->spawn_tile_instance(tile);
         spawned_instance_->set_position(x_, y_);
     }
 }
 
 void SpawnTileInstanceAction::undo_action() {
-    Layer* layer = level_->get_layer_by_name(layer_name_);
-    assert(layer);
-    layer->delete_tile_instance(spawned_instance_);
+    /*
+     * Get the layer we are supposed to be deleting an instance from
+     * then make sure it's active and delete the instance
+     */
+    LayerID layer = level_->layer_by_name(layer_name_);
+    level_->set_active_layer(layer);
+    level_->delete_tile_instance(spawned_instance_);
 
     //Clear the spawned instance
     spawned_instance_ = NULL;

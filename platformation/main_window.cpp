@@ -234,6 +234,6 @@ void MainWindow::on_add_tile_clicked()
         return;
     }
 
-    level_->get_active_layer()->spawn_tile_instance(selector_->get_active_tile_id());
+    level_->spawn_tile_instance(selector_->library().tile(selector_->get_active_tile_id()));
 }
 

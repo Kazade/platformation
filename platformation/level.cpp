@@ -23,6 +23,7 @@
 #include "kazbase/logging/logging.h"
 #include "level.h"
 #include "tileset.h"
+#include "editor_view.h"
 
 /** @brief load
   *
@@ -95,9 +96,6 @@ name_(name),
 tile_size_(tile_size),
 active_layer_(0) {
     create_new_layer();
-    
-    //Create a tileset for the level
-    tileset_.reset(new Tileset());
 }
 
 void Level::set_dimensions(uint32_t tiles_across, uint32_t tiles_down) {
@@ -127,22 +125,22 @@ void Level::set_dimensions(uint32_t tiles_across, uint32_t tiles_down) {
     tile_instances_.erase(iters.first);
 }*/
 
-Layer* Level::create_new_layer() {
+LayerID Level::create_new_layer() {
     static int layer_counter = 0;
-
+    
     L_DEBUG("Creating a new layer");
 
-    Layer::ptr new_layer(new Layer(tileset_));
+    Layer::ptr new_layer(new Layer(this, "Untitled"));
 
     for(LayerArray::iterator it = layers_.begin(); it != layers_.end(); ++it) {
-        if((*it)->get_name() == new_layer->get_name()) {
+        if((*it)->name() == new_layer->name()) {
             new_layer->set_name("Untitled " + boost::lexical_cast<std::string>(++layer_counter));
             break;
         }
     }
 
     layers_.push_back(new_layer);
-    active_layer_ = layers_.size() - 1;
+    active_layer_ = layer(layer_by_index(layers_.size() - 1)).id();
 
     //Call signal
     signal_layer_created_(new_layer.get());
@@ -150,19 +148,15 @@ Layer* Level::create_new_layer() {
 
     //We want layer changes to trigger level changed signals
     new_layer->signal_changed().connect(sigc::mem_fun(this, &Level::on_layer_changed));
-    return new_layer.get();
+    return new_layer->id();
 }
 
-void Level::destroy_layer(Layer* layer) {
+void Level::destroy_layer(LayerID layer_id) {
     L_DEBUG("Destroying layer");
-
-    if(!layer) {
-        return;
-    }
 
     LayerArray::iterator it = layers_.begin();
     for(; it != layers_.end(); ++it) {
-        if((*it).get() == layer) {
+        if((*it)->id() == layer_id) {
             break;
         }
     }
@@ -174,7 +168,7 @@ void Level::destroy_layer(Layer* layer) {
     }
 
     layers_.erase(it);
-    active_layer_ = 0;
+    active_layer_ = layer(layer_by_index(0)).id();
 
     L_DEBUG("Layer destroyed");
 
@@ -188,43 +182,61 @@ void Level::destroy_layer(Layer* layer) {
     signal_layer_destroyed_(NULL); //FIXME: Argument is useless
 }
 
-uint32_t Level::get_layer_count() const {
+uint32_t Level::layer_count() const {
     return layers_.size();
 }
 
-Layer* Level::get_layer_at(uint32_t i) {
-    assert(i >= 0 && i < layers_.size());
-    return layers_[i].get();
-}
-
-Layer* Level::get_layer_by_name(const std::string& name) {
-    for(uint32_t i = 0; i < get_layer_count(); ++i) {
-        Layer* l = get_layer_at(i);
-        if(l->get_name() == name) {
-            return l;
+LayerID Level::layer_by_name(const std::string& name) {
+    for(Layer::ptr layer: layers_) {
+        if(layer->name() == name) {
+            return layer->id();
         }
     }
-
-    return NULL;
+    
+    throw DoesNotExist<Layer>();
 }
 
-void Level::raise_layer(Layer* l) {
-    LayerArray::size_type i = 0;
-    for(; i < layers_.size(); ++i) {
-        Layer* rhs = layers_[i].get();
-        if(rhs == l) {
-            break;
-        }
+void Level::lower_layer(LayerID layer_id) {
+    uint32_t i = layer_index(layer_id);
+    if(i > 0) {
+        L_DEBUG("Lowering layer");
+        //We can swap
+        std::swap(layers_[i], layers_[i-1]);
+        active_layer_ = layer(layer_by_index(i-1)).id();
+
+        signal_changed_();
     }
+}
 
-    assert(i != layers_.size());
-
+void Level::raise_layer(LayerID layer_id) {
+    uint32_t i = layer_index(layer_id);
     if(i < layers_.size() - 1) {
         L_DEBUG("Raising layer");
         //We can swap
         std::swap(layers_[i], layers_[i+1]);
-        active_layer_++;
+        active_layer_ = layer(layer_by_index(i+1)).id();
 
         signal_changed_();
     }
+}
+
+void Level::render_layer(EditorView& view, LayerID layer_id) {        
+    Layer::TileListIteratorPair iters = layer(layer_id).get_iterators();
+
+    for(; iters.first != iters.second; iters.first++) {
+        Object* obj = (*iters.first).get();
+        glBindTexture(GL_TEXTURE_2D, view.get_texture_for_object(obj));
+        obj->render_geometry();
+    }        
+}
+
+uint32_t Level::layer_index(LayerID layer_id) { 
+    uint32_t idx = 0;
+    for(Layer::ptr layer: layers_) {
+        if(layer->id() == layer_id) {
+            return idx;
+        }
+        idx++;
+    }
+    throw DoesNotExist<Layer>();
 }

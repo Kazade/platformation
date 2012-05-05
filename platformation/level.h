@@ -22,6 +22,7 @@
 #ifndef LEVEL_H_INCLUDED
 #define LEVEL_H_INCLUDED
 
+#include <GL/gl.h>
 #include <cstdint>
 #include <set>
 #include <vector>
@@ -31,14 +32,18 @@
 
 #include <sigc++/sigc++.h>
 
+#include "kazbase/list_utils.h"
+
 #include "layer.h"
 #include "tile_instance.h"
 #include "tileset.h"
+#include "typedefs.h"
 
 //#include "gimmick_instance.h"
 //#include "entity_instance.h"
 
 class Tileset;
+class EditorView;
 
 class Level {
 public:
@@ -47,50 +52,40 @@ public:
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
-    //typedef boost::signal<void (Layer*)> LayerCreatedSignal;
-   // typedef boost::signal<void (Layer*)> LayerDestroyedSignal;
-
     Level(const std::string& name, const uint32_t tile_size);
 	void set_dimensions(uint32_t tiles_across, uint32_t tiles_down);
 
-
-    //SceneObject* get_selected_object() const;
-
-   // TileInstance* spawn_tile_instance(int tile_id, bool select=true);
-    /*GimmickInstance* spawn_gimmick_instance(int gimmick_id);
-    EntityInstance* spawn_entity_instance(int entity_id);*/
-
-    Layer* create_new_layer();
-    void destroy_layer(Layer* layer);
-    uint32_t get_layer_count() const;
-    Layer* get_layer_at(uint32_t i);
-    Layer* get_active_layer() { return layers_[active_layer_].get(); }
-    Layer* get_layer_by_name(const std::string& name);
-
-    void raise_layer(Layer* l);
-
-    void set_active_layer(uint32_t layer_num) { active_layer_ = layer_num; }
-
-/*    int get_tile_instance_count() const;
-    TileInstance* get_tile_instance_at(int i) const;
-    void delete_tile_instance(TileInstance* instance);*/
-
-    /*int get_entity_instance_count() const;
-    EntityInstance* get_entity_instance_at(int i) const;
-
-    int get_gimmick_instance_count() const;
-    GimmickInstance* get_gimmick_instance_at(int i) const;*/
-
+    LayerID create_new_layer();
+    void destroy_layer(LayerID layer);
+    uint32_t layer_count() const;
+    LayerID layer_by_index(uint32_t i) {
+        assert(i < layers_.size());
+        return layers_.at(i)->id();
+    }
+    
+    uint32_t layer_index(LayerID layer_id);
+    
+    LayerID layer_by_name(const std::string& name);
+    void set_layer_name(LayerID layer_id, std::string new_name) {
+        layer(layer_id).set_name(new_name);
+    }
+    std::string layer_name(LayerID layer_id) { return layer(layer_id).name(); }
+    void set_active_layer(LayerID layer_id) { active_layer_ = layer_id; }
+    void set_active_layer_by_index(uint32_t index) {
+        set_active_layer(layers_.at(index)->id());
+    }
+    
+    void render_layer(EditorView& view, LayerID layer_id);
+    
+    LayerID active_layer_id() const { return active_layer_; }
+    void raise_layer(LayerID l);
+    void lower_layer(LayerID l);
+    
     bool save(const std::string& filename) const;
     bool load(const std::string& filename);
 
-/*    TileListIteratorPair get_iterators() {
-        return std::make_pair(tile_instances_.begin(), tile_instances_.end());
-    }*/
-
     void set_level_size(const std::pair<int, int> level_size) {
         signal_changed_();
-
         level_size_ = level_size;
     }
 
@@ -102,27 +97,66 @@ public:
     sigc::signal<void, Layer*>& layer_destroyed() { return signal_layer_destroyed_; }
     sigc::signal<void>& signal_changed() { return signal_changed_; }
     sigc::signal<void>& signal_saved() { return signal_saved_; }
+    
+    void trigger_layer_created_on_all_layers() {
+        for(Layer::ptr layer: layers_) {
+            signal_layer_created_(layer.get());
+        }
+    }
+
 
     //If a layer is changed, then the level is classed as altered
     void on_layer_changed() { signal_changed_(); }
     
-    void add_tile_directory(const std::string& directory) {
-		tile_directories_.insert(directory);
-	}
-	
-    void remove_tile_directrory(const std::string& directory) {
-		tile_directories_.erase(directory);
-	}
-	
-    const std::set<std::string>& tile_directories() const { return tile_directories_; }
+    TileInstance* spawn_tile_instance(Tile::ptr tile) {
+        TileID id;
+        if(!container::contains(active_tiles_, tile->absolute_path())) {
+            //If we haven't used this tile yet
+            id = generate_tile_id();
+            active_tiles_[tile->absolute_path()] = id;
+            tiles_[id] = tile;
+            active_tile_refcount_[id] = 1;
+        } else {
+            id = active_tiles_[tile->absolute_path()];
+            active_tile_refcount_[id]++;
+        }
         
+        TileInstance* instance = active_layer().spawn_tile_instance(id);
+        return instance;
+    }
+    
+    void delete_tile_instance(TileInstance* instance) {
+        TileID id = instance->tile_id();
+        Layer& layer = instance->layer();
+        
+        active_tile_refcount_[id]--;
+        if(!active_tile_refcount_[id]) {
+            active_tile_refcount_.erase(id);
+            active_tiles_.erase(tiles_[id]->absolute_path());
+            tiles_.erase(id);
+        }
+        
+        layer.delete_tile_instance(instance);
+    }
+
+    Tile& tile(TileID tile_id) { 
+        assert(container::contains(tiles_, tile_id));
+        return *tiles_[tile_id];
+    }
+
+    TileID generate_tile_id() const {
+        static TileID counter = 0;
+        return ++counter;
+    }
+
 private:
 	std::string name_;	
 	uint32_t tile_size_;
-	std::set<std::string> tile_directories_;
-	Tileset::ptr tileset_;
 	
-	
+    std::map<std::string, TileID> active_tiles_;
+    std::map<TileID, Tile::ptr> tiles_;
+    std::map<TileID, uint32_t> active_tile_refcount_;
+    
     sigc::signal<void> signal_changed_;
     sigc::signal<void> signal_saved_;
     sigc::signal<void, Layer*> signal_layer_created_;
@@ -133,6 +167,19 @@ private:
 
     std::pair<int, int> level_size_;
     uint32_t active_layer_;
+    
+    Layer& layer(LayerID layer_id) { 
+        for(Layer::ptr layer: layers_) {
+            if(layer_id == layer->id()) {
+                return *layer;
+            }
+        }
+        
+        throw DoesNotExist<Layer>();
+    }
+    Layer& active_layer() { return layer(layer_by_index(active_layer_)); }    
+    
+    friend class EditorView; //GAAAAHHHHHH
 };
 
 

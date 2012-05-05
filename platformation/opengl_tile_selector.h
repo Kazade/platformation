@@ -26,8 +26,7 @@
 #include "opengl_widget.h"
 #include "opengl_tile_editor.h"
 #include "tile.h"
-
-class Tileset;
+#include "tileset.h"
 
 class OpenGLTileSelector : public OpenGLWidget {
 public:
@@ -39,18 +38,18 @@ public:
 
     Tile::id_type get_active_tile_id() const { return active_tile_; }
 
-    void set_tileset(Tileset* tileset);
-
+    Tileset& library() { return *tileset_; }
     void on_tile_edit();
 
 private:
     Tile::id_type active_tile_;
 
+    void init_tileset();
     void do_render();
     void do_resize(int width, int height);
     void do_scroll(GdkEventScroll* event);
 
-    Tileset* tileset_;
+    Tileset::ptr tileset_;
 
     std::map<Tile::id_type, GLuint> tile_textures_;
 

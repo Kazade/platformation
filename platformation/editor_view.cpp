@@ -70,22 +70,16 @@ void EditorView::do_render()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_DEPTH_TEST);
-        for(uint32_t i = 0; i < level_->get_layer_count(); ++i) {
-            Layer* layer = level_->get_layer_at(i);
+        for(uint32_t i = 0; i < level_->layer_count(); ++i) {
+            LayerID layer = level_->layer_by_index(i);
 
-            if(layer != level_->get_active_layer()) {
+            if(layer != level_->active_layer_id()) {
                 glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
             } else {
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             }
 
-            Layer::TileListIteratorPair iters = layer->get_iterators();
-
-            for(; iters.first != iters.second; iters.first++) {
-                Object* obj = (*iters.first).get();
-                glBindTexture(GL_TEXTURE_2D, get_texture_for_object(obj));
-                obj->render_geometry();
-            }
+            level_->render_layer(*this, layer);
         }
 
         if(active_object_) {
@@ -219,9 +213,8 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Layer* layer = level_->get_active_layer();
-
-        Layer::TileListIteratorPair iterators = layer->get_iterators();
+        Layer& layer = level_->active_layer();
+        Layer::TileListIteratorPair iterators = layer.get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
         if(t) {
@@ -258,15 +251,15 @@ void EditorView::do_button_press(GdkEventButton* event)
         gfloat x = event->x;
         gfloat y = event->y;
 
-        Layer* layer = level_->get_active_layer();
-        Level::TileListIteratorPair iterators = layer->get_iterators();
+        Layer& layer = level_->active_layer();
+        Layer::TileListIteratorPair iterators = layer.get_iterators();
 
         Object::ptr t = picker_->pick(x, y, iterators.first, iterators.second);
 
         if(t) {
             TileInstance* ti = dynamic_cast<TileInstance*>(t.get());
             if(ti) {
-                layer->delete_tile_instance(ti);
+                level_->delete_tile_instance(ti);
                 active_object_ = NULL;
             }
 
@@ -308,8 +301,8 @@ GLuint EditorView::get_texture_for_object(Object* obj)
     }
 
     if(TileInstance* ti = dynamic_cast<TileInstance*>(obj)) {
-        Tile* t = ti->get_tile();
-        assert(t);
+        TileID tile_id = ti->tile_id();
+        Tile* t = &level_->tile(tile_id);
 
         GLuint new_tex;
         glGenTextures(1, &new_tex);

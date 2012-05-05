@@ -9,6 +9,8 @@ find_package(Boost COMPONENTS system filesystem thread date_time regex REQUIRED)
 
 pkg_check_modules(CURL REQUIRED libcurl)
 
+pkg_check_modules(GTHREAD REQUIRED "gthread-2.0 >= 2.14.0")
+
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
 IF(GTKMM_FOUND)
     link_directories(${GTKMM_LIBRARY_DIRS})
@@ -34,6 +36,12 @@ include_directories(${CURL_INCLUDE_DIRS})
 FILE(GLOB_RECURSE sources platformation/*.cpp)
 FILE(GLOB_RECURSE kazbase kazbase/*.cpp)
 
+FOREACH(item ${kazbase})
+  IF(${item} MATCHES "kazbase/tests.cpp")
+    LIST(REMOVE_ITEM kazbase ${item})
+  ENDIF(${item} MATCHES "kazbase/tests.cpp")
+ENDFOREACH(item)
+
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 set(headers
@@ -55,6 +63,7 @@ add_executable(platformation ${sources} ${kazbase})
 target_link_libraries(
     platformation 
     ${GTKMM_LIBRARIES} 
+    ${GTHREAD_LIBRARIES}
     ${Boost_FILESYSTEM_LIBRARY} 
     ${Boost_REGEX_LIBRARY}
     ${Boost_THREAD_LIBRARY} 

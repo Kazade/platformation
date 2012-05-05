@@ -27,9 +27,9 @@ float tile_spacing = 0.25f;
 OpenGLTileSelector::OpenGLTileSelector(Gtk::DrawingArea* canvas):
 OpenGLWidget(canvas),
 active_tile_(-1),
-tileset_(NULL),
 gtk_tile_edit_menu_(NULL),
 total_display_height_(1.0f) {
+    tileset_.reset(new Tileset());
     initialize();
 }
 
@@ -116,6 +116,9 @@ bool OpenGLTileSelector::initialize()
 
     gtk_tile_edit_menu_->add(*gtk_edit_tile_item_);
     gtk_tile_edit_menu_->show_all();
+    
+    init_tileset();
+    
     return true;
 }
 
@@ -217,14 +220,14 @@ void OpenGLTileSelector::do_button_press(GdkEventButton* event)
   *
   * @todo: document this function
   */
-void OpenGLTileSelector::set_tileset(Tileset* tileset)
+void OpenGLTileSelector::init_tileset()
 {
-    tileset_ = tileset;
-
     float y = -0.75f;
 
+    assert(tileset_);
+
     //todo: fix this, it should get the rendered height from the tile (depending on the ratio)
-    Tileset::IteratorPair iterators = tileset->get_iterators();
+    Tileset::IteratorPair iterators = tileset_->get_iterators();
     for(; iterators.first != iterators.second; ++iterators.first) {
         (*iterators.first)->set_position(0.0f, y);
         std::pair<float, float> dim = (*iterators.first)->get_rendered_dimensions();
@@ -250,9 +253,9 @@ void OpenGLTileSelector::on_tile_edit()
         return;
     }
 
-    Tile* tile = tileset_->get_tile_by_id(active_tile_);
+    Tile::ptr tile = tileset_->tile(active_tile_);
 
-    tile_editor_.reset(new OpenGLTileEditor(tile));
+    tile_editor_.reset(new OpenGLTileEditor(tile.get()));
 
     if(tile_editor_->run(dynamic_cast<Gtk::Window*>(get_widget()->get_toplevel())) == Gtk::RESPONSE_OK) {
         tile->save();

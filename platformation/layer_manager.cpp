@@ -59,6 +59,7 @@ LayerManager::LayerManager(MainWindow* parent, Gtk::TreeView* view, Gtk::Button*
 
     gtk_rename_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_rename));
     gtk_move_up_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_raise));
+    gtk_move_down_menu_item_->signal_activate().connect(sigc::mem_fun(this, &LayerManager::on_layer_lower));
     //TODO: Connect the other menu signals
 
     gtk_layer_menu_->add(*gtk_rename_menu_item_);
@@ -77,8 +78,13 @@ bool LayerManager::on_layer_popup(GdkEventButton* event) {
     return false;
 }
 
+void LayerManager::on_layer_lower() {
+    level_->lower_layer(level_->active_layer_id());
+    update_list_view();    
+}
+
 void LayerManager::on_layer_raise() {
-    level_->raise_layer(level_->get_active_layer());
+    level_->raise_layer(level_->active_layer_id());
     update_list_view();
 }
 
@@ -94,7 +100,7 @@ void LayerManager::on_layer_rename() {
         Level* level = get_main_window()->get_level();
         assert(level);
 
-        std::string old_name = level->get_active_layer()->get_name();
+        std::string old_name = level->layer_name(level_->active_layer_id());
 
         Action::ptr rename_action(new LayerRenameAction(level, old_name, new_name));
         rename_action->do_action();
@@ -119,29 +125,28 @@ void LayerManager::set_level(Level* level) {
         level_->layer_created().connect(bind(&LayerManager::on_layer_created, this, _1));
         level_->layer_destroyed().connect(bind(&LayerManager::on_layer_destroyed, this, _1));
 
-        //Call the callback manually on any already existing layers
-        for(uint32_t i = 0; i < level_->get_layer_count(); ++i) {
-            on_layer_created(level_->get_layer_at(i));
-        }
+        level_->trigger_layer_created_on_all_layers();
     }
 }
 
 void LayerManager::update_list_view() {
+    L_DEBUG("Updating layer list view");
+    
     if(!level_) {
         return;
     }
 
     tree_model_->clear();
 
-    for(int32_t i = (int32_t) level_->get_layer_count() - 1; i >= 0; --i) {
-        Layer* l = level_->get_layer_at(i);
+    for(int32_t i = (int32_t) level_->layer_count() - 1; i >= 0; --i) {
+        LayerID layer_id = level_->layer_by_index(i);
 
         Gtk::TreeModel::Row row = *(tree_model_->append());
         row[columns_.column_id_] = i;
-        row[columns_.column_name_] = l->get_name();
+        row[columns_.column_name_] = level_->layer_name(layer_id);
 
         //If this is the active layer, display a tick next to it
-        if(l == level_->get_active_layer()) {
+        if(layer_id == level_->active_layer_id()) {
             row[columns_.checked_] = view_->render_icon(Gtk::Stock::YES, Gtk::ICON_SIZE_MENU);
         } else {
             row[columns_.checked_] = Glib::RefPtr<Gdk::Pixbuf>();
@@ -160,7 +165,7 @@ void LayerManager::on_layer_manager_row_activate() {
     if(iter) {
         Gtk::TreeModel::Row row = *iter;
         uint32_t active_layer = row[columns_.column_id_];
-        level_->set_active_layer(active_layer);
+        level_->set_active_layer_by_index(active_layer);
     }
 
     /*
@@ -185,7 +190,7 @@ void LayerManager::on_add_layer_clicked() {
 
 void LayerManager::on_delete_layer_clicked() {
     if(level_) {
-        level_->destroy_layer(level_->get_active_layer());
+        level_->destroy_layer(level_->active_layer_id());
     }
 }
 

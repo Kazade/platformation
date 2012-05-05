@@ -8,17 +8,13 @@ LayerRenameAction::LayerRenameAction(Level* level, const std::string& old_name, 
 }
 
 void LayerRenameAction::do_action() {
-    Layer* layer = level_->get_layer_by_name(old_name_);
-    assert(layer && "Layer not found");
-
-    layer->set_name(new_name_);
+    LayerID layer = level_->layer_by_name(old_name_);
+    level_->set_layer_name(layer, new_name_);
 }
 
 void LayerRenameAction::undo_action() {
-    Layer* layer = level_->get_layer_by_name(new_name_);
-    assert(layer && "Layer not found");
-
-    layer->set_name(old_name_);
+    LayerID layer = level_->layer_by_name(new_name_);
+    level_->set_layer_name(layer, old_name_);
 }
 
 std::string LayerRenameAction::get_description() {
