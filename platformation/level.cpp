@@ -168,8 +168,7 @@ void Level::destroy_layer(LayerID layer_id) {
     }
 
     layers_.erase(it);
-    active_layer_ = layer(layer_by_index(0)).id();
-
+    
     L_DEBUG("Layer destroyed");
 
     if(layers_.empty()) {
@@ -177,6 +176,8 @@ void Level::destroy_layer(LayerID layer_id) {
         create_new_layer();
         L_DEBUG("New layer created, final one was destroyed");
     }
+
+    active_layer_ = layer(layer_by_index(0)).id();
 
     signal_changed_();
     signal_layer_destroyed_(NULL); //FIXME: Argument is useless
