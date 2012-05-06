@@ -95,6 +95,8 @@ public:
 
     sigc::signal<void, Layer*>& layer_created() { return signal_layer_created_; }
     sigc::signal<void, Layer*>& layer_destroyed() { return signal_layer_destroyed_; }
+    sigc::signal<void>& layers_changed() { return signal_layers_changed_; }
+    
     sigc::signal<void>& signal_changed() { return signal_changed_; }
     sigc::signal<void>& signal_saved() { return signal_saved_; }
     
@@ -106,7 +108,7 @@ public:
 
 
     //If a layer is changed, then the level is classed as altered
-    void on_layer_changed() { signal_changed_(); }
+    void on_layer_changed() { signal_changed_(); signal_layers_changed_(); }
     
     TileInstance* spawn_tile_instance(Tile::ptr tile) {
         TileID id;
@@ -159,8 +161,10 @@ private:
     
     sigc::signal<void> signal_changed_;
     sigc::signal<void> signal_saved_;
+    
     sigc::signal<void, Layer*> signal_layer_created_;
     sigc::signal<void, Layer*> signal_layer_destroyed_;
+    sigc::signal<void> signal_layers_changed_;
 
     typedef std::vector<Layer::ptr> LayerArray;
     LayerArray layers_;

@@ -25,6 +25,7 @@
 #include "layer_manager.h"
 #include "layer_rename_dialog.h"
 #include "actions/layer_rename_action.h"
+#include "actions/layer_raise_action.h"
 
 using boost::bind;
 
@@ -84,8 +85,9 @@ void LayerManager::on_layer_lower() {
 }
 
 void LayerManager::on_layer_raise() {
-    level_->raise_layer(level_->active_layer_id());
-    update_list_view();
+    Action::ptr raise_action(new LayerRaiseAction(level_, level_->active_layer_id()));
+    raise_action->do_action();
+    get_main_window()->get_action_manager().push_action(raise_action);
 }
 
 void LayerManager::on_layer_rename() {
@@ -124,6 +126,7 @@ void LayerManager::set_level(Level* level) {
     if(level_) {
         level_->layer_created().connect(bind(&LayerManager::on_layer_created, this, _1));
         level_->layer_destroyed().connect(bind(&LayerManager::on_layer_destroyed, this, _1));
+        level_->layers_changed().connect(bind(&LayerManager::update_list_view, this));
 
         level_->trigger_layer_created_on_all_layers();
     }

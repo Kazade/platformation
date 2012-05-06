@@ -145,6 +145,7 @@ LayerID Level::create_new_layer() {
     //Call signal
     signal_layer_created_(new_layer.get());
     signal_changed_();
+    signal_layers_changed_();
 
     //We want layer changes to trigger level changed signals
     new_layer->signal_changed().connect(sigc::mem_fun(this, &Level::on_layer_changed));
@@ -181,6 +182,7 @@ void Level::destroy_layer(LayerID layer_id) {
 
     signal_changed_();
     signal_layer_destroyed_(NULL); //FIXME: Argument is useless
+    signal_layers_changed_();
 }
 
 uint32_t Level::layer_count() const {
@@ -206,6 +208,7 @@ void Level::lower_layer(LayerID layer_id) {
         active_layer_ = layer(layer_by_index(i-1)).id();
 
         signal_changed_();
+        signal_layers_changed_();
     }
 }
 
@@ -218,6 +221,7 @@ void Level::raise_layer(LayerID layer_id) {
         active_layer_ = layer(layer_by_index(i+1)).id();
 
         signal_changed_();
+        signal_layers_changed_();
     }
 }
 
