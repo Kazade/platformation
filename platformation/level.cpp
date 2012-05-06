@@ -235,7 +235,7 @@ void Level::render_layer(EditorView& view, LayerID layer_id) {
     }        
 }
 
-uint32_t Level::layer_index(LayerID layer_id) { 
+uint32_t Level::layer_index(LayerID layer_id) const { 
     uint32_t idx = 0;
     for(Layer::ptr layer: layers_) {
         if(layer->id() == layer_id) {

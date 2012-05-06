@@ -63,7 +63,7 @@ public:
         return layers_.at(i)->id();
     }
     
-    uint32_t layer_index(LayerID layer_id);
+    uint32_t layer_index(LayerID layer_id) const;
     
     LayerID layer_by_name(const std::string& name);
     void set_layer_name(LayerID layer_id, std::string new_name) {
@@ -151,6 +151,15 @@ public:
         return ++counter;
     }
 
+    bool can_raise_layer(LayerID layer=0) const {
+        layer = layer ? layer : active_layer_id();
+        return layer_index(layer) < layers_.size() - 1;
+    }
+    
+    bool can_lower_layer(LayerID layer=0) const {
+        layer = layer ? layer : active_layer_id();
+        return layer_index(layer) > 0;
+    }
 private:
 	std::string name_;	
 	uint32_t tile_size_;

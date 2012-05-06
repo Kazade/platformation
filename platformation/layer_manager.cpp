@@ -26,6 +26,7 @@
 #include "layer_rename_dialog.h"
 #include "actions/layer_rename_action.h"
 #include "actions/layer_raise_action.h"
+#include "actions/layer_lower_action.h"
 
 using boost::bind;
 
@@ -80,11 +81,16 @@ bool LayerManager::on_layer_popup(GdkEventButton* event) {
 }
 
 void LayerManager::on_layer_lower() {
-    level_->lower_layer(level_->active_layer_id());
-    update_list_view();    
+    if(!level_->can_lower_layer()) return;
+    
+    Action::ptr lower_action(new LayerLowerAction(level_, level_->active_layer_id()));
+    lower_action->do_action();
+    get_main_window()->get_action_manager().push_action(lower_action);
 }
 
 void LayerManager::on_layer_raise() {
+    if(!level_->can_raise_layer()) return;
+    
     Action::ptr raise_action(new LayerRaiseAction(level_, level_->active_layer_id()));
     raise_action->do_action();
     get_main_window()->get_action_manager().push_action(raise_action);
