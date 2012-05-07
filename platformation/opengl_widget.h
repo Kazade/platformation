@@ -25,7 +25,7 @@
 class OpenGLWidget : public GtkGLWidget {
 public:
     OpenGLWidget(Gtk::DrawingArea* widget);
-    void initialize();
+    void initialize_gl();
 
     bool on_motion_notify(GdkEventMotion* event);
     bool on_button_press(GdkEventButton* event);

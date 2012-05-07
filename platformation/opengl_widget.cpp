@@ -26,7 +26,7 @@
   *
   * @todo: document this function
   */
-void OpenGLWidget::initialize() {
+void OpenGLWidget::initialize_gl() {
     area()->signal_motion_notify_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_motion_notify));
     area()->signal_button_press_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_button_press));
     area()->signal_button_release_event().connect(sigc::mem_fun(this, &OpenGLWidget::on_button_release));
@@ -39,7 +39,7 @@ void OpenGLWidget::initialize() {
   */
 OpenGLWidget::OpenGLWidget(Gtk::DrawingArea* widget):
 GtkGLWidget(widget) {
-    initialize();
+    initialize_gl();
 }
 
 /** @brief on_scroll

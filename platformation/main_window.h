@@ -74,7 +74,6 @@ private:
     Gtk::Button* gtk_add_layer_button_;
     Gtk::Button* gtk_delete_layer_button_;
 
-    GtkGLWidget::ptr gtk_canvas_;
     Gtk::DrawingArea* gtk_tile_selector_canvas_;
     Gtk::TreeView* gtk_layer_view_;
 

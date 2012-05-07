@@ -18,7 +18,7 @@
 
 #include <iostream>
 #include "opengl_tile_selector.h"
-
+#include "kazbase/logging/logging.h"
 #include "tileset.h"
 
 float tile_size = 1.0f;

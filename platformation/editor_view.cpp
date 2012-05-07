@@ -28,6 +28,7 @@
 #include "level.h"
 #include "editor_view.h"
 #include "actions/spawn_tile_instance_action.h"
+#include "kazbase/logging/logging.h"
 
 /** @brief do_init
   *
@@ -40,6 +41,8 @@ void EditorView::do_init()
     glAlphaFunc(GL_GREATER, 0.1f);
     glEnable(GL_ALPHA_TEST);
     glClearColor(0.2078, 0.494, 0.78, 0.5);
+    
+    L_DEBUG("Initializing the editor view");    
 }
 
 /** @brief do_render
@@ -188,8 +191,6 @@ void EditorView::do_scroll(GdkEventScroll* event)
     if(!make_current()) return;
     do_resize(get_widget()->get_width(), get_widget()->get_height());
 }
-
-
 
 /** @brief do_button_press
   *

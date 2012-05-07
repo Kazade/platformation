@@ -1,4 +1,5 @@
 #include "gtk_gl_widget.h"
+#include "kazbase/logging/logging.h"
 
 const int attributes[] = { 
     GLX_RGBA, 
@@ -81,6 +82,8 @@ bool GtkGLWidget::on_area_idle() {
 
 void GtkGLWidget::on_area_realize() {
     if(make_current()) {
+        L_DEBUG("Initializing a GL widget");
+        
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         glEnable (GL_DEPTH_TEST);
         glDepthFunc (GL_LEQUAL);

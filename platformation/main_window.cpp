@@ -67,10 +67,10 @@ void MainWindow::create_widgets() {
     builder->get_widget("delete_layer_button", gtk_delete_layer_button_);
     builder->get_widget("side_bar_alignment", gtk_side_bar_);
 
-    gtk_canvas_.reset(new GtkGLWidget(canvas));
+    //gtk_canvas_.reset(new GtkGLWidget(canvas));
 
     //assert(gtk_canvas_);
-    editor_view_.reset(new EditorView(gtk_canvas_->area(), this));
+    editor_view_.reset(new EditorView(canvas, this));
 
     assert(gtk_tile_selector_canvas_);
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
@@ -93,7 +93,7 @@ void MainWindow::create_widgets() {
 
     gtk_window_->maximize();
     
-	create_new_level("Untitled", 128);    
+	create_new_level("Untitled", 128);   
 }
 
 void MainWindow::on_undo() {
@@ -143,11 +143,8 @@ void MainWindow::create_new_level(const std::string& name, uint32_t tile_size) {
 	level_changed_connection_ = level_->signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_level_changed));
 	level_saved_connection_ = level_->signal_saved().connect(sigc::mem_fun(this, &MainWindow::on_level_saved));
 	
-    if(editor_view_) {
-        editor_view_->set_level(level_.get());
-    }
-    
 	layer_manager_->set_level(level_.get()); 
+    editor_view_->set_level(level_.get()); 
 }
 
 /** @brief on_new_level
