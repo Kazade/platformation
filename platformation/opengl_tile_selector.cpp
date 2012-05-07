@@ -76,7 +76,7 @@ void OpenGLTileSelector::do_render()
     glDepthFunc(GL_LEQUAL);
 
     float ytrans = 0.0f;
-    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(area()->get_parent())) {
         ytrans = scr->get_vadjustment()->get_value();
     }
 
@@ -164,7 +164,7 @@ GLuint OpenGLTileSelector::get_texture_for_tile(Tile* tile)
   */
 void OpenGLTileSelector::do_scroll(GdkEventScroll* event)
 {
-    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(area()->get_parent())) {
         gdouble val = scr->get_vadjustment()->get_value();
 
         if(event->direction == GDK_SCROLL_UP) {
@@ -190,10 +190,7 @@ void OpenGLTileSelector::do_button_press(GdkEventButton* event)
     }
 
     if(event->type == GDK_BUTTON_PRESS && event->button == 1 && tileset_) {
-        MakeCurrent context(this);
-        if(!context.ok) {
-            return;
-        }
+        if(!make_current()) return;
 
         assert(picker_);
 
@@ -237,7 +234,7 @@ void OpenGLTileSelector::init_tileset()
 
     total_display_height_ = -y;
 
-    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
+    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(area()->get_parent())) {
         scr->get_vadjustment()->set_upper(total_display_height_ + 1.0f);
         scr->get_vadjustment()->set_value(0);
     }
@@ -257,7 +254,7 @@ void OpenGLTileSelector::on_tile_edit()
 
     tile_editor_.reset(new OpenGLTileEditor(tile.get()));
 
-    if(tile_editor_->run(dynamic_cast<Gtk::Window*>(get_widget()->get_toplevel())) == Gtk::RESPONSE_OK) {
+    if(tile_editor_->run(dynamic_cast<Gtk::Window*>(area()->get_toplevel())) == Gtk::RESPONSE_OK) {
         tile->save();
     }
 }

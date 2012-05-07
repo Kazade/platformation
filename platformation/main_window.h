@@ -33,6 +33,7 @@
 #include "editor_view.h"
 #include "layer_manager.h"
 #include "action_manager.h"
+#include "gtkgl/gtk_gl_widget.h"
 
 class MainWindow {
 public:
@@ -73,7 +74,8 @@ private:
     Gtk::Button* gtk_add_layer_button_;
     Gtk::Button* gtk_delete_layer_button_;
 
-    Gtk::DrawingArea* gtk_canvas_, *gtk_tile_selector_canvas_;
+    GtkGLWidget::ptr gtk_canvas_;
+    Gtk::DrawingArea* gtk_tile_selector_canvas_;
     Gtk::TreeView* gtk_layer_view_;
 
     void initialize_tile_canvas();

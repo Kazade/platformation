@@ -256,7 +256,7 @@ void OpenGLTileEditorCanvas::do_button_press(GdkEventButton* event)
     } else if (event->button == 3) {
         //TODO: Only the current layer iterators should be passed to pick() otherwise we'll get
         //false positives
-        MakeCurrent context(this);
+        make_current();
 
         Tile::GeometryIteratorPair iters = parent_->get_tile()->get_geometry_iterators();
         GeometryElement::ptr elem = picker_->pick(event->x, event->y, iters.first, iters.second);

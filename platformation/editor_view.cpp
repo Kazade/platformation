@@ -185,7 +185,7 @@ void EditorView::do_scroll(GdkEventScroll* event)
 
     if(zoom_ <= 0.2f) zoom_ = 0.2f;
 
-    MakeCurrent context(this);
+    if(!make_current()) return;
     do_resize(get_widget()->get_width(), get_widget()->get_height());
 }
 
@@ -203,10 +203,7 @@ void EditorView::do_button_press(GdkEventButton* event)
 
     if(event->button == 1) {
         //Select the tile instance under the cursor
-        MakeCurrent context(this);
-        if(!context.ok) {
-            return;
-        }
+        
 
         assert(picker_);
 
@@ -229,7 +226,8 @@ void EditorView::do_button_press(GdkEventButton* event)
         //Spawn a new tile instance
 
         //Get the spawn position (where we clicked
-        MakeCurrent context(this);
+        if(!make_current()) return;
+        
         kmVec2 pos = unproject(event->x, event->y);
         //Snap the position to the grid
         grid_->snap_to(pos.x, pos.y);
@@ -243,10 +241,7 @@ void EditorView::do_button_press(GdkEventButton* event)
         }
     } else if (event->button == 3) {
         //Delete the instance under the cursor
-        MakeCurrent context(this);
-        if(!context.ok) {
-            return;
-        }
+        if(!make_current()) return;
 
         gfloat x = event->x;
         gfloat y = event->y;
@@ -279,10 +274,7 @@ void EditorView::do_motion(GdkEventMotion* event)
     */
 
     if(active_object_ && event->state & GDK_BUTTON1_MASK && active_timer_.elapsed() >= 0.2) {
-        MakeCurrent context(this);
-        if(!context.ok) {
-            return;
-        }
+        if(!make_current()) return;
 
         kmVec2 pos = unproject(event->x, event->y);
         grid_->snap_to(pos.x, pos.y);

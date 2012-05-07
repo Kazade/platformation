@@ -48,6 +48,8 @@ MainWindow::MainWindow():
 
 void MainWindow::create_widgets() {
     Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create();
+    
+    Gtk::DrawingArea* canvas = nullptr;
 
     //Just let exceptions propagate - we can't do anything about them anyway
     builder->add_from_file(UI_FILE);
@@ -59,18 +61,23 @@ void MainWindow::create_widgets() {
     builder->get_widget("redo_toolbutton", gtk_redo_toolbutton_);
 
     builder->get_widget("add_tile_button", gtk_add_tile_button_);
-    builder->get_widget("canvas", gtk_canvas_);
+    builder->get_widget("canvas", canvas);
     builder->get_widget("layer_tree_view", gtk_layer_view_);
     builder->get_widget("add_layer_button", gtk_add_layer_button_);
     builder->get_widget("delete_layer_button", gtk_delete_layer_button_);
     builder->get_widget("side_bar_alignment", gtk_side_bar_);
 
-    assert(gtk_canvas_);
-    editor_view_.reset(new EditorView(gtk_canvas_, this));
+    gtk_canvas_.reset(new GtkGLWidget(canvas));
+
+    //assert(gtk_canvas_);
+    editor_view_.reset(new EditorView(gtk_canvas_->area(), this));
 
     assert(gtk_tile_selector_canvas_);
     selector_.reset(new OpenGLTileSelector(gtk_tile_selector_canvas_));
-    editor_view_->set_tile_selector(selector_.get());
+    
+    if(editor_view_) {
+        editor_view_->set_tile_selector(selector_.get());
+    }
 
     layer_manager_.reset(new LayerManager(this, gtk_layer_view_, gtk_add_layer_button_, gtk_delete_layer_button_));
 
@@ -136,7 +143,10 @@ void MainWindow::create_new_level(const std::string& name, uint32_t tile_size) {
 	level_changed_connection_ = level_->signal_changed().connect(sigc::mem_fun(this, &MainWindow::on_level_changed));
 	level_saved_connection_ = level_->signal_saved().connect(sigc::mem_fun(this, &MainWindow::on_level_saved));
 	
-	editor_view_->set_level(level_.get());
+    if(editor_view_) {
+        editor_view_->set_level(level_.get());
+    }
+    
 	layer_manager_->set_level(level_.get()); 
 }
 
