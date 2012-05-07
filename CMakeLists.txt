@@ -1,14 +1,16 @@
-cmake_minimum_required(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-project(Platformation)
+PROJECT(platformation)
 
 ADD_DEFINITIONS("-Wall -std=c++0x -g")
 
-find_package(PkgConfig)
-find_package(Boost COMPONENTS system filesystem thread date_time regex REQUIRED)
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
+
+FIND_PACKAGE(PkgConfig)
+FIND_PACKAGE(Boost COMPONENTS system filesystem thread date_time regex REQUIRED)
+FIND_PACKAGE(KGLT REQUIRED)
 
 pkg_check_modules(CURL REQUIRED libcurl)
-
 pkg_check_modules(GTHREAD REQUIRED "gthread-2.0 >= 2.14.0")
 
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
@@ -42,7 +44,10 @@ FOREACH(item ${kazbase})
   ENDIF(${item} MATCHES "kazbase/tests.cpp")
 ENDFOREACH(item)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+INCLUDE_DIRECTORIES(
+    ${CMAKE_SOURCE_DIR}
+    ${KGLT_INCLUDE_DIRS}
+)
 
 set(headers
     src/main_window.h
@@ -62,6 +67,7 @@ set(CMAKE_CXX_FLAGS "-Wall")
 add_executable(platformation ${sources} ${kazbase})
 target_link_libraries(
     platformation 
+    ${KGLT_LIBRARIES}
     ${GTKMM_LIBRARIES} 
     ${GTHREAD_LIBRARIES}
     ${Boost_FILESYSTEM_LIBRARY} 
