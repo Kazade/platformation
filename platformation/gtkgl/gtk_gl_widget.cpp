@@ -108,14 +108,11 @@ bool GtkGLWidget::on_area_expose(GdkEventExpose *event) {
     if(event->count > 0) return true;
     
     if(make_current()) {
-        Glib::RefPtr<Gdk::Window> window = area_->get_window();
-        Display* xdisplay = gdk_x11_drawable_get_xdisplay(window->gobj());
-        int id = gdk_x11_drawable_get_xid(window->gobj());            
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         do_render();
         
-        glXSwapBuffers(xdisplay, id);
+        swap_gl_buffers();
     }
     
     return true;
@@ -128,4 +125,13 @@ bool GtkGLWidget::on_area_configure(GdkEventConfigure* event) {
         do_resize(allocation.get_width(), allocation.get_height());
     }
     return true;
+}
+
+void GtkGLWidget::swap_gl_buffers() {
+    if(!make_current()) return;
+    
+    Glib::RefPtr<Gdk::Window> window = area_->get_window();
+    Display* xdisplay = gdk_x11_drawable_get_xdisplay(window->gobj());
+    int id = gdk_x11_drawable_get_xid(window->gobj());            
+    glXSwapBuffers(xdisplay, id);
 }

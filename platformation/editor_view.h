@@ -28,13 +28,14 @@
 #include "opengl_widget.h"
 #include "opengl_grid.h"
 #include "opengl_picker.h"
+#include "kglt/window_base.h"
 
 class Level;
 class Object;
 class MainWindow;
 class OpenGLTileSelector;
 
-class EditorView : public OpenGLWidget {
+class EditorView : public OpenGLWidget, public kglt::WindowBase {
 public:
     typedef std::tr1::shared_ptr<EditorView> ptr;
 
@@ -45,6 +46,13 @@ public:
     
     GLuint get_texture_for_object(Object* obj);
     
+    //KGLT overrides
+    virtual void set_title(const std::string& title) {}
+    virtual void check_events() {}
+    virtual void swap_buffers() {
+        OpenGLWidget::swap_gl_buffers();
+    }
+    virtual void swap_gl_buffers() {}
 private:
     MainWindow* parent_;
 

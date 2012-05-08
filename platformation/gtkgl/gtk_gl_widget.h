@@ -34,10 +34,13 @@ protected:
     virtual void do_render() {}
     virtual void do_init() {}
     virtual void do_resize(int width, int height) {}    
+    virtual void swap_gl_buffers();
 private:
     Gtk::DrawingArea* area_;
     GLXContext context_;
     sigc::connection idle_connection_;
+    
+    
 };
 
 #endif

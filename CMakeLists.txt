@@ -9,6 +9,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
 FIND_PACKAGE(PkgConfig)
 FIND_PACKAGE(Boost COMPONENTS system filesystem thread date_time regex REQUIRED)
 FIND_PACKAGE(KGLT REQUIRED)
+FIND_PACKAGE(KAZMATH REQUIRED)
 
 pkg_check_modules(CURL REQUIRED libcurl)
 pkg_check_modules(GTHREAD REQUIRED "gthread-2.0 >= 2.14.0")
@@ -47,6 +48,7 @@ ENDFOREACH(item)
 INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}
     ${KGLT_INCLUDE_DIRS}
+    ${KAZMATH_INCLUDE_DIRS}
 )
 
 set(headers
@@ -68,6 +70,7 @@ add_executable(platformation ${sources} ${kazbase})
 target_link_libraries(
     platformation 
     ${KGLT_LIBRARIES}
+    ${KAZMATH_LIBRARIES}
     ${GTKMM_LIBRARIES} 
     ${GTHREAD_LIBRARIES}
     ${Boost_FILESYSTEM_LIBRARY} 
