@@ -51,6 +51,8 @@ void EditorView::do_init()
   */
 void EditorView::do_render()
 {
+    update();
+    /*
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
@@ -97,7 +99,7 @@ void EditorView::do_render()
             glPopAttrib();
             glPopMatrix();
         }
-    }
+    }*/
 }
 
 /** @brief EditorView
@@ -124,6 +126,9 @@ parent_(parent)
   */
 void EditorView::do_resize(int width, int height)
 {
+    set_width(width);
+    set_height(height);
+    /*
     glViewport (0, 0, (GLfloat)width, (GLfloat)height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -145,7 +150,7 @@ void EditorView::do_resize(int width, int height)
     glOrtho(left, right, bottom, top, -1.0, 1.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glLoadIdentity();*/
 }
 
 /** @brief set_level
