@@ -20,26 +20,26 @@
 #define TILE_INSTANCE_H_INCLUDED
 
 #include <tr1/memory>
-#include "object.h"
 #include "typedefs.h"
+#include "kglt/types.h"
 
 class Tileset;
 class Layer;
 
-class TileInstance : public Object {
+class TileInstance {
 public:
     typedef std::tr1::shared_ptr<TileInstance> ptr;
 
-    TileInstance(Layer* parent, TileID tile_id);
-    void render_geometry();
+    TileInstance(Layer* parent, TileID tile_id=0);
+    ~TileInstance();
+    
     TileID tile_id() { return tile_; }
-    
     Layer& layer() { return *layer_; }
-    
+    kglt::MeshID mesh_id() const { return mesh_id_; }
 private:
     Layer* layer_;
     TileID tile_;
-
+    kglt::MeshID mesh_id_;
 };
 
 #endif // TILE_INSTANCE_H_INCLUDED

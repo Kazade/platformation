@@ -15,7 +15,9 @@
 *
 **********************************************************************************/
 
+#include <boost/format.hpp>
 
+#include "kazbase/logging/logging.h"
 #include "layer.h"
 #include "level.h"
 
@@ -25,43 +27,35 @@ Layer::Layer(Level* parent, const std::string& name):
 id_(Layer::generate_layer_id()),
 level_(parent),
 name_(name) {
-
+    std::pair<uint32_t, uint32_t> dimensions = level_->size();
+    resize(dimensions.first, dimensions.second);
 }
 
-TileInstance* Layer::spawn_tile_instance(TileID tile_id, bool select) {
-    TileInstance::ptr new_tile_instance(new TileInstance(this, tile_id));
-    tile_instances_.push_back(new_tile_instance);
-
-    signal_changed_();
-
-    return new_tile_instance.get();
-}
-
-uint32_t Layer::get_tile_instance_count() const {
-    return tile_instances_.size();
-}
-
-TileInstance* Layer::get_tile_instance_at(uint32_t i) const {
-    assert(0);
-    return NULL;
-}
-
-void Layer::delete_tile_instance(TileInstance* instance) {
-    TileListIteratorPair iters = get_iterators();
-
-    for(; iters.first != iters.second; ++iters.first) {
-        TileInstance* rhs = (*iters.first).get();
-        if(rhs == instance) {
-            break;
+void Layer::resize(uint32_t w, uint32_t h) {
+    //FIXME: preserve old tiles if we get larger/smaller
+    L_DEBUG("Resizing the layer");
+    
+    uint32_t new_total = w * h;
+    
+    if(new_total > tile_instances_.size()) {
+        tile_instances_.reserve(new_total);
+        uint32_t to_make = (new_total - tile_instances_.size());
+        for(uint32_t i = 0; i < to_make; ++i) {
+            tile_instances_.push_back(TileInstance::ptr(new TileInstance(this)));
+        }
+    } else {
+        tile_instances_.resize(new_total);
+    }
+    
+    for(uint32_t y = 0; y < h; ++y) {
+        for(uint32_t x = 0; x < w; ++x) {
+            TileInstance::ptr instance = tile_instances_.at((y * w) + x);
+            kglt::Mesh& mesh = level_->scene().mesh(instance->mesh_id());
+            mesh.move_to(float(x) + 0.5, float(y) + 0.5, -1.0);
         }
     }
-
-    if(iters.first == iters.second) {
-        return;
-    }
-    tile_instances_.erase(iters.first);
-
-    signal_changed_();
+    
+    L_DEBUG("Layer resize complete");
 }
 
 void Layer::set_name(const std::string& name) {

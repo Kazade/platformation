@@ -27,20 +27,17 @@
 #include "object.h"
 #include "level.h"
 #include "editor_view.h"
-#include "actions/spawn_tile_instance_action.h"
 #include "kazbase/logging/logging.h"
 
 /** @brief do_init
   *
   * @todo: document this function
   */
-void EditorView::do_init()
-{
-    //glEnable(GL_DEPTH_TEST);
-    //glDepthFunc(GL_LEQUAL);
-    glAlphaFunc(GL_GREATER, 0.1f);
-    glEnable(GL_ALPHA_TEST);
-    glClearColor(0.2078, 0.494, 0.78, 0.5);
+void EditorView::do_init() {
+    scene().render_options.backface_culling_enabled = false;
+    scene().render_options.texture_enabled = true;
+    scene().render_options.wireframe_enabled = true;
+    scene().viewport().set_background_colour(kglt::Colour(0.2078, 0.494, 0.78, 0.5));
     
     L_DEBUG("Initializing the editor view");    
 }
@@ -49,57 +46,8 @@ void EditorView::do_init()
   *
   * @todo: document this function
   */
-void EditorView::do_render()
-{
+void EditorView::do_render() {
     update();
-    /*
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_ALPHA_TEST);
-
-    float ytrans = 0.0f;
-    float xtrans = 0.0f;
-    if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
-        ytrans = scr->get_vadjustment()->get_value();
-        xtrans = scr->get_hadjustment()->get_value();
-    }
-
-    glTranslatef(-xtrans, ytrans, 0.0f);
-
-    if(level_) {
-        grid_->render();
-    }
-
-    if(level_) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_DEPTH_TEST);
-        for(uint32_t i = 0; i < level_->layer_count(); ++i) {
-            LayerID layer = level_->layer_by_index(i);
-
-            if(layer != level_->active_layer_id()) {
-                glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-            } else {
-                glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-
-            level_->render_layer(*this, layer);
-        }
-
-        if(active_object_) {
-            glPushMatrix();
-            glTranslatef(0.0f, 0.0f, -0.1f);
-            glLineWidth(2);
-            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_POLYGON_BIT);
-                glColor3f(1.0f, 0.0f, 0.0f);
-                glDisable(GL_TEXTURE_2D);
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                active_object_->render_geometry();
-            glPopAttrib();
-            glPopMatrix();
-        }
-    }*/
 }
 
 /** @brief EditorView
@@ -124,10 +72,12 @@ parent_(parent)
   *
   * @todo: document this function
   */
-void EditorView::do_resize(int width, int height)
-{
-    set_width(width);
-    set_height(height);
+void EditorView::do_resize(int width, int height) {
+    set_width(area()->get_allocation().get_width());
+    set_height(area()->get_allocation().get_height());
+    scene().viewport().set_size(width, height);
+    scene().viewport().set_orthographic_projection_from_height(15.0);
+    
     /*
     glViewport (0, 0, (GLfloat)width, (GLfloat)height);
     glMatrixMode(GL_PROJECTION);
@@ -211,7 +161,7 @@ void EditorView::do_button_press(GdkEventButton* event)
         //Select the tile instance under the cursor
         
 
-        assert(picker_);
+/*        assert(picker_);
 
         gfloat x = event->x;
         gfloat y = event->y;
@@ -226,10 +176,10 @@ void EditorView::do_button_press(GdkEventButton* event)
         } else {
             active_object_ = NULL;
             active_timer_.reset();
-        }
+        }*/
 
     } else if (event->button == 2 && tile_selector_) {
-        //Spawn a new tile instance
+/*        //Spawn a new tile instance
 
         //Get the spawn position (where we clicked
         if(!make_current()) return;
@@ -244,10 +194,10 @@ void EditorView::do_button_press(GdkEventButton* event)
         TileInstance* ni = action->get_spawned_instance();
         if(ni) {
             parent_->get_action_manager().push_action(action); //Add to the undo queue, but only if the action did something
-        }
+        }*/
     } else if (event->button == 3) {
         //Delete the instance under the cursor
-        if(!make_current()) return;
+/*        if(!make_current()) return;
 
         gfloat x = event->x;
         gfloat y = event->y;
@@ -264,7 +214,7 @@ void EditorView::do_button_press(GdkEventButton* event)
                 active_object_ = NULL;
             }
 
-        }
+        }*/
     }
 }
 

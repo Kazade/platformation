@@ -42,15 +42,8 @@ public:
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
     Layer(Level* parent, const std::string& name);
-    TileInstance* spawn_tile_instance(TileID tile_id, bool select=true);
-
-    uint32_t get_tile_instance_count() const;
-    TileInstance* get_tile_instance_at(uint32_t i) const;
-    void delete_tile_instance(TileInstance* instance);
-
-    TileListIteratorPair get_iterators() {
-        return std::make_pair(tile_instances_.begin(), tile_instances_.end());
-    }
+    void resize(uint32_t horizontal_tile_count, uint32_t vertical_tile_count);
+    void set_tile_at(uint32_t index, TileID tile_id);
 
     void set_name(const std::string& name);
     std::string name() const;
@@ -70,8 +63,9 @@ private:
     Level* level_;
     std::string name_;
     
-    TileList tile_instances_;
     sigc::signal<void> signal_changed_;
+    
+    std::vector<TileInstance::ptr> tile_instances_;
 };
 
 #endif // LAYER_H_INCLUDED

@@ -33,6 +33,7 @@
 #include <sigc++/sigc++.h>
 
 #include "kazbase/list_utils.h"
+#include "kglt/scene.h"
 
 #include "layer.h"
 #include "tile_instance.h"
@@ -52,8 +53,9 @@ public:
     typedef std::list<TileInstance::ptr> TileList;
     typedef std::pair<TileList::iterator, TileList::iterator> TileListIteratorPair;
 
-    Level(const std::string& name, const uint32_t tile_size);
-	void set_dimensions(uint32_t tiles_across, uint32_t tiles_down);
+    Level(kglt::Scene& scene, const std::string& name, const uint32_t tile_size);
+	void set_size(uint32_t tiles_across, uint32_t tiles_down);
+    std::pair<uint32_t, uint32_t> size() const { return level_size_; }
 
     LayerID create_new_layer();
     void destroy_layer(LayerID layer);
@@ -74,8 +76,6 @@ public:
     void set_active_layer_by_index(uint32_t index) {
         set_active_layer(layers_.at(index)->id());
     }
-    
-    void render_layer(EditorView& view, LayerID layer_id);
     
     LayerID active_layer_id() const { return active_layer_; }
     void raise_layer(LayerID l);
@@ -110,6 +110,7 @@ public:
     //If a layer is changed, then the level is classed as altered
     void on_layer_changed() { signal_changed_(); signal_layers_changed_(); }
     
+    /*
     TileInstance* spawn_tile_instance(Tile::ptr tile) {
         TileID id;
         if(!container::contains(active_tiles_, tile->absolute_path())) {
@@ -139,7 +140,7 @@ public:
         }
         
         layer.delete_tile_instance(instance);
-    }
+    }*/
 
     Tile& tile(TileID tile_id) { 
         assert(container::contains(tiles_, tile_id));
@@ -160,7 +161,11 @@ public:
         layer = layer ? layer : active_layer_id();
         return layer_index(layer) > 0;
     }
+    
+    kglt::Scene& scene() { return scene_; }
+    
 private:
+    kglt::Scene& scene_;
 	std::string name_;	
 	uint32_t tile_size_;
 	

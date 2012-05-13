@@ -91,14 +91,18 @@ bool Level::save(const std::string& filename) const
   *
   * @todo: document this function
   */
-Level::Level(const std::string& name, const uint32_t tile_size):
+Level::Level(kglt::Scene& scene, const std::string& name, const uint32_t tile_size):
+scene_(scene),
 name_(name),
 tile_size_(tile_size),
 active_layer_(0) {
+    level_size_.first = 30; //Set some defaults
+    level_size_.second = 6;
+    
     create_new_layer();
 }
 
-void Level::set_dimensions(uint32_t tiles_across, uint32_t tiles_down) {
+void Level::set_size(uint32_t tiles_across, uint32_t tiles_down) {
 	level_size_.first = tiles_across;
 	level_size_.second = tiles_down;
 }
@@ -223,16 +227,6 @@ void Level::raise_layer(LayerID layer_id) {
         signal_changed_();
         signal_layers_changed_();
     }
-}
-
-void Level::render_layer(EditorView& view, LayerID layer_id) {        
-    Layer::TileListIteratorPair iters = layer(layer_id).get_iterators();
-
-    for(; iters.first != iters.second; iters.first++) {
-        Object* obj = (*iters.first).get();
-        glBindTexture(GL_TEXTURE_2D, view.get_texture_for_object(obj));
-        obj->render_geometry();
-    }        
 }
 
 uint32_t Level::layer_index(LayerID layer_id) const { 

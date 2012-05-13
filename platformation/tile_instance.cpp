@@ -19,6 +19,9 @@
 #include <GL/gl.h>
 #include <cassert>
 
+#include "kglt/procedural/mesh.h"
+#include "kglt/mesh.h"
+
 #include "layer.h"
 #include "level.h"
 #include "tileset.h"
@@ -31,38 +34,15 @@
   */
 TileInstance::TileInstance(Layer* parent, TileID tile_id):
 layer_(parent),
-tile_(tile_id) {
-
+tile_(tile_id) {    
+    //Create a new mesh
+    mesh_id_ = parent->level().scene().new_mesh();
+    kglt::Mesh& mesh = parent->level().scene().mesh(mesh_id_);
+    kglt::procedural::mesh::rectangle(mesh, 1.0, 1.0);
 }
 
-
-/** @brief render_geometry
-  *
-  * @todo: document this function
-  */
-void TileInstance::render_geometry()
-{
-    Tile& tile = layer().level().tile(tile_);
-
-    //1 world unit = 64 pixels. THis should be render from the editor view
-    float scale = 1.0f / 64.0f;
-
-    float w = float(tile.get_width()) * scale;
-    float h = float(tile.get_height()) * scale;
-
-    float hw = w / 2.0f;
-    float hh = h / 2.0f;
-
-    kmVec2 pos = get_position();
-
-    glPushMatrix();
-    glTranslatef(pos.x, pos.y, 0.0f);
-    glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex2f(-hw, -hh);
-        glTexCoord2f(1, 0); glVertex2f( hw, -hh);
-        glTexCoord2f(1, 1); glVertex2f( hw,  hh);
-        glTexCoord2f(0, 1); glVertex2f(-hw,  hh);
-    glEnd();
-    glPopMatrix();
+TileInstance::~TileInstance() {
+    layer_->level().scene().delete_mesh(mesh_id_);
 }
+
 

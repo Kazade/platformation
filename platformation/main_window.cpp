@@ -129,8 +129,8 @@ void MainWindow::on_level_saved() {
 void MainWindow::create_new_level(const std::string& name, uint32_t tile_size) {
 	L_DEBUG("Creating a level with name: " + name);
 	
-	level_.reset(new Level(name, tile_size));	
-	level_->set_dimensions(20, 6);
+	level_.reset(new Level(editor_view_->scene(), name, tile_size));	
+	level_->set_size(30, 6);
 	
 	if(level_changed_connection_.connected()) {
 		level_changed_connection_.disconnect();
@@ -241,6 +241,6 @@ void MainWindow::on_add_tile_clicked()
         return;
     }
 
-    level_->spawn_tile_instance(selector_->library().tile(selector_->get_active_tile_id()));
+    //level_->spawn_tile_instance(selector_->library().tile(selector_->get_active_tile_id()));
 }
 

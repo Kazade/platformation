@@ -50,9 +50,8 @@ public:
     virtual void set_title(const std::string& title) {}
     virtual void check_events() {}
     virtual void swap_buffers() {
-        OpenGLWidget::swap_gl_buffers();
+        swap_gl_buffers();
     }
-    virtual void swap_gl_buffers() {}
 private:
     MainWindow* parent_;
 

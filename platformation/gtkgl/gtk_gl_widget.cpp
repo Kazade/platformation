@@ -83,15 +83,6 @@ bool GtkGLWidget::on_area_idle() {
 void GtkGLWidget::on_area_realize() {
     if(make_current()) {
         L_DEBUG("Initializing a GL widget");
-        
-        glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-        glEnable (GL_DEPTH_TEST);
-        glDepthFunc (GL_LEQUAL);
-        glEnable (GL_CULL_FACE);
-        glCullFace (GL_BACK);
-        glDisable (GL_DITHER);
-        glShadeModel (GL_SMOOTH);
-        
         do_init();
     }
 }
@@ -108,11 +99,7 @@ bool GtkGLWidget::on_area_expose(GdkEventExpose *event) {
     if(event->count > 0) return true;
     
     if(make_current()) {
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         do_render();
-        
-        swap_gl_buffers();
     }
     
     return true;
@@ -121,7 +108,7 @@ bool GtkGLWidget::on_area_expose(GdkEventExpose *event) {
 bool GtkGLWidget::on_area_configure(GdkEventConfigure* event) {
     Gtk::Allocation allocation = area_->get_allocation();
     if(make_current()) {
-        glViewport (0, 0, allocation.get_width(), allocation.get_height());
+        //glViewport (0, 0, allocation.get_width(), allocation.get_height());
         do_resize(allocation.get_width(), allocation.get_height());
     }
     return true;
