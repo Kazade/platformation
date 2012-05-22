@@ -36,8 +36,8 @@
 void EditorView::do_init() {
     scene().render_options.backface_culling_enabled = false;
     scene().render_options.texture_enabled = true;
-    scene().render_options.wireframe_enabled = true;
-    scene().viewport().set_background_colour(kglt::Colour(0.2078, 0.494, 0.78, 0.5));
+    scene().render_options.wireframe_enabled = false;
+    scene().pass().viewport().set_background_colour(kglt::Colour(0.2078, 0.494, 0.78, 0.5));
     
     L_DEBUG("Initializing the editor view");    
 }
@@ -57,15 +57,34 @@ void EditorView::do_render() {
 EditorView::EditorView(Gtk::DrawingArea* widget, MainWindow* parent):
 OpenGLWidget(widget),
 level_(NULL),
-active_object_(NULL),
 tile_selector_(NULL),
 zoom_(1.0f),
-parent_(parent)
-{
-    GridColour c;
-    c.r = c.b = c.g = 1.0f;
-    grid_.reset(new OpenGLGrid(1.0f, 4, c));
-    picker_.reset(new OpenGLPicker<Object::ptr>());
+parent_(parent),
+selected_instance_(nullptr) {
+	widget->set_flags(Gtk::CAN_FOCUS);
+    widget->set_events(
+		Gdk::POINTER_MOTION_MASK | 
+		Gdk::BUTTON_PRESS_MASK |
+		Gdk::ENTER_NOTIFY_MASK |
+		Gdk::LEAVE_NOTIFY_MASK
+	);
+	
+    widget->signal_motion_notify_event().connect(sigc::mem_fun(this, &EditorView::motion_notify_event));
+    
+    selection_.reset(new kglt::SelectionRenderer(scene()));
+    
+    scene().remove_all_passes();
+    scene().add_pass(selection_);
+    scene().add_pass(kglt::Renderer::ptr(new kglt::GenericRenderer(scene())));
+}
+
+
+bool EditorView::motion_notify_event(GdkEventMotion* event) {
+	if(event) {
+		mouse_x_ = event->x;
+		mouse_y_ = event->y;
+	}
+	return false;
 }
 
 /** @brief do_resize
@@ -75,32 +94,9 @@ parent_(parent)
 void EditorView::do_resize(int width, int height) {
     set_width(area()->get_allocation().get_width());
     set_height(area()->get_allocation().get_height());
-    scene().viewport().set_size(width, height);
-    scene().viewport().set_orthographic_projection_from_height(15.0);
     
-    /*
-    glViewport (0, 0, (GLfloat)width, (GLfloat)height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    float zoom = zoom_;
-
-    float num_tiles_across = 40.0f;
-
-    float left = zoom * -(num_tiles_across / 2.0f);
-    float right = zoom * (num_tiles_across / 2.0f);
-
-    float ratio = float(height) / float(width);
-
-    float num_tiles_up = num_tiles_across * ratio;
-
-    float top = zoom * (num_tiles_up / 2.0f);
-    float bottom = zoom * -(num_tiles_up / 2.0f);
-
-    glOrtho(left, right, bottom, top, -1.0, 1.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();*/
+    scene().pass(0).renderer().set_orthographic_projection_from_height(8.0, float(width) / float(height));
+    scene().pass(1).renderer().set_orthographic_projection_from_height(8.0, float(width) / float(height));
 }
 
 /** @brief set_level
@@ -111,12 +107,6 @@ void EditorView::set_level(Level* level)
 {
     level_ = level;
 
-    std::pair<int, int> level_size = level_->get_level_size();
-    grid_->set_max_x(level_size.first / 64);
-    grid_->set_min_x(0);
-    grid_->set_max_y(level_size.second / 64 / 2);
-    grid_->set_min_y(-level_size.second / 64 / 2);
-
     if(Gtk::ScrolledWindow* scr = dynamic_cast<Gtk::ScrolledWindow*>(get_widget()->get_parent())) {
         kmVec2 tl = unproject(0, 0);
         kmVec2 br = unproject(get_widget()->get_width(), get_widget()->get_height());
@@ -125,7 +115,6 @@ void EditorView::set_level(Level* level)
         scr->get_hadjustment()->set_lower(lower);
         scr->get_hadjustment()->set_value(lower);
         scr->get_hadjustment()->set_step_increment(1);
-        scr->get_hadjustment()->set_upper(level_size.first / 64); //FIXME: This is wrong, need to correctly calculate max
     }
 }
 
@@ -158,8 +147,24 @@ void EditorView::do_button_press(GdkEventButton* event)
     }
 
     if(event->button == 1) {
+		if(selected_instance_) {
+			selected_instance_->mark_selected(false);
+		}
+		
         //Select the tile instance under the cursor
-        
+		kglt::MeshID selected_mesh = selection_->selected_mesh();
+		if(selected_mesh) {
+			kglt::Mesh& mesh = scene().mesh(selected_mesh);
+			TileInstance* instance = (TileInstance*) mesh.user_data();
+			if(instance) {
+				selected_instance_ = instance;
+				selected_instance_->mark_selected();
+			} else {
+				selected_instance_ = nullptr;
+			}
+		} else {
+			selected_instance_ = nullptr;
+		}
 
 /*        assert(picker_);
 
@@ -222,20 +227,8 @@ void EditorView::do_button_press(GdkEventButton* event)
   *
   * @todo: document this function
   */
-void EditorView::do_motion(GdkEventMotion* event)
-{
-    /*
-        If we are moving, have an active object, and the mouse button
-        is still down, we are trying to move it somewhere.
-    */
+void EditorView::do_motion(GdkEventMotion* event) {
 
-    if(active_object_ && event->state & GDK_BUTTON1_MASK && active_timer_.elapsed() >= 0.2) {
-        if(!make_current()) return;
-
-        kmVec2 pos = unproject(event->x, event->y);
-        grid_->snap_to(pos.x, pos.y);
-        active_object_->set_position(pos.x, pos.y);
-    }
 }
 
 /** @brief get_texture_for_object

@@ -28,7 +28,9 @@
 #include "opengl_widget.h"
 #include "opengl_grid.h"
 #include "opengl_picker.h"
+
 #include "kglt/window_base.h"
+#include "kglt/rendering/selection_renderer.h"
 
 class Level;
 class Object;
@@ -52,6 +54,15 @@ public:
     virtual void swap_buffers() {
         swap_gl_buffers();
     }
+    
+    virtual void cursor_position(int32_t& mouse_x, int32_t& mouse_y) {
+		mouse_x = mouse_x_;
+		mouse_y = mouse_y_;
+		area()->get_pointer(mouse_x, mouse_y);
+		std::cout << mouse_x << ", " << mouse_y << std::endl;
+	}
+	
+	bool motion_notify_event(GdkEventMotion* event);
 private:
     MainWindow* parent_;
 
@@ -62,16 +73,18 @@ private:
     void do_motion(GdkEventMotion* event);
     void do_scroll(GdkEventScroll* event);
 
-    OpenGLGrid::ptr grid_;
     Level* level_;
-
-    OpenGLPicker<Object::ptr>::ptr picker_;
-    Object* active_object_;
     Glib::Timer active_timer_;
     std::map<Object*, GLuint> texture_ids_;
     OpenGLTileSelector* tile_selector_;
 
     float zoom_;
+    
+    int32_t mouse_x_;
+    int32_t mouse_y_;
+    
+    kglt::SelectionRenderer::ptr selection_;
+    TileInstance* selected_instance_;
 };
 
 

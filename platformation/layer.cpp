@@ -51,7 +51,7 @@ void Layer::resize(uint32_t w, uint32_t h) {
         for(uint32_t x = 0; x < w; ++x) {
             TileInstance::ptr instance = tile_instances_.at((y * w) + x);
             kglt::Mesh& mesh = level_->scene().mesh(instance->mesh_id());
-            mesh.move_to(float(x) + 0.5, float(y) + 0.5, -1.0);
+            mesh.move_to(float(x) + 0.5, (float(y) + 0.5) - (h * 0.5), -1.0);
         }
     }
     

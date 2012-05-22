@@ -13,12 +13,30 @@ FIND_PACKAGE(KAZMATH REQUIRED)
 
 pkg_check_modules(CURL REQUIRED libcurl)
 pkg_check_modules(GTHREAD REQUIRED "gthread-2.0 >= 2.14.0")
-
+pkg_check_modules(SIGC REQUIRED sigc++-2.0)
 pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
+pkg_check_modules(GLIBMM REQUIRED glibmm-2.4)
+pkg_check_modules(GDKMM REQUIRED gtkmm-2.4)
+pkg_check_modules(GL REQUIRED gl)
+pkg_check_modules(GLU REQUIRED glu)
+
+link_directories(
+	${GL_LIBRARY_DIRS}
+	${GLU_LIBRARY_DIRS}
+)
+
+include_directories(
+	${GL_INCLUDE_DIRS}
+	${GLU_INCLUDE_DIRS}
+)
+
 IF(GTKMM_FOUND)
     link_directories(${GTKMM_LIBRARY_DIRS})
     include_directories(${GTKMM_INCLUDE_DIRS})
 ENDIF(GTKMM_FOUND)
+
+link_directories(${GLIBMM_LIBRARY_DIRS} ${GDKMM_LIBRARY_DIRS})
+include_directories(${GLIBMM_INCLUDE_DIRS} ${GDKMM_INCLUDE_DIRS})
 
 pkg_check_modules(LIBGLADEMM REQUIRED libglademm-2.4)
 IF(LIBGLADEMM_FOUND)
@@ -26,15 +44,8 @@ IF(LIBGLADEMM_FOUND)
     include_directories(${LIBGLADEMM_INCLUDE_DIRS})
 ENDIF(LIBGLADEMM_FOUND)
 
-pkg_check_modules(GTKGLEXTMM REQUIRED gtkglextmm-1.2)
-IF(GTKGLEXTMM_FOUND)
-    message(STATUS ${GTKGLEXTMM_CFLAGS})
-    link_directories(${GTKGLEXTMM_LIBRARY_DIRS})
-    include_directories(${GTKGLEXTMM_INCLUDE_DIRS})
-ENDIF(GTKGLEXTMM_FOUND)
-
 link_directories(${CURL_LIBRARY_DIRS})
-include_directories(${CURL_INCLUDE_DIRS})
+include_directories(${CURL_INCLUDE_DIRS} ${SIGC_INCLUDE_DIRS})
 
 FILE(GLOB_RECURSE sources platformation/*.cpp)
 FILE(GLOB_RECURSE kazbase kazbase/*.cpp)
@@ -78,10 +89,11 @@ target_link_libraries(
     ${Boost_THREAD_LIBRARY} 
     ${Boost_SYSTEM_LIBRARY} 
     ${Boost_DATE_TIME_LIBRARY}
-    ${GTKGLEXTMM_LIBRARIES} 
     /usr/lib/libSOIL.a 
     /usr/lib/libtinyxml.a 
     ${CURL_LIBRARIES}
+    ${GL_LIBRARIES}
+    ${GLU_LIBRARIES}
 )
 
 set(source_dir ${CMAKE_CURRENT_SOURCE_DIR}/ui)

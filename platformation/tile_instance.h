@@ -36,6 +36,9 @@ public:
     TileID tile_id() { return tile_; }
     Layer& layer() { return *layer_; }
     kglt::MeshID mesh_id() const { return mesh_id_; }
+    
+    void mark_selected(bool value=true);
+    
 private:
     Layer* layer_;
     TileID tile_;

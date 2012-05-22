@@ -39,10 +39,19 @@ tile_(tile_id) {
     mesh_id_ = parent->level().scene().new_mesh();
     kglt::Mesh& mesh = parent->level().scene().mesh(mesh_id_);
     kglt::procedural::mesh::rectangle(mesh, 1.0, 1.0);
+    
+    mesh.set_user_data((void*)this); //Store the pointer to this, in the mesh
 }
 
 TileInstance::~TileInstance() {
     layer_->level().scene().delete_mesh(mesh_id_);
 }
 
+void TileInstance::mark_selected(bool value) { 
+	if(value) {
+		layer().level().scene().mesh(mesh_id()).set_diffuse_colour(kglt::Colour(1.0, 0.0, 0.0, 1.0));
+	} else {
+		layer().level().scene().mesh(mesh_id()).set_diffuse_colour(kglt::Colour(1.0, 1.0, 1.0, 1.0));
+	}
+}
 
