@@ -75,7 +75,7 @@ selected_instance_(nullptr) {
     
     scene().remove_all_passes();
     scene().add_pass(selection_);
-    scene().add_pass(kglt::Renderer::ptr(new kglt::GenericRenderer(scene())));
+    scene().add_pass(kglt::Renderer::ptr(new kglt::GenericRenderer(scene())));    
 }
 
 

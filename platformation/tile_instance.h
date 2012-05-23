@@ -40,9 +40,12 @@ public:
     void mark_selected(bool value=true);
     
 private:
+	kglt::Mesh& outline_mesh();
+
     Layer* layer_;
     TileID tile_;
     kglt::MeshID mesh_id_;
+    kglt::MeshID outline_mesh_id_;
 };
 
 #endif // TILE_INSTANCE_H_INCLUDED

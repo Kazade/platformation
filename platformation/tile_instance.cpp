@@ -27,20 +27,21 @@
 #include "tileset.h"
 #include "tile_instance.h"
 
-/** @brief TileInstance
-  *
-  * @todo: document this function
-  * @todo: Spawn a ClutterTexture
-  */
 TileInstance::TileInstance(Layer* parent, TileID tile_id):
 layer_(parent),
 tile_(tile_id) {    
     //Create a new mesh
     mesh_id_ = parent->level().scene().new_mesh();
     kglt::Mesh& mesh = parent->level().scene().mesh(mesh_id_);
-    kglt::procedural::mesh::rectangle(mesh, 1.0, 1.0);
-    
+    kglt::procedural::mesh::rectangle(mesh, 1.0, 1.0);    
     mesh.set_user_data((void*)this); //Store the pointer to this, in the mesh
+    mesh.set_diffuse_colour(kglt::Colour(1.0, 1.0, 1.0, 0.0));
+    
+	//Create the outline mesh, make it non-selectable and a parent of the mesh
+	outline_mesh_id_ = layer().level().scene().new_mesh();
+	kglt::procedural::mesh::rectangle_outline(outline_mesh(), 1.0, 1.0);
+	outline_mesh().set_parent(&mesh);
+	outline_mesh().move_to(0.0, 0.0, 0.1); //Move the outline slightly closer to the camera than the mesh
 }
 
 TileInstance::~TileInstance() {
@@ -49,9 +50,15 @@ TileInstance::~TileInstance() {
 
 void TileInstance::mark_selected(bool value) { 
 	if(value) {
-		layer().level().scene().mesh(mesh_id()).set_diffuse_colour(kglt::Colour(1.0, 0.0, 0.0, 1.0));
+		//outline_mesh().set_selectable(false);    				
+		outline_mesh().set_diffuse_colour(kglt::Colour(1.0, 0.0, 0.0, 1.0));
+		outline_mesh().move_to(0.0, 0.0, 0.2);
 	} else {
-		layer().level().scene().mesh(mesh_id()).set_diffuse_colour(kglt::Colour(1.0, 1.0, 1.0, 1.0));
+		outline_mesh().set_diffuse_colour(kglt::Colour(1.0, 1.0, 1.0, 1.0));
+		outline_mesh().move_to(0.0, 0.0, 0.1);
 	}
 }
 
+kglt::Mesh& TileInstance::outline_mesh() { 
+	return layer().level().scene().mesh(outline_mesh_id_);
+}
