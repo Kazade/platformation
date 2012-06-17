@@ -53,6 +53,12 @@ public:
         OpenGLWidget::swap_gl_buffers();
     }
     virtual void swap_gl_buffers() {}
+
+    sigc::signal<void, kglt::KeyCode>& signal_key_down() { assert(0); }
+    sigc::signal<void, kglt::KeyCode>& signal_key_up() { assert(0); }
+
+    virtual void cursor_position(int32_t& mouse_x, int32_t& mouse_y) { assert(0); }
+
 private:
     MainWindow* parent_;
 
