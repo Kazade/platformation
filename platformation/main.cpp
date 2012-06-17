@@ -23,8 +23,6 @@
 int main(int argc, char* argv[]) {
 	logging::get_logger("/")->add_handler(logging::Handler::ptr(new logging::StdIOHandler));
 	
-    g_thread_init (NULL);
-
     Gtk::Main kit(argc, argv);
 
     MainWindow window;
