@@ -37,7 +37,7 @@ void EditorView::do_init() {
     scene().render_options.backface_culling_enabled = false;
     scene().render_options.texture_enabled = true;
     scene().render_options.wireframe_enabled = true;
-    scene().viewport().set_background_colour(kglt::Colour(0.2078, 0.494, 0.78, 0.5));
+    scene().pass().viewport().set_background_colour(kglt::Colour(0.2078, 0.494, 0.78, 0.5));
     
     L_DEBUG("Initializing the editor view");    
 }
@@ -66,6 +66,12 @@ parent_(parent)
     c.r = c.b = c.g = 1.0f;
     grid_.reset(new OpenGLGrid(1.0f, 4, c));
     picker_.reset(new OpenGLPicker<Object::ptr>());
+
+    scene().remove_all_passes();
+
+    selection_renderer_.reset(new kglt::SelectionRenderer(scene()));
+    scene().add_pass(kglt::Renderer::ptr(selection_renderer_)); //Add the selection pass
+    scene().add_pass(kglt::Renderer::ptr(new kglt::GenericRenderer(scene()))); //Normal rendering
 }
 
 /** @brief do_resize
@@ -75,32 +81,11 @@ parent_(parent)
 void EditorView::do_resize(int width, int height) {
     set_width(area()->get_allocation().get_width());
     set_height(area()->get_allocation().get_height());
-    scene().viewport().set_size(width, height);
-    scene().viewport().set_orthographic_projection_from_height(15.0);
-    
-    /*
-    glViewport (0, 0, (GLfloat)width, (GLfloat)height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
 
-    float zoom = zoom_;
-
-    float num_tiles_across = 40.0f;
-
-    float left = zoom * -(num_tiles_across / 2.0f);
-    float right = zoom * (num_tiles_across / 2.0f);
-
-    float ratio = float(height) / float(width);
-
-    float num_tiles_up = num_tiles_across * ratio;
-
-    float top = zoom * (num_tiles_up / 2.0f);
-    float bottom = zoom * -(num_tiles_up / 2.0f);
-
-    glOrtho(left, right, bottom, top, -1.0, 1.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();*/
+    scene().pass(0).viewport().set_size(width, height);
+    scene().pass(0).renderer().set_orthographic_projection_from_height(15.0, double(width) / double(height));
+    scene().pass(1).viewport().set_size(width, height);
+    scene().pass(1).renderer().set_orthographic_projection_from_height(15.0, double(width) / double(height));
 }
 
 /** @brief set_level
