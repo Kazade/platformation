@@ -29,6 +29,7 @@
 #include "opengl_grid.h"
 #include "opengl_picker.h"
 #include "kglt/window_base.h"
+#include "kglt/kglt.h"
 
 class Level;
 class Object;
@@ -50,8 +51,14 @@ public:
     virtual void set_title(const std::string& title) {}
     virtual void check_events() {}
     virtual void swap_buffers() {
-        swap_gl_buffers();
+        OpenGLWidget::swap_gl_buffers();
     }
+    virtual void swap_gl_buffers() {}
+
+    sigc::signal<void, kglt::KeyCode>& signal_key_down() { assert(0); }
+    sigc::signal<void, kglt::KeyCode>& signal_key_up() { assert(0); }
+
+    virtual void cursor_position(int32_t& mouse_x, int32_t& mouse_y) { assert(0); }
 private:
     MainWindow* parent_;
 
@@ -72,6 +79,8 @@ private:
     OpenGLTileSelector* tile_selector_;
 
     float zoom_;
+
+    kglt::SelectionRenderer::ptr selection_renderer_;
 };
 
 
