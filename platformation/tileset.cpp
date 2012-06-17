@@ -21,7 +21,8 @@
 #include "natural_sort.h"
 #include "tileset.h"
 
-Tileset::Tileset() {
+Tileset::Tileset(kglt::WindowBase& window):
+    window_(window) {
 
 }
 

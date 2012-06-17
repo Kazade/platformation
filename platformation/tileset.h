@@ -26,6 +26,7 @@
 #include <iterator>
 #include <utility>
 
+#include "kglt/window_base.h"
 #include "kazbase/os/path.h"
 #include "tile.h"
 
@@ -36,6 +37,8 @@ public:
     typedef std::pair<TileArray::iterator, TileArray::iterator > IteratorPair;
 
     static Tileset::ptr load_from_directory(const std::string& path, const TransparentColour& c);
+
+    Tileset(kglt::WindowBase& window);
 
 	void add_directory(const std::string& directory) {
 		directories_.insert(directory);
@@ -55,7 +58,8 @@ public:
 	const std::set<std::string> directories() const { return directories_; }
 
     Tile::ptr tile(Tile::id_type id) const;
-
+    Tile::ptr tile_by_index(uint32_t index) { return tiles_.at(index); }
+    
     int get_tile_count() const { return tiles_.size(); }
     Tile* get_tile_at(int i) { return tiles_[i].get(); }
 
@@ -63,12 +67,12 @@ public:
         return std::make_pair(tiles_.begin(), tiles_.end());
     }
 
-    Tileset();
-
     void sort_tiles();
     void set_transparent_colour(const TransparentColour& c);
 
 private:
+    kglt::WindowBase& window_;
+
     void add_tile(const std::string& path);
 
     TileArray tiles_;

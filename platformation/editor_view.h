@@ -55,6 +55,9 @@ public:
         swap_gl_buffers();
     }
     
+    virtual sigc::signal<void, kglt::KeyCode>& signal_key_pressed() { assert(0); }
+    virtual sigc::signal<void, kglt::KeyCode>& signal_key_released() { assert(0); }
+
     virtual void cursor_position(int32_t& mouse_x, int32_t& mouse_y) {
 		mouse_x = mouse_x_;
 		mouse_y = mouse_y_;

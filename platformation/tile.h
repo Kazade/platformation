@@ -24,6 +24,9 @@
 #include <boost/shared_ptr.hpp>
 #include <string>
 
+#include <kglt/types.h>
+#include <kglt/window_base.h>
+
 #include "object.h"
 #include "geometry_element.h"
 #include "transparent_colour.h"
@@ -35,7 +38,7 @@ public:
     typedef std::vector<GeometryElement::ptr> GeometryArray;
     typedef std::pair<GeometryArray::iterator, GeometryArray::iterator > GeometryIteratorPair;
 
-    Tile(const std::string& path, const TransparentColour& c);
+    Tile(kglt::WindowBase& window, const std::string& path, const TransparentColour& c);
 
     id_type get_id() const { return id_; }
 
@@ -63,8 +66,13 @@ public:
 
     std::string get_name() const;
     std::string absolute_path() const { return path_; }
+    
+    kglt::TextureID texture_id() const { return texture_id_; }
+
 private:
+    kglt::WindowBase& window_;
     std::string path_;
+    kglt::TextureID texture_id_;
 
     int width_;
     int height_;

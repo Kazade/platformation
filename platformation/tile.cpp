@@ -22,6 +22,7 @@
 #include <boost/lexical_cast.hpp>
 #include <tinyxml.h>
 
+#include "kglt/shortcuts.h"
 #include "kazbase/os/path.h"
 #include "tile.h"
 
@@ -31,8 +32,10 @@ namespace bfs = boost::filesystem;
   *
   * @todo: document this function
   */
-Tile::Tile(const std::string& path, const TransparentColour& c):
-path_(path) {
+Tile::Tile(kglt::WindowBase& window, const std::string& path, const TransparentColour& c):
+    window_(window),
+    path_(path) {
+
     load_tile(path, c);
     id_ = next_id();
 }
@@ -42,6 +45,9 @@ std::string Tile::get_name() const {
 }
 
 void Tile::load_tile(const std::string& path, const TransparentColour& c) {
+    texture_id_ = kglt::create_texture_from_file(window_, path);
+	
+	/*
     unsigned char* data = SOIL_load_image(path.c_str(), &width_, &height_, &channels_, SOIL_LOAD_AUTO);
 
     assert(data);
@@ -84,7 +90,7 @@ void Tile::load_tile(const std::string& path, const TransparentColour& c) {
         new_data.push_back(a);
     }
     data_ = new_data;
-    channels_ = 4;
+    channels_ = 4;*/
 }
 
 /** @brief get_height
