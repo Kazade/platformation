@@ -29,7 +29,6 @@
 
 #include "level.h"
 #include "tileset.h"
-#include "opengl_tile_selector.h"
 #include "editor_view.h"
 #include "layer_manager.h"
 #include "action_manager.h"
@@ -82,7 +81,6 @@ private:
 
     Level::ptr level_;
     Tileset::ptr tileset_;
-    OpenGLTileSelector::ptr selector_;
     EditorView::ptr editor_view_;
     LayerManager::ptr layer_manager_;
 

@@ -29,6 +29,7 @@
 #include "opengl_grid.h"
 #include "opengl_picker.h"
 #include "kglt/window_base.h"
+#include "kglt/kglt.h"
 
 class Level;
 class Object;
